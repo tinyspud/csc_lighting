@@ -45,6 +45,12 @@ typedef void (*t_isrFuncPTR)(void);
 
 extern void esmHighInterrupt(void);
 extern void phantomInterrupt(void);
+extern void rtiCompare0Interrupt(void);
+extern void rtiCompare1Interrupt(void);
+extern void rtiCompare2Interrupt(void);
+extern void rtiCompare3Interrupt(void);
+extern void rtiOverflow0Interrupt(void);
+extern void rtiOverflow1Interrupt(void);
 
 /* USER CODE BEGIN (3) */
 /* USER CODE END */
@@ -211,12 +217,12 @@ typedef struct vim_config_reg
 					
 #define VIM_REQMASKSET0_CONFIGVALUE	1U\
                         | (1U << 1U)\
-                        | (0U << 2U)\
-                        | (0U << 3U)\
-                        | (0U << 4U)\
-                        | (0U << 5U)\
-                        | (0U << 6U)\
-                        | (0U << 7U)\
+                        | (1U << 2U)\
+                        | (1U << 3U)\
+                        | (1U << 4U)\
+                        | (1U << 5U)\
+                        | (1U << 6U)\
+                        | (1U << 7U)\
                         | (0U << 8U)\
                         | (0U << 9U)\
                         | (0U << 10U)\

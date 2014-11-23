@@ -1,12 +1,12 @@
-/** @file notification.c 
+/** @file notification.c
 *   @brief User Notification Definition File
 *   @date 25.July.2013
 *   @version 03.06.00
 *
 *   This file  defines  empty  notification  routines to avoid
-*   linker errors, Driver expects user to define the notification. 
-*   The user needs to either remove this file and use their custom 
-*   notification function or place their code sequence in this file 
+*   linker errors, Driver expects user to define the notification.
+*   The user needs to either remove this file and use their custom
+*   notification function or place their code sequence in this file
 *   between the provided USER CODE BEGIN and USER CODE END.
 *
 */
@@ -21,6 +21,7 @@
 #include "het.h"
 #include "rti.h"
 /* USER CODE BEGIN (0) */
+#include "Scheduling.h"
 /* USER CODE END */
 #pragma WEAK(esmGroup1Notification)
 void esmGroup1Notification(uint32 channel)
@@ -67,6 +68,7 @@ void rtiNotification(uint32 notification)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (9) */
+	TickScheduler();
 /* USER CODE END */
 }
 
@@ -84,7 +86,7 @@ void gioNotification(gioPORT_t *port, sint32 bit)
 /* USER CODE END */
 
 #pragma WEAK(sciNotification)
-void sciNotification(sciBASE_t *sci, uint32 flags)     
+void sciNotification(sciBASE_t *sci, uint32 flags)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (29) */

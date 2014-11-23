@@ -38,12 +38,12 @@ static const t_isrFuncPTR s_vim_init[129U] =
     &phantomInterrupt,
     &esmHighInterrupt,
     &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
-    &phantomInterrupt,
+    &rtiCompare0Interrupt,
+    &rtiCompare1Interrupt,
+    &rtiCompare2Interrupt,
+    &rtiCompare3Interrupt,
+    &rtiOverflow0Interrupt,
+    &rtiOverflow1Interrupt,
     &phantomInterrupt,
     &phantomInterrupt,
     &phantomInterrupt,
@@ -327,12 +327,12 @@ void vimInit(void)
     /* enable interrupts */
     vimREG->REQMASKSET0 = 1U
                         | (1U << 1U)
-                        | (0U << 2U)
-                        | (0U << 3U)
-                        | (0U << 4U)
-                        | (0U << 5U)
-                        | (0U << 6U)
-                        | (0U << 7U)
+                        | (1U << 2U)
+                        | (1U << 3U)
+                        | (1U << 4U)
+                        | (1U << 5U)
+                        | (1U << 6U)
+                        | (1U << 7U)
                         | (0U << 8U)
                         | (0U << 9U)
                         | (0U << 10U)
