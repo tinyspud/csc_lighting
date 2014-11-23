@@ -1,7 +1,7 @@
 /** @file sys_pmu.h
 *   @brief System Pmu Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Pmu Interface Functions
@@ -9,12 +9,16 @@
 *   which are relevant for the performance monitor unit driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __SYS_PMU_H__
 #define __SYS_PMU_H__
 
 #include "sys_common.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -187,5 +191,10 @@ uint32 _pmuGetEventCount_(uint32 counter);
 */
 uint32 _pmuGetOverflow_(void);
 
+/* USER CODE BEGIN (1) */
+/* USER CODE END */
 
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 #endif

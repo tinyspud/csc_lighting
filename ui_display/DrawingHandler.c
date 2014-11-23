@@ -18,7 +18,7 @@ void init_drawing_handler(){
 }
 
 void write_to_screen(){
-	gc_is_display_busy = 1;
+	gc_is_display_busy = true;
 	write_attempts = 1;
 }
 

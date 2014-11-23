@@ -1,18 +1,27 @@
 /** @file lin.h
 *   @brief LIN Driver Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 
 #ifndef __LIN_H__
 #define __LIN_H__
 
+/* USER CODE BEGIN (0) */
+/* USER CODE END */
+
 #include "reg_lin.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* USER CODE BEGIN (1) */
+/* USER CODE END */
 
 /** @def LIN_BREAK_INT
 *   @brief Alias for break detect interrupt flag
@@ -181,46 +190,48 @@ typedef struct lin_config_reg
 
 /* Configuration registers initial value for LIN*/
 #define LIN_GCR0_CONFIGVALUE       0x00000001U   
-#define LIN_GCR1_CONFIGVALUE       0x03000CE0U \
-                                 | (1U << 12U) \
-                                 | (0U << 2U)
+#define LIN_GCR1_CONFIGVALUE       (0x03000CE0U \
+                                 | (uint32)((uint32)1U << 12U) \
+                                 | (uint32)((uint32)0U << 2U))
 #define LIN_GCR2_CONFIGVALUE       0x00000000U       
-#define LIN_SETINTLVL_CONFIGVALUE  0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U
+#define LIN_SETINTLVL_CONFIGVALUE  (0x00000000U \
+								  |	0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U)
 
-#define LIN_SETINT_CONFIGVALUE     0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U \
-                                 | 0x00000000U
+#define LIN_SETINT_CONFIGVALUE     (0x00000000U \
+								  |	0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U \
+                                  | 0x00000000U)
 
-#define LIN_FORMAT_CONFIGVALUE     ((8U - 1U) << 16U)
+#define LIN_FORMAT_CONFIGVALUE     ((uint32)((uint32)(8U - 1U) << 16U))
 #define LIN_BRSR_CONFIGVALUE       (312U)
-#define LIN_COMP_CONFIGVALUE       (((1U - 1U) << 8U) | (13U - 13U))
-#define LIN_MASK_CONFIGVALUE       ((0xFFU << 16U) | 0xFFU)
+#define LIN_COMP_CONFIGVALUE       ((uint32)((uint32)(1U - 1U) << 8U) | (13U - 13U))
+#define LIN_MASK_CONFIGVALUE       ((uint32)((uint32)0xFFU << 16U) | 0xFFU)
 #define LIN_MBRSR_CONFIGVALUE      (4507U)
 #define LIN_FUN_CONFIGVALUE        (4U | 2U | 0U)
 #define LIN_DIR_CONFIGVALUE        (0U | 0U | 0U)
@@ -275,5 +286,12 @@ void     linGetConfigValue(lin_config_reg_t *config_reg, config_value_type_t typ
 */
 void linNotification(linBASE_t *lin, uint32 flags);
 
+/* USER CODE BEGIN (2) */
+/* USER CODE END */
+
 /**@}*/
+#ifdef __cplusplus
+}
+#endif
+
 #endif

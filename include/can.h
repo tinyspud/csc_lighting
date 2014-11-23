@@ -1,7 +1,7 @@
 /** @file can.h
 *   @brief CAN Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,12 +11,16 @@
 *   which are relevant for the CAN driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __CAN_H__
 #define __CAN_H__
 
 #include "reg_can.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -24,24 +28,49 @@
 /* CAN General Definitions */
 
 /** @def canLEVEL_ACTIVE
-*   @brief Alias name for CAN error operation level active (Error counter 0-95)  
+*   @brief Alias name for CAN error operation level active (Error counter 0-31)  
 */
 #define canLEVEL_ACTIVE 0x00U
 
-/** @def canLEVEL_WARNING
-*   @brief Alias name for CAN error operation level warning (Error counter 96-127)  
-*/
-#define canLEVEL_WARNING 0x40U
-
 /** @def canLEVEL_PASSIVE
-*   @brief Alias name for CAN error operation level passive (Error counter 128-255)  
+*   @brief Alias name for CAN error operation level passive (Error counter 32-63)  
 */
 #define canLEVEL_PASSIVE 0x20U
 
+/** @def canLEVEL_WARNING
+*   @brief Alias name for CAN error operation level warning (Error counter 64-127)  
+*/
+#define canLEVEL_WARNING 0x40U
+
 /** @def canLEVEL_BUS_OFF
-*   @brief Alias name for CAN error operation level bus off (Error counter 256)  
+*   @brief Alias name for CAN error operation level bus off (Error counter 128-255)  
 */
 #define canLEVEL_BUS_OFF 0x80U
+
+/** @def canLEVEL_PARITY_ERR
+*   @brief Alias name for CAN Parity error (Error counter 256-511)  
+*/
+#define canLEVEL_PARITY_ERR 0x100U
+
+/** @def canLEVEL_TxOK
+*   @brief Alias name for CAN Sucessful Transmission
+*/
+#define canLEVEL_TxOK 0x08U
+
+/** @def canLEVEL_RxOK
+*   @brief Alias name for CAN Sucessful Reception
+*/
+#define canLEVEL_RxOK 0x10U
+
+/** @def canLEVEL_WakeUpPnd
+*   @brief Alias name for CAN Initiated a WakeUp to system
+*/
+#define canLEVEL_WakeUpPnd 0x200U
+
+/** @def canLEVEL_PDA
+*   @brief Alias name for CAN entered low power mode successfully.
+*/
+#define canLEVEL_PDA 0x400U
 
 /** @def canERROR_NO
 *   @brief Alias name for no CAN error occurred 
@@ -588,6 +617,8 @@ typedef struct can_config_reg
 void   canInit(void);
 uint32 canTransmit(canBASE_t *node, uint32 messageBox, const uint8 * data);
 uint32 canGetData(canBASE_t *node, uint32 messageBox, uint8 * const data);
+uint32 canSendRemoteFrame(canBASE_t *node, uint32 messageBox);
+uint32 canFillMessageObjectData(canBASE_t *node, uint32 messageBox, const uint8 * data);
 uint32 canIsTxMessagePending(canBASE_t *node, uint32 messageBox);
 uint32 canIsRxMessageArrived(canBASE_t *node, uint32 messageBox);
 uint32 canIsMessageBoxValid(canBASE_t *node, uint32 messageBox);
@@ -595,12 +626,16 @@ uint32 canGetLastError(canBASE_t *node);
 uint32 canGetErrorLevel(canBASE_t *node);
 void   canEnableErrorNotification(canBASE_t *node);
 void   canDisableErrorNotification(canBASE_t *node);
+void   canEnableStatusChangeNotification(canBASE_t *node);
+void   canDisableStatusChangeNotification(canBASE_t *node);
 void   canEnableloopback(canBASE_t *node, canloopBackType_t Loopbacktype);
 void   canDisableloopback(canBASE_t *node);
 void   canIoSetDirection(canBASE_t *node,uint32 TxDir,uint32 RxDir);
 void   canIoSetPort(canBASE_t *node, uint32 TxValue, uint32 RxValue);
 uint32 canIoTxGetBit(canBASE_t *node);
 uint32 canIoRxGetBit(canBASE_t *node);
+uint32 canGetID(canBASE_t *node, uint32 messageBox);
+void canUpdateID(canBASE_t *node, uint32 messageBox, uint32 msgBoxArbitVal);
 
 /** @fn void canErrorNotification(canBASE_t *node, uint32 notification)
 *   @brief Error notification
@@ -609,12 +644,30 @@ uint32 canIoRxGetBit(canBASE_t *node);
 *              - canREG2: CAN2 node pointer
 *              - canREG3: CAN3 node pointer
 *   @param[in] notification Error notification code:
-*           - canLEVEL_WARNING (0x40): When RX- or TX error counter are between 96 and 127     
-*           - canLEVEL_BUS_OFF (0x80): When RX- or TX error counter are above 255     
-*
+*           - canLEVEL_PASSIVE    (0x20) : When RX- or TX error counter are between 32 and 63     
+*           - canLEVEL_WARNING    (0x40) : When RX- or TX error counter are between 64 and 127     
+*           - canLEVEL_BUS_OFF    (0x80) : When RX- or TX error counter are between 128 and 255  
+*           - canLEVEL_PARITY_ERR (0x100): When RX- or TX error counter are above 256
+*           
 *   @note This function has to be provide by the user.
 */
 void canErrorNotification(canBASE_t *node, uint32 notification);
+
+/** @fn void canStatusChangeNotification(canBASE_t *node, uint32 notification)
+*   @brief Status Change notification
+*   @param[in] node Pointer to CAN node:
+*              - canREG1: CAN1 node pointer
+*              - canREG2: CAN2 node pointer
+*              - canREG3: CAN3 node pointer
+*   @param[in] notification Status change notification code:
+*           - canLEVEL_TxOK      (0x08) : When successful transmission     
+*           - canLEVEL_RxOK      (0x10) : When successful reception     
+*           - canLEVEL_WakeUpPnd (0x200): When successful WakeUp to system initiated
+*           - canLEVEL_PDA       (0x400): When successful low power mode entrance
+*           
+*   @note This function has to be provide by the user.
+*/
+void canStatusChangeNotification(canBASE_t *node, uint32 notification);
 
 /** @fn void canMessageNotification(canBASE_t *node, uint32 messageBox)
 *   @brief Message notification
@@ -631,7 +684,12 @@ void canErrorNotification(canBASE_t *node, uint32 notification);
 */
 void canMessageNotification(canBASE_t *node, uint32 messageBox);
 
-/**@}*/
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
+
+/**@}*/
+#ifdef __cplusplus
+}
+#endif
+
 #endif

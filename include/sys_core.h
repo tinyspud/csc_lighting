@@ -1,7 +1,7 @@
 /** @file sys_core.h
 *   @brief System Core Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Core Interface Functions
@@ -9,12 +9,16 @@
 *   which are relevant for the System driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __SYS_CORE_H__
 #define __SYS_CORE_H__
 
 #include "sys_common.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -247,5 +251,9 @@ void _esmCcmErrorsClear_(void);
 *   instructions in Auxiliary Control register.
 */
 void _errata_CORTEXR4_66_(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,7 +1,7 @@
 /** @file adc.h
 *   @brief ADC Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,12 +11,17 @@
 *   which are relevant for the ADC driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __ADC_H__
 #define __ADC_H__
 
 #include "reg_adc.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
@@ -44,6 +49,11 @@
 */
 #define adcGROUP2 2U
 
+/** @def ADC_12_BIT_MODE
+*   @brief Alias name for ADC 12-bit mode of operation
+*/
+#define ADC_12_BIT_MODE 0x80000000U
+
 /** @enum adcResolution
 *   @brief Alias names for data resolution
 *   This enumeration is used to provide alias names for the data resolution:
@@ -51,7 +61,6 @@
 *     - 10 bit resolution
 *     - 8  bit resolution
 */
-
 enum adcResolution
 {
     ADC_12_BIT = 0x00000000U, /**< Alias for 12 bit data resolution */
@@ -172,6 +181,8 @@ void adcEnableNotification(adcBASE_t *adc, uint32 group);
 void adcDisableNotification(adcBASE_t *adc, uint32 group);
 void adcCalibration(adcBASE_t *adc);
 uint32 adcMidPointCalibration(adcBASE_t *adc);
+void adcSetEVTPin(adcBASE_t *adc, uint32 value);
+uint32 adcGetEVTPin(adcBASE_t *adc);
 
 /** @fn void adcNotification(adcBASE_t *adc, uint32 group)
 *   @brief Group notification

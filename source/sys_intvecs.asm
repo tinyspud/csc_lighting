@@ -12,7 +12,7 @@
 
     .ref _c_int00
     .ref _dabort
-    
+    .ref phantomInterrupt
     .def resetEntry
 
 ;-------------------------------------------------------------------------------
@@ -27,8 +27,7 @@ svcEntry
 prefetchEntry
         b   prefetchEntry
         b   _dabort
-reservedEntry
-        b   reservedEntry
+        b   phantomInterrupt
         ldr pc,[pc,#-0x1b0]
         ldr pc,[pc,#-0x1b0]
 

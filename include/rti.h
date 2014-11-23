@@ -1,7 +1,7 @@
 /** @file rti.h
 *   @brief RTI Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the RTI driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 
 #ifndef __RTI_H__
@@ -19,6 +19,9 @@
 
 #include "reg_rti.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
@@ -215,10 +218,10 @@ typedef struct rti_config_reg
 
 
 /* Configuration registers initial value */
-#define RTI_GCTRL_CONFIGVALUE	(1U << 16U) | 0x00000000U
+#define RTI_GCTRL_CONFIGVALUE	0x00000000U
 #define RTI_TBCTRL_CONFIGVALUE  0x00000000U
-#define RTI_CAPCTRL_CONFIGVALUE  0U | 0U
-#define RTI_COMPCTRL_CONFIGVALUE  0x00001000U | 0x00000100U | 0x00000000U | 0x00000000U
+#define RTI_CAPCTRL_CONFIGVALUE  (0U | 0U)
+#define RTI_COMPCTRL_CONFIGVALUE (0x00001000U | 0x00000100U | 0x00000000U | 0x00000000U)
 #define RTI_UDCP0_CONFIGVALUE 10000U
 #define RTI_UDCP1_CONFIGVALUE 50000U
 #define RTI_UDCP2_CONFIGVALUE 80000U
@@ -279,9 +282,12 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type);
 */
 void rtiNotification(uint32 notification);
 
-/**@}*/
 /* USER CODE BEGIN (6) */
 /* USER CODE END */
 
+/**@}*/
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 
 #endif

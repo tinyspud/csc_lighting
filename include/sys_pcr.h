@@ -1,7 +1,7 @@
 /** @file sys_pcr.h
 *   @brief PCR Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -10,12 +10,16 @@
 *   which are relevant for the System driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __SYS_PCR_H__
 #define __SYS_PCR_H__
 
 #include "reg_pcr.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -252,5 +256,9 @@ void pcrGetConfigValue(pcr_config_reg_t *config_reg, config_value_type_t type);
 /**@}*/
 /* USER CODE BEGIN (7) */
 /* USER CODE END */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

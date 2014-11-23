@@ -1,13 +1,13 @@
 /** @file hal_stdtypes.h
 *   @brief HALCoGen standard types header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Type and Global definitions which are relevant for all drivers.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __HAL_STDTYPES_H__
 #define __HAL_STDTYPES_H__
@@ -41,7 +41,11 @@ typedef uint8_t uint8;
 #endif
 
 #ifndef _BOOLEAN_DECLARED
+#ifdef __cplusplus
+typedef bool boolean;
+#else
 typedef _Bool boolean;
+#endif
 #define	_BOOLEAN_DECLARED
 #endif
 
@@ -82,8 +86,18 @@ typedef double float64;
 /** @def NULL
 *   @brief NULL definition
 */
+
 #ifndef NULL
+	/*SAFETYMCUSW 218 S MR:20.2 <APPROVED> "Custom Type Definition." */
     #define NULL ((void *) 0U)
+#endif
+
+/*****************************************************************************/
+/* Define:       NULL_PTR                                                    */
+/* Description:  Void pointer to 0                                           */
+/*****************************************************************************/
+#ifndef NULL_PTR
+	#define NULL_PTR ((void *)0x0)
 #endif
 
 /** @def TRUE

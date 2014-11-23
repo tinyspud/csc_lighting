@@ -1,16 +1,19 @@
 /** @file dcc.h
 *   @brief DCC Driver Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __DCC_H__
 #define __DCC_H__
 
 #include "reg_dcc.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
@@ -50,7 +53,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_PLL1 0x0000A0000U
+#define dcc1CNT1_CLKSRC_PLL1 0x0000A000U
 
 /** @def dcc1CNT1_CLKSRC_PLL2
 *   @brief Alias name for DCC1 Counter 1 Clock Source PLL2
@@ -59,7 +62,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_PLL2 0x0000A0001U
+#define dcc1CNT1_CLKSRC_PLL2 0x0000A001U
 
 /** @def dcc1CNT1_CLKSRC_LFLPO
 *   @brief Alias name for DCC1 Counter 1 Clock Source LFLPO
@@ -68,7 +71,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_LFLPO 0x0000A0002U
+#define dcc1CNT1_CLKSRC_LFLPO 0x0000A002U
 
 /** @def dcc1CNT1_CLKSRC_HFLPO
 *   @brief Alias name for DCC1 Counter 1 Clock Source HFLPO
@@ -77,7 +80,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_HFLPO 0x0000A0003U
+#define dcc1CNT1_CLKSRC_HFLPO 0x0000A003U
 
 /** @def dcc1CNT1_CLKSRC_EXTCLKIN1
 *   @brief Alias name for DCC1 Counter 1 Clock Source EXTCLKIN1
@@ -86,7 +89,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_EXTCLKIN1 0x0000A0005U
+#define dcc1CNT1_CLKSRC_EXTCLKIN1 0x0000A005U
 
 /** @def dcc1CNT1_CLKSRC_EXTCLKIN2
 *   @brief Alias name for DCC1 Counter 1 Clock Source EXTCLKIN2
@@ -95,7 +98,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_EXTCLKIN2 0x0000A0006U
+#define dcc1CNT1_CLKSRC_EXTCLKIN2 0x0000A006U
 
 /** @def dcc1CNT1_CLKSRC_VCLK
 *   @brief Alias name for DCC1 Counter 1 Clock Source VCLK
@@ -104,7 +107,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_VCLK 0x0000A0008U
+#define dcc1CNT1_CLKSRC_VCLK 0x0000A008U
 
 /** @def dcc1CNT1_CLKSRC_N2HET1_31
 *   @brief Alias name for DCC1 Counter 1 Clock Source N2HET1_31
@@ -113,7 +116,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc1CNT1_CLKSRC_N2HET1_31 0x00005000FU
+#define dcc1CNT1_CLKSRC_N2HET1_31 0x0000500FU
 
 /** @def dcc2CNT0_CLKSRC_TCK
 *   @brief Alias name for DCC2 Counter 0 Clock Source TCK
@@ -140,7 +143,7 @@
 *
 *   @note This value should be used for API argument @a cnt1_Clock_Source
 */
-#define dcc2CNT1_CLKSRC_VCLK 0x0000A0008U
+#define dcc2CNT1_CLKSRC_VCLK 0x0000A008U
 
 /** @def dcc2CNT1_CLKSRC_N2HET1_0
 *   @brief Alias name for DCC2 Counter 1 Clock Source N2HET2_0
@@ -177,18 +180,18 @@
 */
 enum dcc1clocksource
 {
-    DCC1_CNT0_HF_LPO	= 0x5U,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
-	DCC1_CNT0_TCK		= 0xAU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 1*/
-	DCC1_CNT0_OSCIN		= 0xFU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
+    DCC1_CNT0_HF_LPO    = 0x5U,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
+    DCC1_CNT0_TCK       = 0xAU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 1*/
+    DCC1_CNT0_OSCIN     = 0xFU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
 
-    DCC1_CNT1_PLL1		= 0x0U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 0*/
-    DCC1_CNT1_PLL2		= 0x1U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 1*/
-	DCC1_CNT1_LF_LPO	= 0x2U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 2*/
-	DCC1_CNT1_HF_LPO	= 0x3U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 3*/
-	DCC1_CNT1_EXTCLKIN1 = 0x5U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 4*/
-	DCC1_CNT1_EXTCLKIN2 = 0x6U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 6*/
-	DCC1_CNT1_VCLK		= 0x8U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
-	DCC1_CNT1_N2HET1_31	= 0xAU	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
+    DCC1_CNT1_PLL1      = 0x0U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 0*/
+    DCC1_CNT1_PLL2      = 0x1U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 1*/
+    DCC1_CNT1_LF_LPO    = 0x2U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 2*/
+    DCC1_CNT1_HF_LPO    = 0x3U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 3*/
+    DCC1_CNT1_EXTCLKIN1 = 0x5U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 4*/
+    DCC1_CNT1_EXTCLKIN2 = 0x6U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 6*/
+    DCC1_CNT1_VCLK      = 0x8U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
+    DCC1_CNT1_N2HET1_31 = 0xAU     /**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
 };
 
 /** @enum dcc2clocksource
@@ -198,11 +201,11 @@ enum dcc1clocksource
 */
 enum dcc2clocksource
 {
-    DCC2_CNT0_OSCIN		= 0xFU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
-    DCC2_CNT0_TCK		= 0xAU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
-
-   	DCC2_CNT1_VCLK		= 0x8U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
-	DCC2_CNT1_N2HET2_0	= 0xAU	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
+    DCC2_CNT0_OSCIN      = 0xFU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
+    DCC2_CNT0_TCK        = 0xAU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
+    
+    DCC2_CNT1_VCLK       = 0x8U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
+    DCC2_CNT1_N2HET2_0   = 0xAU     /**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
 };
 
 /* Configuration registers */
@@ -227,7 +230,7 @@ typedef struct dcc_config_reg
  *  known clock signal as a reference. This capability can be used to ensure the correct frequency range for
  *  several different device clock sources, thereby enhancing the system safety metrics.
  *
- *	Related Files
+ *    Related Files
  *   - reg_dcc.h
  *   - dcc.h
  *   - dcc.c
@@ -259,5 +262,11 @@ void dcc1GetConfigValue(dcc_config_reg_t *config_reg, config_value_type_t type);
 */
 void dccNotification(dccBASE_t  *dcc,uint32 flags);
 
+/* USER CODE BEGIN (2) */
+/* USER CODE END */
 /**@}*/
+#ifdef __cplusplus
+}
+#endif
+
 #endif

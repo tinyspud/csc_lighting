@@ -1,7 +1,7 @@
 /** @file reg_tcram.h
 *   @brief TCRAM Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -10,12 +10,18 @@
 *   which are relevant for the System driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_TCRAM_H__
 #define __REG_TCRAM_H__
 
+/* USER CODE BEGIN (0) */
+/* USER CODE END */
+
 #include "sys_common.h"
+
+/* USER CODE BEGIN (1) */
+/* USER CODE END */
 
 /* Tcram Register Frame Definition */
 /** @struct tcramBase
@@ -48,5 +54,8 @@ typedef volatile struct tcramBase
 
 #define tcram1REG ((tcramBASE_t *)(0xFFFFF800U))
 #define tcram2REG ((tcramBASE_t *)(0xFFFFF900U))
+
+/* USER CODE BEGIN (2) */
+/* USER CODE END */
 
 #endif

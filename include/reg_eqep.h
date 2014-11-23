@@ -1,7 +1,7 @@
 /** @file reg_eqep.h
 *   @brief EQEP Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the EQEP driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_EQEP_H__
 #define __REG_EQEP_H__
@@ -35,7 +35,7 @@
 */
 #if ((__little_endian__ == 1) || (__LITTLE_ENDIAN__ == 1)) 
 
-typedef struct eqepBASE
+typedef volatile struct eqepBASE
 {
   uint32      QPOSCNT;       /*< 0x0000 eQEP Position Counter*/
   uint32      QPOSINIT;      /*< 0x0004 eQEP Initialization Position Count*/
@@ -66,7 +66,7 @@ typedef struct eqepBASE
 
 #else
 
-typedef struct eqepBASE
+typedef volatile struct eqepBASE
 {
   uint32      QPOSCNT;       /*< 0x0000 eQEP Position Counter*/
   uint32      QPOSINIT;      /*< 0x0004 eQEP Initialization Position Count*/

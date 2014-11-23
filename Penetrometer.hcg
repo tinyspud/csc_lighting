@@ -7,7 +7,7 @@
     <tools>ti</tools>
   </DEVICE>
   <VERSION>
-    <version>03.06.00</version>
+    <version>04.01.00</version>
   </VERSION>
   <HET>
     <FILENAME>
@@ -296,6 +296,49 @@
         <NAME>eqep.h</NAME>
       </HDREQEP>
       <SRCEQEP/>
+      <HDRTEST>
+        <NAME>HL_Test.h</NAME>
+      </HDRTEST>
+      <HDR1FEE>
+        <NAME>Device_RM42.h</NAME>
+      </HDR1FEE>
+      <HDR2FEE>
+        <NAME>Device_header.h</NAME>
+      </HDR2FEE>
+      <HDR3FEE>
+        <NAME>Device_types.h</NAME>
+      </HDR3FEE>
+      <HDR4FEE>
+        <NAME>ti_fee_cfg.h</NAME>
+      </HDR4FEE>
+      <HDR5FEE>
+        <NAME>MemMap.h</NAME>
+      </HDR5FEE>
+      <HDR6FEE>
+        <NAME>ti_fee_types.h</NAME>
+      </HDR6FEE>
+      <HDR7FEE>
+        <NAME>ti_fee.h</NAME>
+      </HDR7FEE>
+      <HDR8FEE>
+        <NAME>fee_interface.h</NAME>
+      </HDR8FEE>
+      <SRC1FEE/>
+      <SRC2FEE/>
+      <SRC3FEE/>
+      <SRC4FEE/>
+      <SRC5FEE/>
+      <SRC6FEE/>
+      <SRC7FEE/>
+      <SRC8FEE/>
+      <SRC9FEE/>
+      <SRC10FEE/>
+      <SRC11FEE/>
+      <SRC12FEE/>
+      <SRC13FEE/>
+      <SRC14FEE/>
+      <SRC15FEE/>
+      <SRC16FEE/>
     </FILENAMES>
   </SYSTEM>
   <PINMUX>
@@ -467,4 +510,80 @@
       </SRCEQEP>
     </FILENAMES>
   </EQEP>
+  <FEE>
+    <FILENAMES>
+      <HDR1FEE>
+        <PATH>include\Device_RM42.h</PATH>
+      </HDR1FEE>
+      <HDR2FEE>
+        <PATH>include\Device_header.h</PATH>
+      </HDR2FEE>
+      <HDR3FEE>
+        <PATH>include\Device_types.h</PATH>
+      </HDR3FEE>
+      <HDR4FEE>
+        <PATH>include\ti_fee_cfg.h</PATH>
+      </HDR4FEE>
+      <HDR5FEE>
+        <PATH>include\MemMap.h</PATH>
+      </HDR5FEE>
+      <HDR6FEE>
+        <PATH>include\ti_fee_types.h</PATH>
+      </HDR6FEE>
+      <HDR7FEE>
+        <PATH>include\ti_fee.h</PATH>
+      </HDR7FEE>
+      <HDR8FEE>
+        <PATH>include\fee_interface.h</PATH>
+      </HDR8FEE>
+      <SRC1FEE>
+        <PATH/>
+      </SRC1FEE>
+      <SRC2FEE>
+        <PATH/>
+      </SRC2FEE>
+      <SRC3FEE>
+        <PATH/>
+      </SRC3FEE>
+      <SRC4FEE>
+        <PATH/>
+      </SRC4FEE>
+      <SRC5FEE>
+        <PATH/>
+      </SRC5FEE>
+      <SRC6FEE>
+        <PATH/>
+      </SRC6FEE>
+      <SRC7FEE>
+        <PATH/>
+      </SRC7FEE>
+      <SRC8FEE>
+        <PATH/>
+      </SRC8FEE>
+      <SRC9FEE>
+        <PATH/>
+      </SRC9FEE>
+      <SRC10FEE>
+        <PATH/>
+      </SRC10FEE>
+      <SRC11FEE>
+        <PATH/>
+      </SRC11FEE>
+      <SRC12FEE>
+        <PATH/>
+      </SRC12FEE>
+      <SRC13FEE>
+        <PATH/>
+      </SRC13FEE>
+      <SRC14FEE>
+        <PATH/>
+      </SRC14FEE>
+      <SRC15FEE>
+        <PATH/>
+      </SRC15FEE>
+      <SRC16FEE>
+        <PATH/>
+      </SRC16FEE>
+    </FILENAMES>
+  </FEE>
 </SETTINGS>

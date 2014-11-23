@@ -1,11 +1,11 @@
-/** @file het.c 
+/** @file het.c
 *   @brief HET Driver Implementation File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #include "het.h"
 #include "sys_vim.h"
@@ -15,7 +15,7 @@
 /*----------------------------------------------------------------------------*/
 /* Global variables                                                           */
 
-static const uint32 s_het1pwmPolarity[8] =
+static const uint32 s_het1pwmPolarity[8U] =
 {
     3U,
     3U,
@@ -37,7 +37,7 @@ static const uint32 s_het1pwmPolarity[8] =
 *   Het program running after initialization.
 */
 
-static const hetINSTRUCTION_t het1PROGRAM[58] =
+static const hetINSTRUCTION_t het1PROGRAM[58U] =
 {
     /* CNT: Timebase
     *       - Instruction                  = 0
@@ -68,7 +68,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000055C0U,
         /* Control */
-        (0x00004006U | (8U << 8U) | (3U << 3U)),
+        (0x00004006U | (uint32)((uint32)8U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -102,7 +102,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000095C0U,
         /* Control */
-        (0x00008006U | (10U << 8U) | (3U << 3U)),
+        (0x00008006U | (uint32)((uint32)10U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -136,7 +136,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0000D5C0U,
         /* Control */
-        (0x0000C006U | (12U << 8U) | (3U << 3U)),
+        (0x0000C006U | (uint32)((uint32)12U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -170,7 +170,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000115C0U,
         /* Control */
-        (0x00010006U | (14U << 8U) | (3U << 3U)),
+        (0x00010006U | (uint32)((uint32)14U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -204,7 +204,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000155C0U,
         /* Control */
-        (0x00014006U | (16U << 8U) | (3U << 3U)),
+        (0x00014006U | (uint32)((uint32)16U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -238,7 +238,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000195C0U,
         /* Control */
-        (0x00018006U | (17U << 8U) | (3U << 3U)),
+        (0x00018006U | (uint32)((uint32)17U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -272,7 +272,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0001D5C0U,
         /* Control */
-        (0x0001C006U | (18U << 8U) | (3U << 3U)),
+        (0x0001C006U | (uint32)((uint32)18U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -306,7 +306,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x000215C0U,
         /* Control */
-        (0x00020006U | (19U << 8U) | (3U << 3U)),
+        (0x00020006U | (uint32)((uint32)19U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -340,7 +340,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00025440U,
         /* Control */
-        (0x00024007U | (9U << 8U) | (1U << 4U)),
+        (0x00024007U | (uint32)((uint32)9U << 8U) | (uint32)((uint32)1U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -357,7 +357,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00027440U,
         /* Control */
-        (0x00026007U | (11U << 8U) | (1U << 4U)),
+        (0x00026007U | (uint32)((uint32)11U << 8U) | (uint32)((uint32)1U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -374,7 +374,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00029440U,
         /* Control */
-        (0x00028007U | (13U << 8U) | (1U << 4U)),
+        (0x00028007U | (uint32)((uint32)13U << 8U) | (uint32)((uint32)1U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -391,7 +391,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0002B440U,
         /* Control */
-        (0x0002A007U | (15U << 8U) | (1U << 4U)),
+        (0x0002A007U | (uint32)((uint32)15U << 8U) | (uint32)((uint32)1U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -408,7 +408,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0002D440U,
         /* Control */
-        (0x0002C007U | (20U << 8U) | (1U << 4U)),
+        (0x0002C007U | (uint32)((uint32)20U << 8U) | (uint32)((uint32)1U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -419,13 +419,13 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     *         - Next instruction             = 23
     *         - Conditional next instruction = 23
     *         - Interrupt                    = 22
-    *         - Pin                          = 21
+    *         - Pin                          = 14
     */
     {
         /* Program */
         0x0002F440U,
         /* Control */
-        (0x0002E007U | (21U << 8U) | (1U << 4U)),
+        (0x0002E007U | (uint32)((uint32)14U << 8U) | (uint32)((uint32)3U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -436,13 +436,13 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     *         - Next instruction             = 24
     *         - Conditional next instruction = 24
     *         - Interrupt                    = 23
-    *         - Pin                          = 22
+    *         - Pin                          = 16
     */
     {
         /* Program */
         0x00031440U,
         /* Control */
-        (0x00030007U | (22U << 8U) | (1U << 4U)),
+        (0x00030007U | (uint32)((uint32)16U << 8U) | (uint32)((uint32)3U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -453,13 +453,13 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     *         - Next instruction             = 25
     *         - Conditional next instruction = 25
     *         - Interrupt                    = 24
-    *         - Pin                          = 23
+    *         - Pin                          = 18
     */
     {
         /* Program */
         0x00033440U,
         /* Control */
-        (0x00032007U | (23U << 8U) | (1U << 4U)),
+        (0x00032007U | (uint32)((uint32)18U << 8U) | (uint32)((uint32)3U << 4U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -474,7 +474,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00034E00U | (0U << 6U)  | (0U),
+        0x00034E00U | (uint32)((uint32)0U << 6U)  | (uint32)(0U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -491,7 +491,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00036E80U | (0U << 6U)  | ((0U) + 1U),
+        0x00036E80U | (uint32)((uint32)0U << 6U)  | (uint32)((0U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -508,7 +508,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00038E00U | (0U << 6U)  | (2U),
+        0x00038E00U | (uint32)((uint32)0U << 6U)  | (uint32)(2U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -525,7 +525,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0003AE80U | (0U << 6U)  | ((2U) + 1U),
+        0x0003AE80U | (uint32)((uint32)0U << 6U)  | (uint32)((2U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -542,7 +542,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0003CE00U | (0U << 6U)  | (4U),
+        0x0003CE00U | (uint32)((uint32)0U << 6U)  | (uint32)(4U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -559,7 +559,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0003EE80U | (0U << 6U)  | ((4U) + 1U),
+        0x0003EE80U | (uint32)((uint32)0U << 6U)  | (uint32)((4U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -576,7 +576,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00040E00U | (0U << 6U)  | (6U),
+        0x00040E00U | (uint32)((uint32)0U << 6U)  | (uint32)(6U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -593,7 +593,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00042E80U | (0U << 6U)  | ((6U) + 1U),
+        0x00042E80U | (uint32)((uint32)0U << 6U)  | (uint32)((6U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -610,7 +610,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00044E00U | (0U << 6U)  | (24U),
+        0x00044E00U | (uint32)((uint32)0U << 6U)  | (uint32)(24U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -627,7 +627,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00046E80U | (0U << 6U)  | ((24U) + 1U),
+        0x00046E80U | (uint32)((uint32)0U << 6U)  | (uint32)((24U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -644,7 +644,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00048E00U | (0U << 6U)  | (26U),
+        0x00048E00U | (uint32)((uint32)0U << 6U)  | (uint32)(26U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -661,7 +661,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0004AE80U | (0U << 6U)  | ((26U) + 1U),
+        0x0004AE80U | (uint32)((uint32)0U << 6U)  | (uint32)((26U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -678,7 +678,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0004CE00U | (0U << 6U)  | (28U),
+        0x0004CE00U | (uint32)((uint32)0U << 6U)  | (uint32)(28U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -695,7 +695,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x0004EE80U | (0U << 6U)  | ((28U) + 1U),
+        0x0004EE80U | (uint32)((uint32)0U << 6U)  | (uint32)((28U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -712,7 +712,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00050E00U | (0U << 6U)  | (30U),
+        0x00050E00U | (uint32)((uint32)0U << 6U)  | (uint32)(30U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -729,7 +729,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
     */
     {
         /* Program */
-        0x00072E80U | (0U << 6U)  | ((30U) + 1U),
+        0x00072E80U | (uint32)((uint32)0U << 6U)  | (uint32)((30U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -748,7 +748,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00054201U,
         /* Control */
-        (0x00004007U | (0U << 22U) | (8U << 8U) | (3U << 3U)),
+        (0x00004007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)8U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -782,7 +782,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00058203U,
         /* Control */
-        (0x00008007U | (0U << 22U) | (10U << 8U) | (3U << 3U)),
+        (0x00008007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)10U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -816,7 +816,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0005C205U,
         /* Control */
-        (0x0000C007U | (0U << 22U) | (12U << 8U) | (3U << 3U)),
+        (0x0000C007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)12U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -850,7 +850,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00060207U,
         /* Control */
-        (0x00010007U | (0U << 22U) | (14U << 8U) | (3U << 3U)),
+        (0x00010007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)14U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -884,7 +884,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x00064209U,
         /* Control */
-        (0x00014007U | (0U << 22U) | (16U << 8U) | (3U << 3U)),
+        (0x00014007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)16U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -918,7 +918,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0006820BU,
         /* Control */
-        (0x00018007U | (0U << 22U) | (17U << 8U) | (3U << 3U)),
+        (0x00018007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)17U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -952,7 +952,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0006C20DU,
         /* Control */
-        (0x0001C007U | (0U << 22U) | (18U << 8U) | (3U << 3U)),
+        (0x0001C007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)18U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -986,7 +986,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
         /* Program */
         0x0007020FU,
         /* Control */
-        (0x00020007U | (0U << 22U) | (19U << 8U) | (3U << 3U)),
+        (0x00020007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)19U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         100224U,
         /* Reserved */
@@ -1036,234 +1036,237 @@ static const hetINSTRUCTION_t het1PROGRAM[58] =
 *
 *   This function initializes the het 1 module.
 */
+/* SourceId : HET_SourceId_001 */
+/* DesignId : HET_DesignId_001 */
+/* Requirements : HL_SR363 */
 void hetInit(void)
 {
     /** @b initialize @b HET */
 
     /** - Set HET pins default output value */
-    hetREG1->DOUT = (uint32)(0U << 31U)
-                 | (uint32)(0U << 30U)
-                 | (uint32)(0U << 29U)
-                 | (uint32)(0U << 28U) 
-                 | (uint32)(0U << 27U)  
-                 | (uint32)(0U << 26U)  
-                 | (uint32)(0U << 25U)  
-                 | (uint32)(0U << 24U)  
-                 | (uint32)(0U << 23U)  
-                 | (uint32)(0U << 22U)  
-                 | (uint32)(0U << 21U)  
-                 | (uint32)(0U << 20U)  
-                 | (uint32)(0U << 19U)  
-                 | (uint32)(0U << 18U) 
-                 | (uint32)(0U << 17U) 
-                 | (uint32)(0U << 16U) 
-                 | (uint32)(0U << 15U) 
-                 | (uint32)(0U << 14U) 
-                 | (uint32)(0U << 13U) 
-                 | (uint32)(0U << 12U) 
-                 | (uint32)(0U << 11U) 
-                 | (uint32)(0U << 10U) 
-                 | (uint32)(0U << 9U)
-                 | (uint32)(0U << 8U)
-                 | (uint32)(0U << 7U)
-                 | (uint32)(0U << 6U)
-                 | (uint32)(0U << 5U)
-                 | (uint32)(0U << 4U)
-                 | (uint32)(0U << 3U)
-                 | (uint32)(0U << 2U)
-                 | (uint32)(0U << 1U)
-                 | (uint32)(0U);
+    hetREG1->DOUT = (uint32)((uint32)0U << 31U)
+                  | (uint32)((uint32)0U << 30U)
+                  | (uint32)((uint32)0U << 29U)
+                  | (uint32)((uint32)0U << 28U)
+                  | (uint32)((uint32)0U << 27U)
+                  | (uint32)((uint32)0U << 26U)
+                  | (uint32)((uint32)0U << 25U)
+                  | (uint32)((uint32)0U << 24U)
+                  | (uint32)((uint32)0U << 23U)
+                  | (uint32)((uint32)0U << 22U)
+                  | (uint32)((uint32)0U << 21U)
+                  | (uint32)((uint32)0U << 20U)
+                  | (uint32)((uint32)0U << 19U)
+                  | (uint32)((uint32)0U << 18U)
+                  | (uint32)((uint32)0U << 17U)
+                  | (uint32)((uint32)0U << 16U)
+                  | (uint32)((uint32)0U << 15U)
+                  | (uint32)((uint32)0U << 14U)
+                  | (uint32)((uint32)0U << 13U)
+                  | (uint32)((uint32)0U << 12U)
+                  | (uint32)((uint32)0U << 11U)
+                  | (uint32)((uint32)0U << 10U)
+                  | (uint32)((uint32)0U << 9U)
+                  | (uint32)((uint32)0U << 8U)
+                  | (uint32)((uint32)0U << 7U)
+                  | (uint32)((uint32)0U << 6U)
+                  | (uint32)((uint32)0U << 5U)
+                  | (uint32)((uint32)0U << 4U)
+                  | (uint32)((uint32)0U << 3U)
+                  | (uint32)((uint32)0U << 2U)
+                  | (uint32)((uint32)0U << 1U)
+                  | (uint32)((uint32)0U << 0U);
 
     /** - Set HET pins direction */
-    hetREG1->DIR = (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U;
-
-    /** - Set HET pins open drain enable */
-    hetREG1->PDR = (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U;
-
-    /** - Set HET pins pullup/down enable */
-    hetREG1->PULDIS = (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U 
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U
-                   | (uint32) 0x00000000U;
-
-    /** - Set HET pins pullup/down select */
-    hetREG1->PSL = (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U 
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U;
-
-    /** - Set HET pins high resolution share */
-    hetREG1->HRSH = (uint32) 0x00008000U 
-                 | (uint32) 0x00004000U 
-                 | (uint32) 0x00002000U 
-                 | (uint32) 0x00001000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U
-                 | (uint32) 0x00000008U
-                 | (uint32) 0x00000004U
-                 | (uint32) 0x00000002U
-                 | (uint32) 0x00000001U;
-
-    /** - Set HET pins AND share */
-    hetREG1->AND = (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
+    hetREG1->DIR = (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
-                 | (uint32) 0x00000000U;                 
-
-    /** - Set HET pins XOR share */
-    hetREG1->XOR = (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
-                 | (uint32) 0x00000000U 
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00400000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U;
-                 
+
+    /** - Set HET pins open drain enable */
+    hetREG1->PDR = (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U;
+
+    /** - Set HET pins pullup/down enable */
+    hetREG1->PULDIS = (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U
+                    | (uint32) 0x00000000U;
+
+    /** - Set HET pins pullup/down select */
+    hetREG1->PSL = (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U;
+
+    /** - Set HET pins high resolution share */
+    hetREG1->HRSH = (uint32) 0x00008000U
+                  | (uint32) 0x00004000U
+                  | (uint32) 0x00002000U
+                  | (uint32) 0x00001000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000000U
+                  | (uint32) 0x00000008U
+                  | (uint32) 0x00000004U
+                  | (uint32) 0x00000002U
+                  | (uint32) 0x00000001U;
+
+    /** - Set HET pins AND share */
+    hetREG1->AND = (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U;
+
+    /** - Set HET pins XOR share */
+    hetREG1->XOR = (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U;
+
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
@@ -1271,16 +1274,22 @@ void hetInit(void)
     *     - Loop resolution prescaler
     *     - High resolution prescaler
     */
-    hetREG1->PFR = ((uint32) 6U << 8U)
+    hetREG1->PFR = (uint32)((uint32) 6U << 8U)
                 | ((uint32) 0U);
-     
-    /** - Fill HET RAM with opcodes and Data */
-    /*SAFETYMCUSW 94 S MR:11.1,11.2,11.4 <APPROVED> "HET RAM Fill from the table" */
-	/*SAFETYMCUSW 95 S MR:11.1,11.4 <APPROVED> "HET RAM Fill from the table" */
-	/*SAFETYMCUSW 95 S MR:11.1,11.4 <APPROVED> "HET RAM Fill from the table" */
-    memcpy((void *)hetRAM1, (const void *)het1PROGRAM, sizeof(het1PROGRAM));
 
-    /** - Setup interrupt priority level 
+
+   /** - Parity control register
+    *     - Enable/Disable Parity check
+    */
+    hetREG1->PCR = (uint32) 0x00000005U;
+
+    /** - Fill HET RAM with opcodes and Data */
+    /*SAFETYMCUSW 94 S MR:11.1,11.2,11.4 <APPROVED> "HET RAM Fill from the table - Allowed as per MISRA rule 11.2" */
+    /*SAFETYMCUSW 95 S MR:11.1,11.4 <APPROVED> "HET RAM Fill from the table - Allowed as per MISRA rule 11.2" */
+    /*SAFETYMCUSW 95 S MR:11.1,11.4 <APPROVED> "HET RAM Fill from the table - Allowed as per MISRA rule 11.2" */
+    (void)memcpy((void *)hetRAM1, (const void *)het1PROGRAM, sizeof(het1PROGRAM));
+
+    /** - Setup interrupt priority level
     *     - PWM 0 end of duty  level
     *     - PWM 0 end of period level
     *     - PWM 1 end of duty  level
@@ -1308,31 +1317,31 @@ void hetInit(void)
     *     - CCU Edge Detection 7 level
     */
     hetREG1->PRY = (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U
-                | (uint32) 0x00000000U;
- 
-    /** - Enable interrupts 
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U
+                 | (uint32) 0x00000000U;
+
+    /** - Enable interrupts
     *     - PWM 0 end of duty
     *     - PWM 0 end of period
     *     - PWM 1 end of duty
@@ -1360,47 +1369,41 @@ void hetInit(void)
     */
     hetREG1->INTENAC = 0xFFFFFFFFU;
     hetREG1->INTENAS = (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U
-                    | (uint32) 0x00000000U;
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00000000U
+                     | (uint32) 0x00400000U
+                     | (uint32) 0x00800000U
+                     | (uint32) 0x01000000U;
 
-   
-   /** - Parity control register 
-    *     - Enable/Disable Parity check
-    */
-    hetREG1->PCR = (uint32) 0x00000005U;
 
-   /** - Setup control register 
+   /** - Setup control register
     *     - Enable output buffers
     *     - Ignore software breakpoints
-	*     - Master mode since only one HET is active
+    *     - Master or Slave Clock Mode
     *     - Enable HET
     */
-    hetREG1->GCR = 0x01030001U;	
+    hetREG1->GCR = (0x01000001U | (uint32)((uint32)1U << 16U) | (0x00020000U));
 
 
 }
-
 /** @fn void pwmStart( hetRAMBASE_t * hetRAM, uint32 pwm)
 *   @brief Start pwm signal
 *   @param[in] hetRAM Pointer to HET RAM:
@@ -1418,10 +1421,12 @@ void hetInit(void)
 *
 *   Start the given pwm signal
 */
-
+/* SourceId : HET_SourceId_002 */
+/* DesignId : HET_DesignId_002 */
+/* Requirements : HL_SR364 */
 void pwmStart( hetRAMBASE_t * hetRAM, uint32 pwm)
 {
- 
+
    hetRAM->Instruction[(pwm << 1U) + 41U].Control  |= 0x00400000U;
 }
 
@@ -1443,10 +1448,12 @@ void pwmStart( hetRAMBASE_t * hetRAM, uint32 pwm)
 *
 *   Stop the given pwm signal
 */
-
+/* SourceId : HET_SourceId_003 */
+/* DesignId : HET_DesignId_003 */
+/* Requirements : HL_SR365 */
 void pwmStop( hetRAMBASE_t * hetRAM, uint32 pwm)
 {
-    hetRAM->Instruction[(pwm << 1U) + 41U].Control  &= ~0x00400000U;
+    hetRAM->Instruction[(pwm << 1U) + 41U].Control  &= ~(uint32)0x00400000U;
 }
 
 
@@ -1468,12 +1475,16 @@ void pwmStop( hetRAMBASE_t * hetRAM, uint32 pwm)
 *
 *   Sets a new duty cycle on the given pwm signal
 */
-
+/* SourceId : HET_SourceId_004 */
+/* DesignId : HET_DesignId_004 */
+/* Requirements : HL_SR366 */
 void pwmSetDuty(hetRAMBASE_t * hetRAM, uint32 pwm, uint32 pwmDuty)
 {
     uint32 action;
-    uint32 pwmPolarity;
-    float64   pwmPeriod = hetRAM->Instruction[(pwm << 1U) + 42U].Data + 128U;
+    uint32 pwmPolarity =0U;
+    uint32 pwmPeriod = hetRAM->Instruction[(pwm << 1U) + 42U].Data + 128U;
+    pwmPeriod = pwmPeriod >> 7U;
+
     if(hetRAM == hetRAM1)
     {
         pwmPolarity = s_het1pwmPolarity[pwm];
@@ -1493,9 +1504,9 @@ void pwmSetDuty(hetRAMBASE_t * hetRAM, uint32 pwm, uint32 pwmDuty)
     {
         action = pwmPolarity;
     }
-        
-    hetRAM->Instruction[(pwm << 1U) + 41U].Control = ((hetRAM->Instruction[(pwm << 1U) + 41U].Control) & (~(0x00000018U))) | (action << 3U);
-    hetRAM->Instruction[(pwm << 1U) + 41U].Data = (uint32)((pwmPeriod * pwmDuty) / 100.0) + 128U;
+
+    hetRAM->Instruction[(pwm << 1U) + 41U].Control = ((hetRAM->Instruction[(pwm << 1U) + 41U].Control) & (~(uint32)(0x00000018U))) | (action << 3U);
+    hetRAM->Instruction[(pwm << 1U) + 41U].Data = (((pwmPeriod * pwmDuty) / 100U) << 7U) + 128U;
 }
 
 
@@ -1513,22 +1524,24 @@ void pwmSetDuty(hetRAMBASE_t * hetRAM, uint32 pwm, uint32 pwmDuty)
 *              - pwm5: Pwm 5
 *              - pwm6: Pwm 6
 *              - pwm7: Pwm 7
-*   @param[in] signal signal 
+*   @param[in] signal signal
                - duty cycle in %.
 *              - period period in us.
 *
 *   Sets a new pwm signal
 */
-
+/* SourceId : HET_SourceId_005 */
+/* DesignId : HET_DesignId_005 */
+/* Requirements : HL_SR367 */
 void pwmSetSignal(hetRAMBASE_t * hetRAM, uint32 pwm, hetSIGNAL_t signal)
 {
     uint32 action;
-    uint32 pwmPeriod;
-    uint32 pwmPolarity;
-    
+    uint32 pwmPolarity = 0U;
+    float64 pwmPeriod = 0.0F;
+
     if(hetRAM == hetRAM1)
     {
-        pwmPeriod = (uint32)((signal.period * 1000.0) / (uint32) 640.000) << 7U;
+        pwmPeriod = (signal.period * 1000.0F) / 640.000F;
         pwmPolarity = s_het1pwmPolarity[pwm];
     }
     else
@@ -1546,11 +1559,11 @@ void pwmSetSignal(hetRAMBASE_t * hetRAM, uint32 pwm, hetSIGNAL_t signal)
     {
         action = pwmPolarity;
     }
-        
-    hetRAM->Instruction[(pwm << 1U) + 41U].Control = ((hetRAM->Instruction[(pwm << 1U) + 41U].Control) & (~(0x00000018U))) | (action << 3U);
-    /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
-    hetRAM->Instruction[(pwm << 1U) + 41U].Data = (uint32)((pwmPeriod * signal.duty) / 100.0) + 128U;
-    hetRAM->Instruction[(pwm << 1U) + 42U].Data = pwmPeriod - 128U;
+
+    hetRAM->Instruction[(pwm << 1U) + 41U].Control = ((hetRAM->Instruction[(pwm << 1U) + 41U].Control) & (~(uint32)(0x00000018U))) | (action << 3U);
+    hetRAM->Instruction[(pwm << 1U) + 41U].Data = ((((uint32)pwmPeriod * signal.duty) / 100U) << 7U ) + 128U;
+    hetRAM->Instruction[(pwm << 1U) + 42U].Data = ((uint32)pwmPeriod << 7U) - 128U;
+
 }
 
 
@@ -1568,31 +1581,31 @@ void pwmSetSignal(hetRAMBASE_t * hetRAM, uint32 pwm, hetSIGNAL_t signal)
 *              - pwm5: Pwm 5
 *              - pwm6: Pwm 6
 *              - pwm7: Pwm 7
-*   @param[in] signal signal 
+*   @param[in] signal signal
 *              - duty cycle in %.
 *              - period period in us.
 *
 *   Gets current signal of the given pwm signal.
 */
+/* SourceId : HET_SourceId_006 */
+/* DesignId : HET_DesignId_006 */
+/* Requirements : HL_SR368 */
 void pwmGetSignal(hetRAMBASE_t * hetRAM, uint32 pwm, hetSIGNAL_t* signal)
 {
-    uint32    pwmDuty   = hetRAM->Instruction[(pwm << 1U) + 41U].Data - 128U;
-    uint32    pwmPeriod = hetRAM->Instruction[(pwm << 1U) + 42U].Data + 128U;
-    
-    signal->duty   = (uint32)((100.0 * pwmDuty) / pwmPeriod);
+    uint32    pwmDuty   = (hetRAM->Instruction[(pwm << 1U) + 41U].Data - 128U) >> 7U;
+    uint32    pwmPeriod = (hetRAM->Instruction[(pwm << 1U) + 42U].Data + 128U) >> 7U;
+
+    signal->duty   = (pwmDuty * 100U) / pwmPeriod;
 
     if(hetRAM == hetRAM1)
     {
-        /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
-        signal->period = ((pwmPeriod >> 7U) * (uint32) 640.000) / 1000.0;
+        signal->period = ((float64)pwmPeriod * 640.000F) / 1000.0F;
     }
     else
     {
-        /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
-        signal->period = ((pwmPeriod >> 7U) * (uint32) 800.000) / 1000.0;
+        signal->period = ((float64)pwmPeriod * 800.000F) / 1000.0F;
     }
 }
-
 
 /** @fn void pwmEnableNotification(hetBASE_t * hetREG, uint32 pwm, uint32 notification)
 *   @brief Enable pwm notification
@@ -1613,7 +1626,9 @@ void pwmGetSignal(hetRAMBASE_t * hetRAM, uint32 pwm, hetSIGNAL_t* signal)
 *              - pwmEND_OF_PERIOD: Notification on end of end period
 *              - pwmEND_OF_BOTH:   Notification on end of both duty and period
 */
-
+/* SourceId : HET_SourceId_007 */
+/* DesignId : HET_DesignId_007 */
+/* Requirements : HL_SR369 */
 void pwmEnableNotification(hetBASE_t * hetREG, uint32 pwm, uint32 notification)
 {
     hetREG->FLG     = notification << (pwm << 1U);
@@ -1640,7 +1655,9 @@ void pwmEnableNotification(hetBASE_t * hetREG, uint32 pwm, uint32 notification)
 *              - pwmEND_OF_PERIOD: Notification on end of end period
 *              - pwmEND_OF_BOTH:   Notification on end of both duty and period
 */
-
+/* SourceId : HET_SourceId_008 */
+/* DesignId : HET_DesignId_008 */
+/* Requirements : HL_SR370 */
 void pwmDisableNotification(hetBASE_t * hetREG, uint32 pwm, uint32 notification)
 {
     hetREG->INTENAC = notification << (pwm << 1U);
@@ -1664,7 +1681,9 @@ void pwmDisableNotification(hetBASE_t * hetREG, uint32 pwm, uint32 notification)
 *
 *   Reset edge counter to 0.
 */
-
+/* SourceId : HET_SourceId_009 */
+/* DesignId : HET_DesignId_009 */
+/* Requirements : HL_SR372 */
 void edgeResetCounter(hetRAMBASE_t * hetRAM, uint32 edge)
 {
     hetRAM->Instruction[edge + 17U].Data = 0U;
@@ -1688,7 +1707,9 @@ void edgeResetCounter(hetRAMBASE_t * hetRAM, uint32 edge)
 *
 *   Gets current edge counter value.
 */
-
+/* SourceId : HET_SourceId_010 */
+/* DesignId : HET_DesignId_010 */
+/* Requirements : HL_SR373 */
 uint32 edgeGetCounter(hetRAMBASE_t * hetRAM, uint32 edge)
 {
     return hetRAM->Instruction[edge + 17U].Data >> 7U;
@@ -1710,11 +1731,13 @@ uint32 edgeGetCounter(hetRAMBASE_t * hetRAM, uint32 edge)
 *              - edge6: Edge 6
 *              - edge7: Edge 7
 */
-
+/* SourceId : HET_SourceId_011 */
+/* DesignId : HET_DesignId_011 */
+/* Requirements : HL_SR374 */
 void edgeEnableNotification(hetBASE_t * hetREG, uint32 edge)
 {
-    hetREG->FLG     = 0x20000U << edge;
-    hetREG->INTENAS = 0x20000U << edge;
+    hetREG->FLG     = (uint32)0x20000U << edge;
+    hetREG->INTENAS = (uint32)0x20000U << edge;
 }
 
 
@@ -1733,10 +1756,12 @@ void edgeEnableNotification(hetBASE_t * hetREG, uint32 edge)
 *              - edge6: Edge 6
 *              - edge7: Edge 7
 */
-
+/* SourceId : HET_SourceId_012 */
+/* DesignId : HET_DesignId_012 */
+/* Requirements : HL_SR375 */
 void edgeDisableNotification(hetBASE_t * hetREG, uint32 edge)
 {
-    hetREG->INTENAC = 0x20000U << edge;
+    hetREG->INTENAC = (uint32)0x20000U << edge;
 }
 
 
@@ -1754,29 +1779,29 @@ void edgeDisableNotification(hetBASE_t * hetREG, uint32 edge)
 *              - cap5: Captured signal 5
 *              - cap6: Captured signal 6
 *              - cap7: Captured signal 7
-*   @param[in] signal signal 
+*   @param[in] signal signal
 *              - duty cycle in %.
 *              - period period in us.
 *
 *   Gets current signal of the given capture signal.
 */
-
+/* SourceId : HET_SourceId_013 */
+/* DesignId : HET_DesignId_013 */
+/* Requirements : HL_SR377 */
 void capGetSignal(hetRAMBASE_t * hetRAM, uint32 cap, hetSIGNAL_t *signal)
 {
-    uint32    pwmDuty   = hetRAM->Instruction[(cap << 1U) + 25U].Data;
-    uint32    pwmPeriod = hetRAM->Instruction[(cap << 1U) + 26U].Data;
-    
-    signal->duty   = (uint32)((100.0 * pwmDuty) / pwmPeriod);
-    
+    uint32    pwmDuty   = (hetRAM->Instruction[(cap << 1U) + 25U].Data) >> 7U;
+    uint32    pwmPeriod = (hetRAM->Instruction[(cap << 1U) + 26U].Data) >> 7U;
+
+    signal->duty   = (pwmDuty * 100U) / pwmPeriod;
+
     if( hetRAM == hetRAM1)
     {
-        /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
-        signal->period = ((pwmPeriod >> 7U) * (uint32) 640.000) / 1000.0;
+        signal->period = ((float64)pwmPeriod * 640.000F) / 1000.0F;
     }
     else
     {
-        /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
-        signal->period = ((pwmPeriod >> 7U) * (uint32) 800.000) / 1000.0;
+        signal->period = ((float64)pwmPeriod * 800.000F) / 1000.0F;
     }
 }
 
@@ -1789,7 +1814,9 @@ void capGetSignal(hetRAMBASE_t * hetRAM, uint32 cap, hetSIGNAL_t *signal)
 *
 *   Resets loop count based timestamp.
 */
-
+/* SourceId : HET_SourceId_014 */
+/* DesignId : HET_DesignId_014 */
+/* Requirements : HL_SR378 */
 void hetResetTimestamp(hetRAMBASE_t * hetRAM)
 {
     hetRAM->Instruction[0U].Data = 0U;
@@ -1801,7 +1828,9 @@ void hetResetTimestamp(hetRAMBASE_t * hetRAM)
 *
 *   Returns loop count based timestamp.
 */
-
+/* SourceId : HET_SourceId_015 */
+/* DesignId : HET_DesignId_015 */
+/* Requirements : HL_SR379 */
 uint32 hetGetTimestamp(hetRAMBASE_t * hetRAM)
 {
     return hetRAM->Instruction[57U].Data;
@@ -1814,55 +1843,121 @@ uint32 hetGetTimestamp(hetRAMBASE_t * hetRAM)
 /** @fn void het1GetConfigValue(het_config_reg_t *config_reg, config_value_type_t type)
 *   @brief Get the initial or current values of the HET1 configuration registers
 *
-*	@param[in] *config_reg: pointer to the struct to which the initial or current 
+*   @param[in] *config_reg: pointer to the struct to which the initial or current
 *                           value of the configuration registers need to be stored
-*	@param[in] type: 	whether initial or current value of the configuration registers need to be stored
-*						- InitialValue: initial value of the configuration registers will be stored 
+*   @param[in] type:    whether initial or current value of the configuration registers need to be stored
+*                       - InitialValue: initial value of the configuration registers will be stored
 *                                       in the struct pointed by config_reg
-*						- CurrentValue: initial value of the configuration registers will be stored 
+*                       - CurrentValue: initial value of the configuration registers will be stored
 *                                       in the struct pointed by config_reg
 *
-*   This function will copy the initial or current value (depending on the parameter 'type') 
+*   This function will copy the initial or current value (depending on the parameter 'type')
 *   of the configuration registers to the struct pointed by config_reg
 *
 */
-
+/* SourceId : HET_SourceId_016 */
+/* DesignId : HET_DesignId_016 */
+/* Requirements : HL_SR379 */
 void het1GetConfigValue(het_config_reg_t *config_reg, config_value_type_t type)
 {
-	if (type == InitialValue)
-	{
-		config_reg->CONFIG_GCR     = HET1_GCR_CONFIGVALUE;
-		config_reg->CONFIG_PFR     = HET1_PFR_CONFIGVALUE;
-		config_reg->CONFIG_INTENAS = HET1_INTENAS_CONFIGVALUE;
-		config_reg->CONFIG_INTENAC = HET1_INTENAC_CONFIGVALUE;
-		config_reg->CONFIG_PRY     = HET1_PRY_CONFIGVALUE;
-		config_reg->CONFIG_AND     = HET1_AND_CONFIGVALUE;
-		config_reg->CONFIG_HRSH    = HET1_HRSH_CONFIGVALUE;
-		config_reg->CONFIG_XOR     = HET1_XOR_CONFIGVALUE;
-		config_reg->CONFIG_DIR     = HET1_DIR_CONFIGVALUE;
-		config_reg->CONFIG_PDR	   = HET1_PDR_CONFIGVALUE;
-		config_reg->CONFIG_PULDIS  = HET1_PULDIS_CONFIGVALUE;
-		config_reg->CONFIG_PSL	   = HET1_PSL_CONFIGVALUE;	
-		config_reg->CONFIG_PCR	   = HET1_PCR_CONFIGVALUE;			
-	}
-	else
-	{
-	/*SAFETYMCUSW 134 S MR:12.2 <APPROVED> "Register read back support" */
-		config_reg->CONFIG_GCR     = hetREG1->GCR;
-		config_reg->CONFIG_PFR     = hetREG1->PFR;
-		config_reg->CONFIG_INTENAS = hetREG1->INTENAS;
-		config_reg->CONFIG_INTENAC = hetREG1->INTENAC;
-		config_reg->CONFIG_PRY     = hetREG1->PRY;
-		config_reg->CONFIG_AND     = hetREG1->AND;
-		config_reg->CONFIG_HRSH    = hetREG1->HRSH;
-		config_reg->CONFIG_XOR     = hetREG1->XOR;
-		config_reg->CONFIG_DIR     = hetREG1->DIR;
-		config_reg->CONFIG_PDR	   = hetREG1->PDR;	
-		config_reg->CONFIG_PULDIS  = hetREG1->PULDIS;
-		config_reg->CONFIG_PSL	   = hetREG1->PSL;	
-		config_reg->CONFIG_PCR	   = hetREG1->PCR;	
-	}
+    if (type == InitialValue)
+    {
+        config_reg->CONFIG_GCR     = HET1_GCR_CONFIGVALUE;
+        config_reg->CONFIG_PFR     = HET1_PFR_CONFIGVALUE;
+        config_reg->CONFIG_INTENAS = HET1_INTENAS_CONFIGVALUE;
+        config_reg->CONFIG_INTENAC = HET1_INTENAC_CONFIGVALUE;
+        config_reg->CONFIG_PRY     = HET1_PRY_CONFIGVALUE;
+        config_reg->CONFIG_AND     = HET1_AND_CONFIGVALUE;
+        config_reg->CONFIG_HRSH    = HET1_HRSH_CONFIGVALUE;
+        config_reg->CONFIG_XOR     = HET1_XOR_CONFIGVALUE;
+        config_reg->CONFIG_DIR     = HET1_DIR_CONFIGVALUE;
+        config_reg->CONFIG_PDR     = HET1_PDR_CONFIGVALUE;
+        config_reg->CONFIG_PULDIS  = HET1_PULDIS_CONFIGVALUE;
+        config_reg->CONFIG_PSL     = HET1_PSL_CONFIGVALUE;
+        config_reg->CONFIG_PCR     = HET1_PCR_CONFIGVALUE;
+    }
+    else
+    {
+    /*SAFETYMCUSW 134 S MR:12.2 <APPROVED> "LDRA Tool issue" */
+        config_reg->CONFIG_GCR     = hetREG1->GCR;
+        config_reg->CONFIG_PFR     = hetREG1->PFR;
+        config_reg->CONFIG_INTENAS = hetREG1->INTENAS;
+        config_reg->CONFIG_INTENAC = hetREG1->INTENAC;
+        config_reg->CONFIG_PRY     = hetREG1->PRY;
+        config_reg->CONFIG_AND     = hetREG1->AND;
+        config_reg->CONFIG_HRSH    = hetREG1->HRSH;
+        config_reg->CONFIG_XOR     = hetREG1->XOR;
+        config_reg->CONFIG_DIR     = hetREG1->DIR;
+        config_reg->CONFIG_PDR     = hetREG1->PDR;
+        config_reg->CONFIG_PULDIS  = hetREG1->PULDIS;
+        config_reg->CONFIG_PSL     = hetREG1->PSL;
+        config_reg->CONFIG_PCR     = hetREG1->PCR;
+    }
 }
 
+/* USER CODE BEGIN (5) */
+/* USER CODE END */
 
+/** @fn void het1HighLevelInterrupt(void)
+*   @brief Level 0 Interrupt for HET1
+*/
+#pragma CODE_STATE(het1HighLevelInterrupt, 32)
+#pragma INTERRUPT(het1HighLevelInterrupt, IRQ)
+
+/* SourceId : HET_SourceId_018 */
+/* DesignId : HET_DesignId_017 */
+/* Requirements : HL_SR371, HL_SR380, HL_SR381 */
+void het1HighLevelInterrupt(void)
+{
+    uint32 vec = hetREG1->OFF1;
+
+    if (vec < 18U)
+    {
+        if ((vec & 1U) != 0U)
+        {
+            pwmNotification(hetREG1,(vec >> 1U) - 1U, pwmEND_OF_PERIOD);
+        }
+        else
+        {
+            pwmNotification(hetREG1,(vec >> 1U) - 1U, pwmEND_OF_DUTY);
+        }
+    }
+    else
+    {
+        edgeNotification(hetREG1,vec - 18U);
+    }
+}
+
+/* USER CODE BEGIN (6) */
+/* USER CODE END */
+
+/** @fn void het1LowLevelInterrupt(void)
+*   @brief Level 1 Interrupt for HET1
+*/
+#pragma CODE_STATE(het1LowLevelInterrupt, 32)
+#pragma INTERRUPT(het1LowLevelInterrupt, IRQ)
+
+/* SourceId : HET_SourceId_019 */
+/* DesignId : HET_DesignId_017 */
+/* Requirements : HL_SR371, HL_SR380, HL_SR381 */
+void het1LowLevelInterrupt(void)
+{
+    uint32 vec = hetREG1->OFF2;
+
+    if (vec < 18U)
+    {
+        if ((vec & 1U) != 0U)
+        {
+            pwmNotification(hetREG1,(vec >> 1U) - 1U, pwmEND_OF_PERIOD);
+        }
+        else
+        {
+            pwmNotification(hetREG1,(vec >> 1U) - 1U, pwmEND_OF_DUTY);
+        }
+    }
+    else
+    {
+        edgeNotification(hetREG1,vec - 18U);
+    }
+}
 

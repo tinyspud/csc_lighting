@@ -1,11 +1,11 @@
 /** @file sci.h
 *   @brief SCI Driver Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 
 #ifndef __SCI_H__
@@ -13,6 +13,15 @@
 
 #include "reg_sci.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* USER CODE BEGIN (0) */
+#include "hal_stdtypes.h"
+#include "common.h"
+#include "Scheduling.h"
+/* USER CODE END */
 
 /** @enum sciIntFlags
 *   @brief Interrupt Flag Definitions
@@ -75,35 +84,36 @@ typedef struct sci_config_reg
 
 /* Configuration registers initial value for SCI*/
 #define SCILIN_GCR0_CONFIGVALUE       0x00000001U   
-#define SCILIN_GCR1_CONFIGVALUE    ((1U << 5U) \
-                                 | ((2U-1U) << 4U) \
-                                 | (0U << 3U) \
-                                 | (0U << 2U) \
-                                 | (1U << 1U) \
-                                 | (0U << 2U) \
-                                 | 0x03000080U)
-#define SCILIN_SETINTLVL_CONFIGVALUE  ((0U << 26U) \
-                                 | (0U << 25U) \
-                                 | (0U << 24U) \
-                                 | (0U << 9U) \
-                                 | (0U << 8U) \
-                                 | (0U << 1U) \
-                                 | (0U))
+#define SCILIN_GCR1_CONFIGVALUE       ((uint32)((uint32)1U << 5U) \
+                                      |(uint32)((uint32)(1U-1U) << 4U) \
+                                      |(uint32)((uint32)0U << 3U) \
+                                      |(uint32)((uint32)0U << 2U) \
+                                      |(uint32)((uint32)1U << 1U) \
+                                      |(uint32)((uint32)0U << 2U) \
+                                      |(uint32)(0x03000080U))
+									  
+#define SCILIN_SETINTLVL_CONFIGVALUE  ((uint32)((uint32)0U << 26U) \
+                                      |(uint32)((uint32)0U << 25U) \
+                                      |(uint32)((uint32)0U << 24U) \
+                                      |(uint32)((uint32)1U << 9U) \
+                                      |(uint32)((uint32)1U << 8U) \
+                                      |(uint32)((uint32)0U << 1U) \
+                                      |(uint32)((uint32)0U))
 
-#define SCILIN_SETINT_CONFIGVALUE ((0U << 26U) \
-                                 | (0U << 25U) \
-                                 | (0U << 24U) \
-                                 | (1U << 9U) \
-                                 | (0U << 1U) \
-                                 | (0U))
+#define SCILIN_SETINT_CONFIGVALUE     ((uint32)((uint32)0U << 26U) \
+                                      |(uint32)((uint32)0U << 25U) \
+                                      |(uint32)((uint32)0U << 24U) \
+                                      |(uint32)((uint32)1U << 9U) \
+                                      |(uint32)((uint32)0U << 1U) \
+                                      |(uint32)((uint32)0U << 0U))
 
 #define SCILIN_FORMAT_CONFIGVALUE     (8U - 1U)
-#define SCILIN_BRS_CONFIGVALUE        (650U)
-#define SCILIN_PIO0_CONFIGVALUE       (1U | 1U | 0U)
-#define SCILIN_PIO1_CONFIGVALUE       (0U | 0U | 0U)
-#define SCILIN_PIO6_CONFIGVALUE       (0U | 0U | 0U)
-#define SCILIN_PIO7_CONFIGVALUE       (0U | 0U | 0U)
-#define SCILIN_PIO8_CONFIGVALUE       (1U | 1U | 1U)
+#define SCILIN_BRS_CONFIGVALUE        (325U)
+#define SCILIN_PIO0_CONFIGVALUE       ((uint32)((uint32)1U << 2U) | (uint32)((uint32)1U << 1U))
+#define SCILIN_PIO1_CONFIGVALUE       ((uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U))
+#define SCILIN_PIO6_CONFIGVALUE       ((uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U))
+#define SCILIN_PIO7_CONFIGVALUE       ((uint32)((uint32)1U << 2U) | (uint32)((uint32)1U << 1U))
+#define SCILIN_PIO8_CONFIGVALUE       ((uint32)((uint32)1U << 2U) | (uint32)((uint32)1U << 1U))
  
 /** 
  *  @defgroup SCI SCI
@@ -149,5 +159,13 @@ void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type
 */
 void sciNotification(sciBASE_t *sci, uint32 flags);
 
+/* USER CODE BEGIN (1) */
+void send_byte_on_uart(char);
+int xSerialGetChar(char*, portTickType);
+/* USER CODE END */
 /**@}*/
+#ifdef __cplusplus
+}
+#endif
+
 #endif

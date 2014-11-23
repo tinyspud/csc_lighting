@@ -1,7 +1,7 @@
 /** @file reg_htu.h
 *   @brief HTU Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the HTU driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_HTU_H__
 #define __REG_HTU_H__
@@ -68,31 +68,38 @@ typedef volatile struct htuBase
     uint32 MP0S;			/** 0x74 */ 
     uint32 MP0E;			/** 0x78 */ 
 } htuBASE_t;                        
-                                    
-typedef volatile struct htudcp      
-{                                   
-    uint32 IFADDRA;			 
-    uint32 IFADDRB;			
-    uint32 IHADDRCT;		
-    uint32 ITCOUNT;			
-} htudcp_t;                         
-                                    
-typedef volatile struct htucdcp     
-{     
-    uint32 CFADDRA;			
-    uint32 CFADDRB;			
-    uint32 CFCOUNT;			
-    uint32 rsvd4; 			
-} htucdcp_t;
+
+typedef volatile struct
+{
+     struct                                     /* 0x00-0x7C */
+     {
+        uint32 IFADDRA;			 
+        uint32 IFADDRB;			
+        uint32 IHADDRCT;		
+        uint32 ITCOUNT; 
+     }DCP[8U];
+
+     struct                                     /* 0x80-0xFC */
+     {
+       uint32 res[32U];
+     } RESERVED;
+
+     struct                                     /* 0x100-0x17C */
+     {
+        uint32 CFADDRA;			
+        uint32 CFADDRB;			
+        uint32 CFCOUNT;			
+        uint32 rsvd4; 	
+     }CDCP[8U];
+
+} htuRAMBASE_t;
 
 #define htuREG1   ((htuBASE_t *)0xFFF7A400U)
 #define htuREG2   ((htuBASE_t *)0xFFF7A500U)
 
-#define htuDCP1   ((htudcp_t *)0xFF4E0000U)
-#define htuDCP2   ((htudcp_t *)0xFF4C0000U)
+#define htuRAM1   ((htuRAMBASE_t *)0xFF4E0000U)
+#define htuRAM2   ((htuRAMBASE_t *)0xFF4C0000U)
 
-#define htuCDCP1   ((htucdcp_t *)0xFF4E0100U)
-#define htuCDCP2   ((htucdcp_t *)0xFF4C0100U)
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

@@ -1,7 +1,7 @@
 /** @file reg_adc.h
 *   @brief ADC Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the ADC driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_ADC_H__
 #define __REG_ADC_H__
@@ -110,7 +110,59 @@ typedef volatile struct adcBase
     uint32 PARCR;              /**< 0x0180: Parity control register                           */
     uint32 PARADDR;            /**< 0x0184: Parity error address register                     */
     uint32 PWRUPDLYCTRL;       /**< 0x0188: Power-Up delay control register                   */
+    uint32   rsvd7;            /**< 0x018C: Reserved                                            */
+	uint32 ADEVCHNSELMODECTRL; /**< 0x0190: Event Group Channel Selection Mode Control Register */
+    uint32 ADG1CHNSELMODECTRL; /**< 0x0194: Group1 Channel Selection Mode Control Register      */
+    uint32 ADG2CHNSELMODECTRL; /**< 0x0198: Group2 Channel Selection Mode Control Register      */
+    uint32 ADEVCURRCOUNT;      /**< 0x019C: Event Group Current Count Register                  */
+    uint32 ADEVMAXCOUNT;       /**< 0x01A0: Event Group Max Count Register                      */
+    uint32 ADG1CURRCOUNT;      /**< 0x01A4: Group1 Current Count Register                       */
+    uint32 ADG1MAXCOUNT;       /**< 0x01A8: Group1 Max Count Register                           */
+    uint32 ADG2CURRCOUNT;      /**< 0x01AC: Group2 Current Count Register                       */
+    uint32 ADG2MAXCOUNT;       /**< 0x01B0: Group2 Max Count Register                           */
 } adcBASE_t;
+
+
+/** @struct adcLUTEntry
+*   @brief ADC Look-Up Table Entry
+*
+*   This type is used to access ADC Look-Up Table Entry
+*/
+/** @typedef adcLUTEntry_t
+*   @brief ADC Look-Up Table Entry
+*
+*   This type is used to access the Look-Up Table Entry.
+*/
+typedef struct adcLUTEntry
+{
+#if ((__little_endian__ == 1) || (__LITTLE_ENDIAN__ == 1))
+    uint8 EV_INT_CHN_MUX_SEL;
+    uint8 EV_EXT_CHN_MUX_SEL;
+    uint16 rsvd;
+#else
+    uint16 rsvd;
+    uint8 EV_EXT_CHN_MUX_SEL;
+    uint8 EV_INT_CHN_MUX_SEL;
+#endif
+}adcLUTEntry_t;
+
+
+/** @struct adcLUT
+*   @brief ADC Look-Up Table
+*
+*   This type is used to access ADC Look-Up Table
+*/
+/** @typedef adcLUT_t
+*   @brief ADC Look-Up Table
+*
+*   This type is used to access the ADC Look-Up Table.
+*/
+typedef volatile struct adcLUT
+{
+    adcLUTEntry_t eventGroup[32];
+    adcLUTEntry_t Group1[32];
+    adcLUTEntry_t Group2[32];
+} adcLUT_t;
 
 
 /** @def adcREG1
@@ -132,6 +184,13 @@ typedef volatile struct adcBase
 *   This pointer is used by the ADC driver to access the ADC1 Parity RAM.
 */
 #define adcPARRAM1 (*(volatile uint32 *)(0xFF3E0000U + 0x1000U))
+
+/** @def adcLUT1
+*   @brief ADC1 Look-Up Table
+*
+*   This pointer is used by the ADC driver to access the ADC1 Look-Up Table.
+*/
+#define adcLUT1 ((adcLUT_t *) 0xFF3E2000U)
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

@@ -1,7 +1,7 @@
 /** @file reg_can.h
 *   @brief CAN Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the CAN driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_CAN_H__
 #define __REG_CAN_H__

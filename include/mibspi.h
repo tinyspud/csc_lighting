@@ -1,11 +1,11 @@
 /** @file mibspi.h
 *   @brief MIBSPI Driver Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
-*   
+*   @date 9.Sep.2014
+*   @version 04.01.00
+*
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 
 #ifndef __MIBSPI_H__
@@ -13,6 +13,12 @@
 
 #include "reg_mibspi.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* USER CODE BEGIN (0) */
+/* USER CODE END */
 
 /** @enum triggerEvent
 *   @brief Transfer Group Trigger Event
@@ -150,23 +156,23 @@ typedef struct mibspi_config_reg
 }mibspi_config_reg_t;
 
 
-/** 
+/**
  *  @defgroup MIBSPI MIBSPI
  *  @brief Multi-Buffered Serial Peripheral Interface Module.
- *  
+ *
  *  The MibSPI/MibSPIP is a high-speed synchronous serial input/output port that allows a serial bit stream of
  *  programmed length (2 to 16 bits) to be shifted in and out of the device at a programmed bit-transfer rate.
  *  The MibSPI has a programmable buffer memory that enables programmed transmission to be completed
  *  without CPU intervention
  *
- *	Related Files
+ *    Related Files
  *   - reg_mibspi.h
  *   - mibspi.h
  *   - mibspi.c
  *  @addtogroup MIBSPI
  *  @{
  */
- 
+
 /* MIBSPI Interface Functions */
 void mibspiInit(void);
 void mibspiSetFunctional(mibspiBASE_t *mibspi, uint32 port);
@@ -202,5 +208,10 @@ void mibspiNotification(mibspiBASE_t *mibspi, uint32 flags);
 */
 void mibspiGroupNotification(mibspiBASE_t *mibspi, uint32 group);
 
+/* USER CODE BEGIN (1) */
+/* USER CODE END */
 /**@}*/
+#ifdef __cplusplus
+}
+#endif
 #endif

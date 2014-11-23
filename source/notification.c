@@ -1,12 +1,12 @@
-/** @file notification.c
+/** @file notification.c 
 *   @brief User Notification Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *
 *   This file  defines  empty  notification  routines to avoid
-*   linker errors, Driver expects user to define the notification.
-*   The user needs to either remove this file and use their custom
-*   notification function or place their code sequence in this file
+*   linker errors, Driver expects user to define the notification. 
+*   The user needs to either remove this file and use their custom 
+*   notification function or place their code sequence in this file 
 *   between the provided USER CODE BEGIN and USER CODE END.
 *
 */
@@ -20,7 +20,10 @@
 #include "spi.h"
 #include "het.h"
 #include "rti.h"
+
 /* USER CODE BEGIN (0) */
+#include "hal_stdtypes.h"
+#include "common.h"
 #include "Scheduling.h"
 /* USER CODE END */
 #pragma WEAK(esmGroup1Notification)
@@ -75,7 +78,7 @@ void rtiNotification(uint32 notification)
 /* USER CODE BEGIN (10) */
 /* USER CODE END */
 #pragma WEAK(gioNotification)
-void gioNotification(gioPORT_t *port, sint32 bit)
+void gioNotification(gioPORT_t *port, uint32 bit)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (19) */
@@ -86,7 +89,7 @@ void gioNotification(gioPORT_t *port, sint32 bit)
 /* USER CODE END */
 
 #pragma WEAK(sciNotification)
-void sciNotification(sciBASE_t *sci, uint32 flags)
+void sciNotification(sciBASE_t *sci, uint32 flags)     
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (29) */
@@ -131,6 +134,19 @@ void edgeNotification(hetBASE_t * hetREG,uint32 edge)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (37) */
+	switch(edge){
+	case 5:
+		/* HET1-14 */
+		break;
+	case 6:
+		/* HET1-16 */
+		break;
+	case 7:
+		/* HET1-18 */
+		break;
+	default:
+		break;
+	}
 /* USER CODE END */
 }
 
@@ -164,6 +180,11 @@ void hetNotification(hetBASE_t *het, uint32 offset)
 /* USER CODE END */
 
 
-
 /* USER CODE BEGIN (56) */
+/* USER CODE END */
+
+/* USER CODE BEGIN (58) */
+/* USER CODE END */
+
+/* USER CODE BEGIN (60) */
 /* USER CODE END */

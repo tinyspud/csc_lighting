@@ -1,7 +1,7 @@
 /** @file system.h
 *   @brief System Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -10,7 +10,7 @@
 *   which are relevant for the System driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __SYS_SYSTEM_H__
 #define __SYS_SYSTEM_H__
@@ -19,25 +19,15 @@
 #include "reg_flash.h"
 #include "reg_tcram.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
 
 /* System General Definitions */
-
-/** @enum systemInterrupt
-*   @brief Alias names for clock sources
-*
-*   This enumeration is used to provide alias names for the clock sources:
-*     - IRQ
-*     - FIQ
-*/
-enum systemInterrupt
-{
-    SYS_IRQ, /**< Alias for IRQ interrupt */
-    SYS_FIQ  /**< Alias for FIQ interrupt */
-};
 
 /** @enum systemClockSource
 *   @brief Alias names for clock sources
@@ -157,6 +147,13 @@ enum systemClockSource
 */
 #define AVCLK3_FREQ  100.0F
 
+/** @def AVCLK4_FREQ
+*   @brief AVCLK4 Domain frequency exported from HALCoGen GUI
+*
+*   AVCLK4 Domain frequency exported from HALCoGen GUI
+*/
+#define AVCLK4_FREQ  100.0F
+
 /** @def VCLK1_FREQ
 *   @brief VCLK1 Domain frequency exported from HALCoGen GUI
 *
@@ -170,6 +167,20 @@ enum systemClockSource
 *   VCLK2 Domain frequency exported from HALCoGen GUI
 */
 #define VCLK2_FREQ   100.000F
+
+/** @def VCLK3_FREQ
+*   @brief VCLK3 Domain frequency exported from HALCoGen GUI
+*
+*   VCLK3 Domain frequency exported from HALCoGen GUI
+*/
+#define VCLK3_FREQ   50.000F
+
+/** @def VCLK4_FREQ
+*   @brief VCLK4 Domain frequency exported from HALCoGen GUI
+*
+*   VCLK4 Domain frequency exported from HALCoGen GUI
+*/
+#define VCLK4_FREQ   100.0F
 
 
 /** @def SYS_PRE1
@@ -185,8 +196,8 @@ enum systemClockSource
 *     - Low Power Oscillator High
 *     - Flexray Pll
 */
-/*SAFETYMCUSW 79 S MR:19.4 <APPROVED> "Macro filled using GUI parameter cannot be avoided" */
-#define SYS_PRE1 SYS_PLL1
+/*SAFETYMCUSW 79 S MR:19.4 <APPROVED> " Value comes from GUI drop down option " */
+#define SYS_PRE1 (SYS_PLL1)
 
 /** @def SYS_PRE2
 *   @brief Alias name for RTI2CLK pre clock source
@@ -201,8 +212,8 @@ enum systemClockSource
 *     - Low Power Oscillator High
 *     - Flexray Pll
 */
-/*SAFETYMCUSW 79 S MR:19.4 <APPROVED> "Macro filled using GUI parameter cannot be avoided" */
-#define SYS_PRE2 SYS_PLL1
+/*SAFETYMCUSW 79 S MR:19.4 <APPROVED> " Value comes from GUI drop down option " */
+#define SYS_PRE2 (SYS_PLL1)
 
 /* Configuration registers */
 typedef struct system_config_reg
@@ -235,10 +246,7 @@ typedef struct system_config_reg
     uint32 CONFIG_ECPCNTL;
     uint32 CONFIG_DEVCR1;
     uint32 CONFIG_SYSECR;
-    uint32 CONFIG_PLLCTL3;
     uint32 CONFIG_STCCLKDIV;
-    uint32 CONFIG_CLK2CNTL;
-    uint32 CONFIG_VCLKACON1;
     uint32 CONFIG_CLKSLIP;
     uint32 CONFIG_EFC_CTLEN;
 } system_config_reg_t;
@@ -254,32 +262,32 @@ typedef struct system_config_reg
 
 #define SYS_SYSPC9_CONFIGVALUE	1U
 
-#define SYS_CSDIS_CONFIGVALUE	0x00000000U\
+#define SYS_CSDIS_CONFIGVALUE	(0x00000000U\
 								| 0x00000000U \
 								| 0x00000008U \
 								| 0x00000080U \
 								| 0x00000000U \
 								| 0x00000040U \
 								| 0x00000000U\
-								| (1U << 2U)
+                                | 0x4U)
 					  
-#define SYS_CDDIS_CONFIGVALUE	(FALSE << 4U )\
-								|(TRUE << 5U )\
-								|(FALSE << 8U )\
-								|(FALSE << 10U)\
-								|(FALSE << 11U)
+#define SYS_CDDIS_CONFIGVALUE   ( (uint32)((uint32)0 << 4U )\
+                                | (uint32)((uint32)1 << 5U )\
+                                | (uint32)((uint32)0 << 8U )\
+                                | (uint32)((uint32)0 << 10U)\
+                                | (uint32)((uint32)0 << 11U) )
 					  
-#define SYS_GHVSRC_CONFIGVALUE	(SYS_PLL1 << 24U) \
-								| (SYS_PLL1 << 16U) \
-								|  SYS_PLL1
+#define SYS_GHVSRC_CONFIGVALUE  ( (uint32)((uint32)SYS_PLL1 << 24U) \
+                                | (uint32)((uint32)SYS_PLL1 << 16U) \
+                                | (uint32)((uint32)SYS_PLL1 << 0U) )
 								
-#define SYS_VCLKASRC_CONFIGVALUE	(SYS_VCLK << 8U)\
-									|  SYS_VCLK
+#define SYS_VCLKASRC_CONFIGVALUE    ( (uint32)((uint32)SYS_VCLK << 8U)\
+                                    | (uint32)((uint32)SYS_VCLK << 0U) )
 									
-#define SYS_RCLKSRC_CONFIGVALUE		(1U << 24U)\
-									| (SYS_VCLK << 16U)\
-									| (1U << 8U)\
-									|  SYS_VCLK
+#define SYS_RCLKSRC_CONFIGVALUE     ( (uint32)((uint32)1U << 24U)\
+                                    | (uint32)((uint32)SYS_VCLK << 16U)\
+                                    | (uint32)((uint32)1U << 8U)\
+                                    | (uint32)((uint32)SYS_VCLK << 0U) )
 									
 #define SYS_MSTGCR_CONFIGVALUE		0x00000105U
 
@@ -287,25 +295,25 @@ typedef struct system_config_reg
 
 #define SYS_MSINENA_CONFIGVALUE		0U
 
-#define SYS_PLLCTL1_CONFIGVALUE_1		(uint32)0x00000000U \
-									|  (uint32)0x20000000U \
-									| (((uint32)0x1FU)<< 24U) \
-									|  (uint32)0x00000000U \
-									| (((uint32)6U - 1U)<< 16U)\
-									| (((uint32)150U - 1U)<< 8U)
+#define SYS_PLLCTL1_CONFIGVALUE_1   ( (uint32)0x00000000U \
+                                    | (uint32)0x20000000U \
+                                    | (uint32)((uint32)0x1FU << 24U) \
+                                    | (uint32)0x00000000U \
+                                    | (uint32)((uint32)(6U - 1U)<< 16U)\
+                                    | (uint32)((uint32)(150U - 1U)<< 8U) )
 									
-#define SYS_PLLCTL1_CONFIGVALUE_2	( (SYS_PLLCTL1_CONFIGVALUE_1) & 0xE0FFFFFFU)|((2U - 1U)<< 24U)
+#define SYS_PLLCTL1_CONFIGVALUE_2   (((SYS_PLLCTL1_CONFIGVALUE_1) & 0xE0FFFFFFU) | (uint32)((uint32)(2U - 1U) << 24U))
 									
-#define SYS_PLLCTL2_CONFIGVALUE		0x00000000U\
-									| (255U << 22U)\
-									| (7U << 12U)\
-									| ((2U - 1U)<< 9U)\
-									|  61U
+#define SYS_PLLCTL2_CONFIGVALUE     ( (uint32)0x00000000U\
+                                    | (uint32)((uint32)255U << 22U)\
+                                    | (uint32)((uint32)7U << 12U)\
+                                    | (uint32)((uint32)(2U - 1U)<< 9U)\
+                                    | (uint32)61U)
 									
 #define SYS_UERFLAG_CONFIGVALUE		0U
 
-#define SYS_LPOMONCTL_CONFIGVALUE_1	(1U << 24U) | LPO_TRIM_VALUE
-#define SYS_LPOMONCTL_CONFIGVALUE_2	(1U << 24U) | (16U << 8U) | 8U
+#define SYS_LPOMONCTL_CONFIGVALUE_1 ((uint32)((uint32)1U << 24U) | LPO_TRIM_VALUE)
+#define SYS_LPOMONCTL_CONFIGVALUE_2 ((uint32)((uint32)1U << 24U) | (uint32)((uint32)16U << 8U) | 16U)
 
 #define SYS_CLKTEST_CONFIGVALUE		0x000A0000U
 
@@ -321,32 +329,20 @@ typedef struct system_config_reg
 
 #define SYS_MMUGCR_CONFIGVALUE	0U
 
-#define SYS_CLKCNTL_CONFIGVALUE	(1U << 8U) \
-                                | (0U << 16U) \
-								| (0U << 24U) 
+#define SYS_CLKCNTL_CONFIGVALUE     ( 0x00000100U \
+                                    | (uint32)((uint32)0U << 16U) \
+                                    | (uint32)((uint32)0U << 24U) ) 
 								
-#define SYS_ECPCNTL_CONFIGVALUE	(0U << 24U)\
-								| (0U << 23U)\
-								| ((8U - 1U) & 0xFFFFU)
+#define SYS_ECPCNTL_CONFIGVALUE     ( (uint32)((uint32)0U << 24U)\
+                                    | (uint32)((uint32)0U << 23U)\
+                                    | (uint32)((uint32)(8U - 1U) & 0xFFFFU) )
 								
 #define SYS_DEVCR1_CONFIGVALUE	0xAU
 
 #define SYS_SYSECR_CONFIGVALUE	0x00004000U
-#define SYS2_PLLCTL3_CONFIGVALUE_1	((2U - 1U) << 29U)\
-									| ((0x1FU)<< 24U) \
-									| ((6U - 1U)<< 16U) \
-									| ((120U - 1U) << 8U)
 									
-#define SYS2_PLLCTL3_CONFIGVALUE_2	((SYS2_PLLCTL3_CONFIGVALUE_1) & 0xE0FFFFFFU)|((1U - 1U)<< 24U)
+#define SYS2_PLLCTL3_CONFIGVALUE_2  (((SYS2_PLLCTL3_CONFIGVALUE_1) & 0xE0FFFFFFU) | (uint32)((uint32)(1U - 1U) << 24U))
 #define SYS2_STCCLKDIV_CONFIGVALUE	0U
-#define SYS2_CLK2CNTL_CONFIGVALUE	(1U) \
-                                    | (1U << 8U)
-#define SYS2_VCLKACON1_CONFIGVALUE	(1U << 24U) \
-									| (1U << 20U) \
-									| (SYS_VCLK << 16U)\
-									| (1U << 8U)\
-									| (1U << 4U) \
-									| SYS_VCLK
 #define SYS2_CLKSLIP_CONFIGVALUE	0x5U
 #define SYS2_EFC_CTLEN_CONFIGVALUE	0x5U
 	
@@ -400,22 +396,21 @@ typedef struct tcmflash_config_reg
 } tcmflash_config_reg_t;
 
 /* Configuration registers initial value */
-#define TCMFLASH_FRDCNTL_CONFIGVALUE		0x00000000U | (1U << 8U) | (0U << 4U) |  1U
+#define TCMFLASH_FRDCNTL_CONFIGVALUE        (0x00000000U | (uint32)((uint32)1U << 8U) | (uint32)((uint32)0U << 4U) |  1U)
 #define TCMFLASH_FEDACCTRL1_CONFIGVALUE		0x000A0005U
 #define TCMFLASH_FEDACCTRL2_CONFIGVALUE		0U
 #define TCMFLASH_FEDACSDIS_CONFIGVALUE		0U
 #define TCMFLASH_FBPROT_CONFIGVALUE			0U
 #define TCMFLASH_FBSE_CONFIGVALUE			0U
 #define TCMFLASH_FBAC_CONFIGVALUE			0xFU
-#define TCMFLASH_FBFALLBACK_CONFIGVALUE		0x00000000U\
-											| ((uint32)SYS_ACTIVE << 14U) \
-											| (3U << 12U) \
-											| (3U << 10U) \
-											| (3U << 8U) \
-											| (3U << 6U) \
-											| (3U << 4U) \
-											| ((uint32)SYS_SLEEP << 2U) \
-											|  (uint32)SYS_ACTIVE \
+#define TCMFLASH_FBFALLBACK_CONFIGVALUE     ( (uint32)((uint32)SYS_ACTIVE << 14U) \
+                                            | (uint32)((uint32)3U << 12U) \
+                                            | (uint32)((uint32)3U << 10U) \
+                                            | (uint32)((uint32)3U << 8U) \
+                                            | (uint32)((uint32)3U << 6U) \
+                                            | (uint32)((uint32)3U << 4U) \
+                                            | (uint32)((uint32)3U << 2U) \
+                                            | (uint32)((uint32)SYS_ACTIVE << 0U) )
 						  
 #define TCMFLASH_FPAC1_CONFIGVALUE			0x00C80001U
 #define TCMFLASH_FPAC2_CONFIGVALUE			0U
@@ -461,4 +456,7 @@ typedef struct sram_config_reg
 #define SRAM_RAMADDRDECVECT_CONFIGVALUE	0U
 
 void sramGetConfigValue(sram_config_reg_t *config_reg, config_value_type_t type);
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 #endif

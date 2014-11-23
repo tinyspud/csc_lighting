@@ -1,7 +1,7 @@
 /** @file reg_het.h
 *   @brief HET Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,15 +11,13 @@
 *   which are relevant for the HET driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_HET_H__
 #define __REG_HET_H__
 
 #include "sys_common.h"
-#include "gio.h"
-
-
+#include "reg_gio.h"
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -79,6 +77,41 @@ typedef volatile struct hetBase
 } hetBASE_t;
 
 
+/** @struct hetInstructionBase
+*   @brief HET Instruction Definition
+*
+*   This structure is used to access the HET RAM.
+*/
+/** @typedef hetINSTRUCTION_t
+*   @brief HET Instruction Type Definition
+*
+*   This type is used to access a HET Instruction.
+*/
+typedef volatile struct hetInstructionBase
+{
+    uint32 Program;
+    uint32 Control;
+    uint32 Data;
+    uint32   rsvd1;
+} hetINSTRUCTION_t;
+
+
+/** @struct hetRamBase
+*   @brief HET RAM Definition
+*
+*   This structure is used to access the HET RAM.
+*/
+/** @typedef hetRAMBASE_t
+*   @brief HET RAM Type Definition
+*
+*   This type is used to access the HET RAM.
+*/
+typedef volatile struct het1RamBase
+{
+    hetINSTRUCTION_t Instruction[160U];
+} hetRAMBASE_t;
+
+
 /** @def hetREG1
 *   @brief HET Register Frame Pointer
 *
@@ -95,32 +128,15 @@ typedef volatile struct hetBase
 */
 #define hetPORT1 ((gioPORT_t *)0xFFF7B84CU)
 
-
-/** @def hetREG2
-*   @brief HET2 Register Frame Pointer
+/** @def hetRAM1
+*   @brief NHET1 RAM Pointer
 *
-*   This pointer is used by the HET driver to access the het module registers.
+*   This pointer is used by the HET driver to access the NHET1 memory.
 */
-#define hetREG2 ((hetBASE_t *)0xFFF7B900U)
-
-
-/** @def hetPORT2
-*   @brief HET2 GIO Port Register Pointer
-*
-*   Pointer used by the GIO driver to access I/O PORT of HET2
-*   (use the GIO drivers to access the port pins).
-*/
-#define hetPORT2 ((gioPORT_t *)0xFFF7B94CU)
-
 #define hetRAM1 ((hetRAMBASE_t *)0xFF460000U)
-
-#define hetRAM2 ((hetRAMBASE_t *)0xFF440000U)
 
 #define NHET1RAMPARLOC	(*(volatile uint32 *)0xFF462000U)
 #define NHET1RAMLOC		(*(volatile uint32 *)0xFF460000U)
-
-#define NHET2RAMPARLOC	(*(volatile uint32 *)0xFF442000U)
-#define NHET2RAMLOC		(*(volatile uint32 *)0xFF440000U)
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

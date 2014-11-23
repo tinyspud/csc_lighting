@@ -1,15 +1,16 @@
 /** @file sys_phantom.c 
 *   @brief Phantom Interrupt Source File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *
 *   This file contains:
 *   - Phantom Interrupt Handler
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #include "sys_common.h"
+#include "sys_vim.h"
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */

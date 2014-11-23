@@ -1,7 +1,7 @@
 /** @file esm.h
 *   @brief Error Signaling Module Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -10,14 +10,16 @@
 *   which are relevant for the Esm driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __ESM_H__
 #define __ESM_H__
 
 #include "reg_esm.h"
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -654,200 +656,200 @@ typedef struct esm_config_reg
 } esm_config_reg_t;
 
 /* Configuration registers initial value */
-#define ESM_EEPAPR1_CONFIGVALUE	((0U << 31U)\
-                      | (0U << 30U)\
-                      | (0U << 29U)\
-                      | (0U << 28U)\
-                      | (0U << 27U)\
-                      | (0U << 26U)\
-                      | (0U << 25U)\
-                      | (0U << 24U)\
-                      | (0U << 23U)\
-                      | (0U << 22U)\
-                      | (0U << 21U)\
-                      | (0U << 20U)\
-                      | (0U << 19U)\
-                      | (0U << 18U)\
-                      | (0U << 17U)\
-                      | (0U << 16U)\
-                      | (0U << 15U)\
-                      | (0U << 14U)\
-                      | (0U << 13U)\
-                      | (0U << 12U)\
-                      | (0U << 11U)\
-                      | (0U << 10U)\
-                      | (0U <<  9U)\
-                      | (0U <<  8U)\
-                      | (0U <<  7U)\
-                      | (0U <<  6U)\
-                      | (0U <<  5U)\
-                      | (0U <<  4U)\
-                      | (0U <<  3U)\
-                      | (0U <<  2U)\
-                      | (0U <<  1U)\
-                      | (0U))
-#define ESM_IESR1_CONFIGVALUE	((0U << 31U)\
-                       | (0U << 30U)\
-                       | (0U << 29U)\
-                       | (0U << 28U)\
-                       | (0U << 27U)\
-                       | (0U << 26U)\
-                       | (0U << 25U)\
-                       | (0U << 24U)\
-                       | (0U << 23U)\
-                       | (0U << 22U)\
-                       | (0U << 21U)\
-                       | (0U << 20U)\
-                       | (0U << 19U)\
-                       | (0U << 18U)\
-                       | (0U << 17U)\
-                       | (0U << 16U)\
-                       | (0U << 15U)\
-                       | (0U << 14U)\
-                       | (0U << 13U)\
-                       | (0U << 12U)\
-                       | (0U << 11U)\
-                       | (0U << 10U)\
-                       | (0U <<  9U)\
-                       | (0U <<  8U)\
-                       | (0U <<  7U)\
-                       | (0U <<  6U)\
-                       | (0U <<  5U)\
-                       | (0U <<  4U)\
-                       | (0U <<  3U)\
-                       | (0U <<  2U)\
-                       | (0U <<  1U)\
-                       | (0U))
-#define ESM_ILSR1_CONFIGVALUE ((0U << 31U)\
-                       | (0U << 30U)\
-                       | (0U << 29U)\
-                       | (0U << 28U)\
-                       | (0U << 27U)\
-                       | (0U << 26U)\
-                       | (0U << 25U)\
-                       | (0U << 24U)\
-                       | (0U << 23U)\
-                       | (0U << 22U)\
-                       | (0U << 21U)\
-                       | (0U << 20U)\
-                       | (0U << 19U)\
-                       | (0U << 18U)\
-                       | (0U << 17U)\
-                       | (0U << 16U)\
-                       | (0U << 15U)\
-                       | (0U << 14U)\
-                       | (0U << 13U)\
-                       | (0U << 12U)\
-                       | (0U << 11U)\
-                       | (0U << 10U)\
-                       | (0U <<  9U)\
-                       | (0U <<  8U)\
-                       | (0U <<  7U)\
-                       | (0U <<  6U)\
-                       | (0U <<  5U)\
-                       | (0U <<  4U)\
-                       | (0U <<  3U)\
-                       | (0U <<  2U)\
-                       | (0U <<  1U)\
-                       | (0U))
-#define ESM_LTCPR_CONFIGVALUE	16384U - 1U
-#define ESM_EKR_CONFIGVALUE 		0U
-#define ESM_IEPSR4_CONFIGVALUE ((0U << 31U)\
-                      | (0U << 30U)\
-                      | (0U << 29U)\
-                      | (0U << 28U)\
-                      | (0U << 27U)\
-                      | (0U << 26U)\
-                      | (0U << 25U)\
-                      | (0U << 24U)\
-                      | (0U << 23U)\
-                      | (0U << 22U)\
-                      | (0U << 21U)\
-                      | (0U << 20U)\
-                      | (0U << 19U)\
-                      | (0U << 18U)\
-                      | (0U << 17U)\
-                      | (0U << 16U)\
-                      | (0U << 15U)\
-                      | (0U << 14U)\
-                      | (0U << 13U)\
-                      | (0U << 12U)\
-                      | (0U << 11U)\
-                      | (0U << 10U)\
-                      | (0U <<  9U)\
-                      | (0U <<  8U)\
-                      | (0U <<  7U)\
-                      | (0U <<  6U)\
-                      | (0U <<  5U)\
-                      | (0U <<  4U)\
-                      | (0U <<  3U)\
-                      | (0U <<  2U)\
-                      | (0U <<  1U)\
-                      | (0U))
-#define ESM_IESR4_CONFIGVALUE ((0U << 31U)\
-                       | (0U << 30U)\
-                       | (0U << 29U)\
-                       | (0U << 28U)\
-                       | (0U << 27U)\
-                       | (0U << 26U)\
-                       | (0U << 25U)\
-                       | (0U << 24U)\
-                       | (0U << 23U)\
-                       | (0U << 22U)\
-                       | (0U << 21U)\
-                       | (0U << 20U)\
-                       | (0U << 19U)\
-                       | (0U << 18U)\
-                       | (0U << 17U)\
-                       | (0U << 16U)\
-                       | (0U << 15U)\
-                       | (0U << 14U)\
-                       | (0U << 13U)\
-                       | (0U << 12U)\
-                       | (0U << 11U)\
-                       | (0U << 10U)\
-                       | (0U <<  9U)\
-                       | (0U <<  8U)\
-                       | (0U <<  7U)\
-                       | (0U <<  6U)\
-                       | (0U <<  5U)\
-                       | (0U <<  4U)\
-                       | (0U <<  3U)\
-                       | (0U <<  2U)\
-                       | (0U <<  1U)\
-                       | (0U))
-#define ESM_ILSR4_CONFIGVALUE ((0U << 31U)\
-                       | (0U << 30U)\
-                       | (0U << 29U)\
-                       | (0U << 28U)\
-                       | (0U << 27U)\
-                       | (0U << 26U)\
-                       | (0U << 25U)\
-                       | (0U << 24U)\
-                       | (0U << 23U)\
-                       | (0U << 22U)\
-                       | (0U << 21U)\
-                       | (0U << 20U)\
-                       | (0U << 19U)\
-                       | (0U << 18U)\
-                       | (0U << 17U)\
-                       | (0U << 16U)\
-                       | (0U << 15U)\
-                       | (0U << 14U)\
-                       | (0U << 13U)\
-                       | (0U << 12U)\
-                       | (0U << 11U)\
-                       | (0U << 10U)\
-                       | (0U <<  9U)\
-                       | (0U <<  8U)\
-                       | (0U <<  7U)\
-                       | (0U <<  6U)\
-                       | (0U <<  5U)\
-                       | (0U <<  4U)\
-                       | (0U <<  3U)\
-                       | (0U <<  2U)\
-                       | (0U <<  1U)\
-                       | (0U))
+#define ESM_EEPAPR1_CONFIGVALUE	((uint32)((uint32)0U << 31U)\
+                               | (uint32)((uint32)0U << 30U)\
+                               | (uint32)((uint32)0U << 29U)\
+                               | (uint32)((uint32)0U << 28U)\
+                               | (uint32)((uint32)0U << 27U)\
+                               | (uint32)((uint32)0U << 26U)\
+                               | (uint32)((uint32)0U << 25U)\
+                               | (uint32)((uint32)0U << 24U)\
+                               | (uint32)((uint32)0U << 23U)\
+                               | (uint32)((uint32)0U << 22U)\
+                               | (uint32)((uint32)0U << 21U)\
+                               | (uint32)((uint32)0U << 20U)\
+                               | (uint32)((uint32)0U << 19U)\
+                               | (uint32)((uint32)0U << 18U)\
+                               | (uint32)((uint32)0U << 17U)\
+                               | (uint32)((uint32)0U << 16U)\
+                               | (uint32)((uint32)0U << 15U)\
+                               | (uint32)((uint32)0U << 14U)\
+                               | (uint32)((uint32)0U << 13U)\
+                               | (uint32)((uint32)0U << 12U)\
+                               | (uint32)((uint32)0U << 11U)\
+                               | (uint32)((uint32)0U << 10U)\
+                               | (uint32)((uint32)0U <<  9U)\
+                               | (uint32)((uint32)0U <<  8U)\
+                               | (uint32)((uint32)0U <<  7U)\
+                               | (uint32)((uint32)0U <<  6U)\
+                               | (uint32)((uint32)0U <<  5U)\
+                               | (uint32)((uint32)0U <<  4U)\
+                               | (uint32)((uint32)0U <<  3U)\
+                               | (uint32)((uint32)0U <<  2U)\
+                               | (uint32)((uint32)0U <<  1U)\
+                               | (uint32)((uint32)0U <<  0U))
+#define ESM_IESR1_CONFIGVALUE	((uint32)((uint32)0U << 31U)\
+                               | (uint32)((uint32)0U << 30U)\
+                               | (uint32)((uint32)0U << 29U)\
+                               | (uint32)((uint32)0U << 28U)\
+                               | (uint32)((uint32)0U << 27U)\
+                               | (uint32)((uint32)0U << 26U)\
+                               | (uint32)((uint32)0U << 25U)\
+                               | (uint32)((uint32)0U << 24U)\
+                               | (uint32)((uint32)0U << 23U)\
+                               | (uint32)((uint32)0U << 22U)\
+                               | (uint32)((uint32)0U << 21U)\
+                               | (uint32)((uint32)0U << 20U)\
+                               | (uint32)((uint32)0U << 19U)\
+                               | (uint32)((uint32)0U << 18U)\
+                               | (uint32)((uint32)0U << 17U)\
+                               | (uint32)((uint32)0U << 16U)\
+                               | (uint32)((uint32)0U << 15U)\
+                               | (uint32)((uint32)0U << 14U)\
+                               | (uint32)((uint32)0U << 13U)\
+                               | (uint32)((uint32)0U << 12U)\
+                               | (uint32)((uint32)0U << 11U)\
+                               | (uint32)((uint32)0U << 10U)\
+                               | (uint32)((uint32)0U <<  9U)\
+                               | (uint32)((uint32)0U <<  8U)\
+                               | (uint32)((uint32)0U <<  7U)\
+                               | (uint32)((uint32)0U <<  6U)\
+                               | (uint32)((uint32)0U <<  5U)\
+                               | (uint32)((uint32)0U <<  4U)\
+                               | (uint32)((uint32)0U <<  3U)\
+                               | (uint32)((uint32)0U <<  2U)\
+                               | (uint32)((uint32)0U <<  1U)\
+                               | (uint32)((uint32)0U <<  0U))
+#define ESM_ILSR1_CONFIGVALUE   ((uint32)((uint32)0U << 31U)\
+                               | (uint32)((uint32)0U << 30U)\
+                               | (uint32)((uint32)0U << 29U)\
+                               | (uint32)((uint32)0U << 28U)\
+                               | (uint32)((uint32)0U << 27U)\
+                               | (uint32)((uint32)0U << 26U)\
+                               | (uint32)((uint32)0U << 25U)\
+                               | (uint32)((uint32)0U << 24U)\
+                               | (uint32)((uint32)0U << 23U)\
+                               | (uint32)((uint32)0U << 22U)\
+                               | (uint32)((uint32)0U << 21U)\
+                               | (uint32)((uint32)0U << 20U)\
+                               | (uint32)((uint32)0U << 19U)\
+                               | (uint32)((uint32)0U << 18U)\
+                               | (uint32)((uint32)0U << 17U)\
+                               | (uint32)((uint32)0U << 16U)\
+                               | (uint32)((uint32)0U << 15U)\
+                               | (uint32)((uint32)0U << 14U)\
+                               | (uint32)((uint32)0U << 13U)\
+                               | (uint32)((uint32)0U << 12U)\
+                               | (uint32)((uint32)0U << 11U)\
+                               | (uint32)((uint32)0U << 10U)\
+                               | (uint32)((uint32)0U <<  9U)\
+                               | (uint32)((uint32)0U <<  8U)\
+                               | (uint32)((uint32)0U <<  7U)\
+                               | (uint32)((uint32)0U <<  6U)\
+                               | (uint32)((uint32)0U <<  5U)\
+                               | (uint32)((uint32)0U <<  4U)\
+                               | (uint32)((uint32)0U <<  3U)\
+                               | (uint32)((uint32)0U <<  2U)\
+                               | (uint32)((uint32)0U <<  1U)\
+                               | (uint32)((uint32)0U <<  0U))
+#define ESM_LTCPR_CONFIGVALUE	 (16384U - 1U)
+#define ESM_EKR_CONFIGVALUE      0U
+#define ESM_IEPSR4_CONFIGVALUE ((uint32)((uint32)0U << 31U)\
+                              | (uint32)((uint32)0U << 30U)\
+                              | (uint32)((uint32)0U << 29U)\
+                              | (uint32)((uint32)0U << 28U)\
+                              | (uint32)((uint32)0U << 27U)\
+                              | (uint32)((uint32)0U << 26U)\
+                              | (uint32)((uint32)0U << 25U)\
+                              | (uint32)((uint32)0U << 24U)\
+                              | (uint32)((uint32)0U << 23U)\
+                              | (uint32)((uint32)0U << 22U)\
+                              | (uint32)((uint32)0U << 21U)\
+                              | (uint32)((uint32)0U << 20U)\
+                              | (uint32)((uint32)0U << 19U)\
+                              | (uint32)((uint32)0U << 18U)\
+                              | (uint32)((uint32)0U << 17U)\
+                              | (uint32)((uint32)0U << 16U)\
+                              | (uint32)((uint32)0U << 15U)\
+                              | (uint32)((uint32)0U << 14U)\
+                              | (uint32)((uint32)0U << 13U)\
+                              | (uint32)((uint32)0U << 12U)\
+                              | (uint32)((uint32)0U << 11U)\
+                              | (uint32)((uint32)0U << 10U)\
+                              | (uint32)((uint32)0U <<  9U)\
+                              | (uint32)((uint32)0U <<  8U)\
+                              | (uint32)((uint32)0U <<  7U)\
+                              | (uint32)((uint32)0U <<  6U)\
+                              | (uint32)((uint32)0U <<  5U)\
+                              | (uint32)((uint32)0U <<  4U)\
+                              | (uint32)((uint32)0U <<  3U)\
+                              | (uint32)((uint32)0U <<  2U)\
+                              | (uint32)((uint32)0U <<  1U)\
+                              | (uint32)((uint32)0U <<  0U))
+#define ESM_IESR4_CONFIGVALUE ((uint32)((uint32)0U << 31U)\
+                             | (uint32)((uint32)0U << 30U)\
+                             | (uint32)((uint32)0U << 29U)\
+                             | (uint32)((uint32)0U << 28U)\
+                             | (uint32)((uint32)0U << 27U)\
+                             | (uint32)((uint32)0U << 26U)\
+                             | (uint32)((uint32)0U << 25U)\
+                             | (uint32)((uint32)0U << 24U)\
+                             | (uint32)((uint32)0U << 23U)\
+                             | (uint32)((uint32)0U << 22U)\
+                             | (uint32)((uint32)0U << 21U)\
+                             | (uint32)((uint32)0U << 20U)\
+                             | (uint32)((uint32)0U << 19U)\
+                             | (uint32)((uint32)0U << 18U)\
+                             | (uint32)((uint32)0U << 17U)\
+                             | (uint32)((uint32)0U << 16U)\
+                             | (uint32)((uint32)0U << 15U)\
+                             | (uint32)((uint32)0U << 14U)\
+                             | (uint32)((uint32)0U << 13U)\
+                             | (uint32)((uint32)0U << 12U)\
+                             | (uint32)((uint32)0U << 11U)\
+                             | (uint32)((uint32)0U << 10U)\
+                             | (uint32)((uint32)0U <<  9U)\
+                             | (uint32)((uint32)0U <<  8U)\
+                             | (uint32)((uint32)0U <<  7U)\
+                             | (uint32)((uint32)0U <<  6U)\
+                             | (uint32)((uint32)0U <<  5U)\
+                             | (uint32)((uint32)0U <<  4U)\
+                             | (uint32)((uint32)0U <<  3U)\
+                             | (uint32)((uint32)0U <<  2U)\
+                             | (uint32)((uint32)0U <<  1U)\
+                             | (uint32)((uint32)0U <<  0U))
+#define ESM_ILSR4_CONFIGVALUE ((uint32)((uint32)0U << 31U)\
+                             | (uint32)((uint32)0U << 30U)\
+                             | (uint32)((uint32)0U << 29U)\
+                             | (uint32)((uint32)0U << 28U)\
+                             | (uint32)((uint32)0U << 27U)\
+                             | (uint32)((uint32)0U << 26U)\
+                             | (uint32)((uint32)0U << 25U)\
+                             | (uint32)((uint32)0U << 24U)\
+                             | (uint32)((uint32)0U << 23U)\
+                             | (uint32)((uint32)0U << 22U)\
+                             | (uint32)((uint32)0U << 21U)\
+                             | (uint32)((uint32)0U << 20U)\
+                             | (uint32)((uint32)0U << 19U)\
+                             | (uint32)((uint32)0U << 18U)\
+                             | (uint32)((uint32)0U << 17U)\
+                             | (uint32)((uint32)0U << 16U)\
+                             | (uint32)((uint32)0U << 15U)\
+                             | (uint32)((uint32)0U << 14U)\
+                             | (uint32)((uint32)0U << 13U)\
+                             | (uint32)((uint32)0U << 12U)\
+                             | (uint32)((uint32)0U << 11U)\
+                             | (uint32)((uint32)0U << 10U)\
+                             | (uint32)((uint32)0U <<  9U)\
+                             | (uint32)((uint32)0U <<  8U)\
+                             | (uint32)((uint32)0U <<  7U)\
+                             | (uint32)((uint32)0U <<  6U)\
+                             | (uint32)((uint32)0U <<  5U)\
+                             | (uint32)((uint32)0U <<  4U)\
+                             | (uint32)((uint32)0U <<  3U)\
+                             | (uint32)((uint32)0U <<  2U)\
+                             | (uint32)((uint32)0U <<  1U)\
+                             | (uint32)((uint32)0U <<  0U))
 
 
 /* USER CODE BEGIN (1) */
@@ -868,18 +870,18 @@ typedef struct esm_config_reg
  */
  
 /* Esm Interface Functions */
-void     esmInit(void);
+void   esmInit(void);
 uint32 esmError(void);
-void     esmEnableError(uint64 channels);
-void     esmDisableError(uint64 channels);
-void     esmTriggerErrorPinReset(void);
-void     esmActivateNormalOperation(void);
-void     esmEnableInterrupt(uint64 channels);
-void     esmDisableInterrupt(uint64 channels);
-void     esmSetInterruptLevel(uint64 channels, uint64 flags);
-void     esmClearStatus(uint32 group, uint64 channels);
-void     esmClearStatusBuffer(uint64 channels);
-void     esmSetCounterPreloadValue(uint32 value);
+void   esmEnableError(uint64 channels);
+void   esmDisableError(uint64 channels);
+void   esmTriggerErrorPinReset(void);
+void   esmActivateNormalOperation(void);
+void   esmEnableInterrupt(uint64 channels);
+void   esmDisableInterrupt(uint64 channels);
+void   esmSetInterruptLevel(uint64 channels, uint64 flags);
+void   esmClearStatus(uint32 group, uint64 channels);
+void   esmClearStatusBuffer(uint64 channels);
+void   esmSetCounterPreloadValue(uint32 value);
 
 uint64 esmGetStatus(uint32 group, uint64 channels);
 uint64 esmGetStatusBuffer(uint64 channels);
@@ -912,5 +914,8 @@ void esmGroup2Notification(uint32 channel);
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
 
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 
 #endif

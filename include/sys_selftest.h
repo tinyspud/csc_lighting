@@ -1,7 +1,7 @@
 /** @file sys_selftest.h
 *   @brief System Memory Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Efuse Self Test Functions
@@ -9,7 +9,7 @@
 *   which are relevant for the System driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __sys_selftest_H__
 #define __sys_selftest_H__
@@ -45,10 +45,13 @@
 #define tcramB1bit		(*(volatile uint64 *)(0x08000008U))
 #define tcramB2bit		(*(volatile uint64 *)(0x08000018U))
 
-#define flashBadECC		(*(volatile uint32 *)(0x20000000U))
+#define flashBadECC1	(*(volatile uint32 *)(0x20000000U))
+#define flashBadECC2	(*(volatile uint32 *)(0x20000010U))
 
 #define CCMSR 			(*(volatile uint32 *)(0xFFFFF600U))
 #define CCMKEYR			(*(volatile uint32 *)(0xFFFFF604U))
+
+#define MIBSPI1RAMLOC	(*(volatile uint32 *)(0xFF0E0000U))
 
 
 #ifndef __PBIST_H__
@@ -70,46 +73,39 @@ enum pbistPort
 *   @brief Alias names for pbist Algorithm
 *
 *   This enumeration is used to provide alias names for the pbist Algorithm
-*     - PBIST_TripleReadSlow 
-*     - PBIST_TripleReadFast 
-*     - PBIST_March13N_DP    
-*     - PBIST_March13N_SP    
-*     - PBIST_DOWN1a_DP      
-*     - PBIST_DOWN1a_SP      
-*     - PBIST_MapColumn_DP   
-*     - PBIST_MapColumn_SP   
-*     - PBIST_Precharge_DP   
-*     - PBIST_Precharge_SP   
-*     - PBIST_DTXN2a_DP      
-*     - PBIST_DTXN2a_SP      
-*     - PBIST_PMOSOpen_DP    
-*     - PBIST_PMOSOpen_SP    
-*     - PBIST_PPMOSOpenSlice1_DP
-*     - PBIST_PPMOSOpenSlice1_SP
-*     - PBIST_PPMOSOpenSlice2_DP
-*     - PBIST_PPMOSOpenSlice2_SP
-
 */
 enum pbistAlgo
 {
-    PBIST_TripleReadSlow     = 0x00000001U,
-    PBIST_TripleReadFast     = 0x00000002U,
-    PBIST_March13N_DP        = 0x00000004U,
-	PBIST_March13N_SP        = 0x00000008U,
-    PBIST_DOWN1a_DP          = 0x00000010U,
-	PBIST_DOWN1a_SP          = 0x00000020U,
-    PBIST_MapColumn_DP       = 0x00000040U,
-	PBIST_MapColumn_SP       = 0x00000080U,
-    PBIST_Precharge_DP       = 0x00000100U,
-	PBIST_Precharge_SP       = 0x00000200U,
-    PBIST_DTXN2a_DP          = 0x00000400U,
-	PBIST_DTXN2a_SP          = 0x00000800U,
-	PBIST_PMOSOpen_DP        = 0x00001000U,
-    PBIST_PMOSOpen_SP        = 0x00002000U,
-	PBIST_PPMOSOpenSlice1_DP = 0x00004000U,
-    PBIST_PPMOSOpenSlice1_SP = 0x00008000U,
-	PBIST_PPMOSOpenSlice2_DP = 0x00010000U,
-    PBIST_PPMOSOpenSlice2_SP = 0x00020000U
+    PBIST_TripleReadSlow     = 0x00000001U,  /**<TRIPLE_READ_SLOW_READ  for PBIST and STC ROM*/
+    PBIST_TripleReadFast     = 0x00000002U,  /**<TRIPLE_READ_SLOW_READ  for PBIST and STC ROM*/
+    PBIST_March13N_DP        = 0x00000004U,  /**< March13 N Algo for 2 Port mem */
+	PBIST_March13N_SP        = 0x00000008U,  /**< March13 N Algo for 1 Port mem */
+    PBIST_DOWN1a_DP          = 0x00000010U,  /**< Down1a Algor forces the switching fo all data bits & most addr bits on consecutive read cycles */
+	PBIST_DOWN1a_SP          = 0x00000020U,  /**< Down1a Algor forces the switching fo all data bits & most addr bits on consecutive read cycles */
+    PBIST_MapColumn_DP       = 0x00000040U,  /**< Map Column algo (to identify bit line senstivities) for 2 Port memory */
+	PBIST_MapColumn_SP       = 0x00000080U,  /**< Map Column algo (to identify bit line senstivities) for 1 Port memory */
+    PBIST_Precharge_DP       = 0x00000100U,  /**< Pre-Charge algo to exercise pre-charge capability for 2 port memory */
+	PBIST_Precharge_SP       = 0x00000200U,  /**< Pre-Charge algo to exercise pre-charge capability for 1 port memory */
+    PBIST_DTXN2a_DP          = 0x00000400U,  /**< Global column decode logic algo for 2 Port memories*/
+	PBIST_DTXN2a_SP          = 0x00000800U,  /**< Global column decode logic algo for 1 Port memories*/
+	PBIST_PMOSOpen_DP        = 0x00001000U,  /**<pmos oper algo for 2 port memories*/
+    PBIST_PMOSOpen_SP        = 0x00002000U,  /**<pmos oper algo for 1 port memories*/
+	PBIST_PPMOSOpenSlice1_DP = 0x00004000U,  /**<pmos open slice1 for 2port memories*/
+	PBIST_PPMOSOpenSlice2_DP = 0x00008000U,  /**<pmos open slice2 for 2port memories*/
+	PBIST_Flip10_DP          = 0x00010000U,  /**<flip10 algo for 2 port memories*/
+	PBIST_Flip10_SP          = 0x00020000U,  /**<flip10  algo for 1 port memories*/
+	PBIST_IDDQ_DP            = 0x00040000U,  /**<iddq  algo for 2 port memories*/
+	PBIST_IDDQ_SP            = 0x00080000U,  /**<iddq  algo for 1 port memories*/
+	PBIST_Retention_DP       = 0x00100000U,  /**<retention  algo for 2 port memories*/
+	PBIST_Retention_SP       = 0x00200000U,  /**<retention  algo for 1 port memories*/
+	PBIST_IDDQ2_DP           = 0x00400000U,  /**<iddq2  algo for 2 port memories*/
+	PBIST_IDDQ2_SP           = 0x00800000U,  /**<iddq2  algo for 1 port memories*/
+	PBIST_Retention2_DP      = 0x01000000U,  /**<retention2  algo for 2 port memories*/
+	PBIST_Retention2_SP      = 0x02000000U,  /**<retention2  algo for 1 port memories*/
+	PBIST_IDDQRowStripe_DP   = 0x04000000U,  /**<iddqwstripe  algo for 2 port memories*/
+	PBIST_IDDQRowStripe_SP   = 0x08000000U,  /**<iddqwstripe  algo for 1 port memories*/
+	PBIST_IDDQRowStripe2_DP  = 0x10000000U,  /**<iddqwstripe2  algo for 2 port memories*/
+	PBIST_IDDQRowStripe2_SP  = 0x20000000U   /**<iddqwstripe2  algo for 1 port memories*/
 };
 /* PBIST configuration registers */
 typedef struct pbist_config_reg
@@ -125,6 +121,10 @@ typedef struct pbist_config_reg
     uint32 CONFIG_RINFOL;
     uint32 CONFIG_RINFOU;
 } pbist_config_reg_t;
+
+/* PBIST and STC ROM - PBIST RAM GROUPING */
+#define PBIST_ROM_PBIST_RAM_GROUP   1U
+#define STC_ROM_PBIST_RAM_GROUP     2U
 
 /* PBIST congiruration registers initial value */
 #define PBIST_RAMT_CONFIGVALUE 0U
@@ -309,45 +309,47 @@ typedef struct efc_config_reg
 void efcGetConfigValue(efc_config_reg_t *config_reg, config_value_type_t type);
 #endif
 
-#define CCMSELFCHECK_FAIL1            1U
-#define CCMSELFCHECK_FAIL2            2U
-#define CCMSELFCHECK_FAIL3            3U
-#define CCMSELFCHECK_FAIL4            4U
-#define PBISTSELFCHECK_FAIL1          5U
-#define EFCCHECK_FAIL1                6U
-#define EFCCHECK_FAIL2                7U
-#define FMCECCCHECK_FAIL1             8U
-#define CHECKB0RAMECC_FAIL1           9U
-#define CHECKB1RAMECC_FAIL1          10U
-#define CHECKFLASHECC_FAIL1          11U
-#define VIMPARITYCHECK_FAIL1         12U
-#define DMAPARITYCHECK_FAIL1         13U
-#define HET1PARITYCHECK_FAIL1        14U
-#define HTU1PARITYCHECK_FAIL1        15U
-#define HET2PARITYCHECK_FAIL1        16U
-#define HTU2PARITYCHECK_FAIL1        17U
-#define ADC1PARITYCHECK_FAIL1        18U
-#define ADC2PARITYCHECK_FAIL1        19U
-#define CAN1PARITYCHECK_FAIL1        20U
-#define CAN2PARITYCHECK_FAIL1        21U
-#define CAN3PARITYCHECK_FAIL1        22U
-#define MIBSPI1PARITYCHECK_FAIL1     23U
-#define MIBSPI3PARITYCHECK_FAIL1     24U
-#define MIBSPI5PARITYCHECK_FAIL1     25U
-#define CHECKRAMECC_FAIL1            26U
-#define CHECKRAMECC_FAIL2            27U
-#define CHECKCLOCKMONITOR_FAIL1      28U
-#define CHECKFLASHEEPROMECC_FAIL1    29U 
-#define CHECKFLASHEEPROMECC_FAIL2    31U
-#define CHECKFLASHEEPROMECC_FAIL3    32U
-#define CHECKFLASHEEPROMECC_FAIL4    33U
-#define CHECKPLL1SLIP_FAIL1          34U
-#define CHECKRAMADDRPARITY_FAIL1     35U
-#define CHECKRAMADDRPARITY_FAIL2     36U
-#define CHECKRAMUERRTEST_FAIL1       37U
-#define CHECKRAMUERRTEST_FAIL2       38U
-#define FMCBUS1PARITYCHECK_FAIL1     39U
-#define FMCBUS1PARITYCHECK_FAIL2     40U
+#define CCMSELFCHECK_FAIL1           1U
+#define CCMSELFCHECK_FAIL2           2U
+#define CCMSELFCHECK_FAIL3           3U
+#define CCMSELFCHECK_FAIL4           4U
+#define PBISTSELFCHECK_FAIL1         5U
+#define EFCCHECK_FAIL1               6U
+#define EFCCHECK_FAIL2               7U
+#define FMCECCCHECK_FAIL1            8U
+#define CHECKB0RAMECC_FAIL1          9U
+#define CHECKB1RAMECC_FAIL1         10U
+#define CHECKFLASHECC_FAIL1         11U
+#define VIMPARITYCHECK_FAIL1        12U
+#define DMAPARITYCHECK_FAIL1        13U
+#define HET1PARITYCHECK_FAIL1       14U
+#define HTU1PARITYCHECK_FAIL1       15U
+#define HET2PARITYCHECK_FAIL1       16U
+#define HTU2PARITYCHECK_FAIL1       17U
+#define ADC1PARITYCHECK_FAIL1       18U
+#define ADC2PARITYCHECK_FAIL1       19U
+#define CAN1PARITYCHECK_FAIL1       20U
+#define CAN2PARITYCHECK_FAIL1       21U
+#define CAN3PARITYCHECK_FAIL1       22U
+#define MIBSPI1PARITYCHECK_FAIL1    23U
+#define MIBSPI3PARITYCHECK_FAIL1    24U
+#define MIBSPI5PARITYCHECK_FAIL1    25U
+#define CHECKRAMECC_FAIL1           26U
+#define CHECKRAMECC_FAIL2           27U
+#define CHECKCLOCKMONITOR_FAIL1     28U
+#define CHECKFLASHEEPROMECC_FAIL1   29U 
+#define CHECKFLASHEEPROMECC_FAIL2   31U
+#define CHECKFLASHEEPROMECC_FAIL3   32U
+#define CHECKFLASHEEPROMECC_FAIL4   33U
+#define CHECKPLL1SLIP_FAIL1         34U
+#define CHECKRAMADDRPARITY_FAIL1    35U
+#define CHECKRAMADDRPARITY_FAIL2    36U
+#define CHECKRAMUERRTEST_FAIL1      37U
+#define CHECKRAMUERRTEST_FAIL2      38U
+#define FMCBUS1PARITYCHECK_FAIL1    39U
+#define FMCBUS1PARITYCHECK_FAIL2    40U
+#define PBISTSELFCHECK_FAIL2         41U
+#define PBISTSELFCHECK_FAIL3         42U
 
 /* safety Init Interface Functions */
 void ccmSelfCheck(void);
@@ -367,7 +369,7 @@ boolean pbistIsTestPassed(void);
 boolean pbistPortTestStatus(uint32 port);
 void pbistFail(void);
 
-void efcCheck(void);
+uint32 efcCheck(void);
 void efcSelfTest(void);
 boolean efcStuckZeroTest(void);
 boolean checkefcSelfTest(void);
@@ -382,19 +384,12 @@ void checkB1RAMECC(void);
 void checkFlashECC(void);
 
 void vimParityCheck(void);
-void dmaParityCheck(void);
 void adc1ParityCheck(void);
-void adc2ParityCheck(void);
 void het1ParityCheck(void);
 void htu1ParityCheck(void);
-void het2ParityCheck(void);
-void htu2ParityCheck(void);
 void can1ParityCheck(void);
 void can2ParityCheck(void);
-void can3ParityCheck(void);
 void mibspi1ParityCheck(void);
-void mibspi3ParityCheck(void);
-void mibspi5ParityCheck(void);
 
 void checkRAMECC(void);
 void checkClockMonitor(void);
@@ -404,8 +399,12 @@ void checkPLL2Slip(void);
 void checkRAMAddrParity(void);
 void checkRAMUERRTest(void);
 
+void enableParity(void);
+void disableParity(void);
+
 void custom_dabort(void);
 void selftestFailNotification(uint32 flag);
+void errata_PBIST_4(void);
 
 /* USER CODE BEGIN (2) */
 /* USER CODE END */

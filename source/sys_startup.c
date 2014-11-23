@@ -1,7 +1,7 @@
 /** @file sys_startup.c 
 *   @brief Startup Source File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *
 *   This file contains:
 *   - Include Files
@@ -13,7 +13,7 @@
 *   which are relevant for the Startup.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
@@ -33,28 +33,18 @@
 /* USER CODE END */
 
 
-/* Type Definitions */
-
-typedef void (*handler_fptr)(const uint8 * in, uint8 * out);
-
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
 
 
 /* External Functions */
-
-
-
 /*SAFETYMCUSW 218 S MR:20.2 <APPROVED> "Functions from library" */
 extern void __TI_auto_init(void);
-/*SAFETYMCUSW 354 S MR:1.4 <APPROVED> " Startup code(main should bedeclared by the user)" */
+/*SAFETYMCUSW 354 S MR:NA <APPROVED> " Startup code(main should be declared by the user)" */
 extern void main(void);
 /*SAFETYMCUSW 122 S MR:20.11 <APPROVED> "Startup code(exit and abort need to be present)" */
-/*SAFETYMCUSW 354 S MR:1.4 <APPROVED> " Startup code(Extern declaration present in the library)" */
+/*SAFETYMCUSW 354 S MR:NA <APPROVED> " Startup code(Extern declaration present in the library)" */
 extern void exit(void);
-
-extern void muxInit(void);
-
 
 
 /* USER CODE BEGIN (3) */
@@ -69,6 +59,9 @@ void _c_int00(void);
 #pragma INTERRUPT(_c_int00, RESET)
 #pragma WEAK(_c_int00)
 
+/* SourceId : STARTUP_SourceId_001 */
+/* DesignId : STARTUP_DesignId_001 */
+/* Requirements : HL_SR508 */
 void _c_int00(void)
 {
     
@@ -102,7 +95,7 @@ void _c_int00(void)
      */
 
     /* check for power-on reset condition */
-	/*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
     if ((SYS_EXCEPTION & POWERON_RESET) != 0U)
     {
 /* USER CODE BEGIN (12) */
@@ -114,14 +107,15 @@ void _c_int00(void)
 /* USER CODE BEGIN (13) */
 /* USER CODE END */
 
-    _errata_CORTEXR4_66_();
+        /* Workaround for Errata CORTEXR4 66 */
+        _errata_CORTEXR4_66_();
     
 /* USER CODE BEGIN (14) */
 /* USER CODE END */
 
         /* continue with normal start-up sequence */
     }
-	/*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
     else if ((SYS_EXCEPTION & OSC_FAILURE_RESET) != 0U)
     {
         /* Reset caused due to oscillator failure.
@@ -130,7 +124,7 @@ void _c_int00(void)
 /* USER CODE BEGIN (16) */
 /* USER CODE END */
     }
-	/*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
     else if ((SYS_EXCEPTION & WATCHDOG_RESET) !=0U)
     {
         /* Reset caused due 
@@ -158,7 +152,7 @@ void _c_int00(void)
 /* USER CODE END */
         }
     }
-	/*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
     else if ((SYS_EXCEPTION & CPU_RESET) !=0U)
     {
         /* Reset caused due to CPU reset.
@@ -175,7 +169,7 @@ void _c_int00(void)
 /* USER CODE END */
 
     }
-	/*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Hardware status bit read check" */
     else if ((SYS_EXCEPTION & SW_RESET) != 0U)
     {
         /* Reset caused due to software reset.
@@ -207,7 +201,7 @@ void _c_int00(void)
 /* USER CODE END */
     /*SAFETYMCUSW 5 C MR:NA <APPROVED> "for(;;) can be removed by adding "# if 0" and "# endif" in the user codes above and below" */
     /*SAFETYMCUSW 26 S MR:NA <APPROVED> "for(;;) can be removed by adding "# if 0" and "# endif" in the user codes above and below" */
-	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "for(;;) can be removed by adding "# if 0" and "# endif" in the user codes above and below" */
+    /*SAFETYMCUSW 28 D MR:NA <APPROVED> "for(;;) can be removed by adding "# if 0" and "# endif" in the user codes above and below" */
         for(;;)
         { 
         }/* Wait */                 
@@ -217,28 +211,73 @@ void _c_int00(void)
 
 /* USER CODE BEGIN (26) */
 /* USER CODE END */
-
     /* Initialize System - Clock, Flash settings with Efuse self check */
     systemInit();
-
-
-/* USER CODE BEGIN (29) */
-/* USER CODE END */
-
+    
+    /* Workaround for Errata PBIST#4 */
+    errata_PBIST_4();
 
     /* Run a diagnostic check on the memory self-test controller.
      * This function chooses a RAM test algorithm and runs it on an on-chip ROM.
      * The memory self-test is expected to fail. The function ensures that the PBIST controller
      * is capable of detecting and indicating a memory self-test failure.
      */
-    pbistSelfCheck();
+    pbistSelfCheck();	
+	
+	/* Run PBIST on STC ROM */
+    pbistRun((uint32)STC_ROM_PBIST_RAM_GROUP,
+             ((uint32)PBIST_TripleReadSlow | (uint32)PBIST_TripleReadFast));
+    
+    /* Wait for PBIST for STC ROM to be completed */
+    /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
+    while(pbistIsTestCompleted() != TRUE)
+    { 
+    }/* Wait */ 
+    
+    /* Check if PBIST on STC ROM passed the self-test */
+    if( pbistIsTestPassed() != TRUE)
+    {
+        /* PBIST and STC ROM failed the self-test.
+         * Need custom handler to check the memory failure
+         * and to take the appropriate next step.
+         */
+         
+        pbistFail();
+
+    }   
+	
+	/* Run PBIST on PBIST ROM */
+    pbistRun((uint32)PBIST_ROM_PBIST_RAM_GROUP,
+             ((uint32)PBIST_TripleReadSlow | (uint32)PBIST_TripleReadFast));
+    
+    /* Wait for PBIST for PBIST ROM to be completed */
+    /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
+    while(pbistIsTestCompleted() != TRUE)
+    { 
+    }/* Wait */ 
+    
+    /* Check if PBIST ROM passed the self-test */
+    if( pbistIsTestPassed() != TRUE)
+    {
+        /* PBIST and STC ROM failed the self-test.
+         * Need custom handler to check the memory failure
+         * and to take the appropriate next step.
+         */
+         
+        pbistFail();
+
+    }   
+
+
+/* USER CODE BEGIN (29) */
+/* USER CODE END */
 
 /* USER CODE BEGIN (31) */
 /* USER CODE END */
 
-
-	_coreDisableRamEcc_();
-	
+    /* Disable RAM ECC before doing PBIST for Main RAM */
+    _coreDisableRamEcc_();
+    
     /* Run PBIST on CPU RAM.
      * The PBIST controller needs to be configured separately for single-port and dual-port SRAMs.
      * The CPU RAM is a single-port memory. The actual "RAM Group" for all on-chip SRAMs is defined in the
@@ -251,7 +290,7 @@ void _c_int00(void)
 /* USER CODE END */
 
     /* Wait for PBIST for CPU RAM to be completed */
-	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
     while(pbistIsTestCompleted() != TRUE)
     { 
     }/* Wait */                 
@@ -259,7 +298,7 @@ void _c_int00(void)
 
 /* USER CODE BEGIN (33) */
 /* USER CODE END */
-	
+    
     /* Check if CPU RAM passed the self-test */
     if( pbistIsTestPassed() != TRUE)
     {
@@ -269,9 +308,9 @@ void _c_int00(void)
          */
 /* USER CODE BEGIN (34) */
 /* USER CODE END */
-		 
-		pbistFail();
-		
+         
+        pbistFail();
+        
 /* USER CODE BEGIN (35) */
 /* USER CODE END */
     }
@@ -282,7 +321,6 @@ void _c_int00(void)
     /* Disable PBIST clocks and disable memory self-test mode */
     pbistStop();
     
-
 /* USER CODE BEGIN (37) */
 /* USER CODE END */
 
@@ -309,28 +347,27 @@ void _c_int00(void)
 
     /* Start PBIST on all dual-port memories */
     /* NOTE : Please Refer DEVICE DATASHEET for the list of Supported Dual port Memories.
-       PBIST test perfomed only on the user selected memories in HALCoGen's GUI SAFETY INIT tab.
+       PBIST test performed only on the user selected memories in HALCoGen's GUI SAFETY INIT tab.
      */
     
-    pbistRun(  (uint32)0x00000000U   
-             | (uint32)0x00000000U         
-             | (uint32)0x00000000U    
-             | (uint32)0x00000200U   
-             | (uint32)0x00000040U
-             | (uint32)0x00000000U
-             | (uint32)0x00000000U
-             | (uint32)0x00000004U   
-             | (uint32)0x00000008U   
-             | (uint32)0x00000000U   
-             | (uint32)0x00000400U   
-             | (uint32)0x00000000U   
-             | (uint32)0x00001000U   
-             | (uint32)0x00000000U   
-             | (uint32)0x00002000U   
-             | (uint32)0x00000000U   
-             | (uint32)0x00000000U    
-             | (uint32)0x00000000U    
-             | (uint32)0x00000000U   
+    pbistRun(  (uint32)0x00000000U    /* EMAC RAM */
+             | (uint32)0x00000000U    /* USB RAM */  
+             | (uint32)0x00000000U    /* DMA RAM */
+             | (uint32)0x00000200U    /* VIM RAM */
+             | (uint32)0x00000040U    /* MIBSPI1 RAM */
+             | (uint32)0x00000000U    /* MIBSPI3 RAM */
+             | (uint32)0x00000000U    /* MIBSPI5 RAM */
+             | (uint32)0x00000004U    /* CAN1 RAM */
+             | (uint32)0x00000008U    /* CAN2 RAM */
+             | (uint32)0x00000000U    /* CAN3 RAM */
+             | (uint32)0x00000400U    /* ADC1 RAM */
+             | (uint32)0x00000000U    /* ADC2 RAM */
+             | (uint32)0x00001000U    /* HET1 RAM */
+             | (uint32)0x00000000U    /* HET2 RAM */
+             | (uint32)0x00002000U    /* HTU1 RAM */
+             | (uint32)0x00000000U    /* HTU2 RAM */
+             | (uint32)0x00000000U    /* RTP RAM */
+             | (uint32)0x00000000U    /* FRAY RAM */
              ,(uint32) PBIST_March13N_DP);
 
 /* USER CODE BEGIN (40) */
@@ -344,7 +381,7 @@ void _c_int00(void)
      * deliberately caused exception and to return the code execution to the instruction
      * following the one that caused the abort.
      */
-	checkRAMECC();
+    checkRAMECC();
 
 /* USER CODE BEGIN (41) */
 /* USER CODE END */
@@ -354,7 +391,7 @@ void _c_int00(void)
 /* USER CODE END */
 
     /* Wait for PBIST for CPU RAM to be completed */
-	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
+    /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
     while(pbistIsTestCompleted() != TRUE)
     { 
     }/* Wait */                 
@@ -376,9 +413,9 @@ void _c_int00(void)
          */
 /* USER CODE BEGIN (46) */
 /* USER CODE END */
-		 
-		pbistFail();
-		
+         
+        pbistFail();
+        
 /* USER CODE BEGIN (47) */
 /* USER CODE END */
     }
@@ -402,6 +439,9 @@ void _c_int00(void)
 /* USER CODE BEGIN (56) */
 /* USER CODE END */
 
+    /* Enable parity on selected RAMs */
+    enableParity();
+    
     /* Initialize all on-chip SRAMs except for MibSPIx RAMs
      * The MibSPIx modules have their own auto-initialization mechanism which is triggered
      * as soon as the modules are brought out of local reset.
@@ -411,19 +451,22 @@ void _c_int00(void)
     /* NOTE : Please Refer DEVICE DATASHEET for the list of Supported Memories and their channel numbers.
               Memory Initialization is perfomed only on the user selected memories in HALCoGen's GUI SAFETY INIT tab.
      */
-    memoryInit(  (0U << 1U)   
-                 | (1U << 2U)  
-                 | (1U << 5U)  
-                 | (1U << 6U)  
-                 | (0U << 10U) 
-                 | (1U << 8U)  
-                 | (0U << 14U) 
-                 | (1U << 3U)  
-                 | (1U << 4U)  
-                 | (0U << 15U) 
-                 | (0U << 16U) 
-                 | (0U << 13U) );
+    memoryInit( (uint32)((uint32)0U << 1U)    /* DMA RAM */
+              | (uint32)((uint32)1U << 2U)    /* VIM RAM */
+              | (uint32)((uint32)1U << 5U)    /* CAN1 RAM */
+              | (uint32)((uint32)1U << 6U)    /* CAN2 RAM */
+              | (uint32)((uint32)0U << 10U)   /* CAN3 RAM */
+              | (uint32)((uint32)1U << 8U)    /* ADC1 RAM */
+              | (uint32)((uint32)0U << 14U)   /* ADC2 RAM */
+              | (uint32)((uint32)1U << 3U)    /* HET1 RAM */
+              | (uint32)((uint32)1U << 4U)    /* HTU1 RAM */
+              | (uint32)((uint32)0U << 15U)   /* HET2 RAM */
+              | (uint32)((uint32)0U << 16U)   /* HTU2 RAM */
+              );
 
+    /* Disable parity */
+    disableParity();
+    
     /* Test the parity protection mechanism for peripheral RAMs
        NOTE : Please Refer DEVICE DATASHEET for the list of Supported Memories with parity.
                  Parity Self check is perfomed only on the user selected memories in HALCoGen's GUI SAFETY INIT tab.
@@ -494,10 +537,8 @@ void _c_int00(void)
     /* Configure system response to error conditions signaled to the ESM group1 */
     /* This function can be configured from the ESM tab of HALCoGen */
     esmInit();
-
     /* initialize copy table */
     __TI_auto_init();
-
 /* USER CODE BEGIN (75) */
 /* USER CODE END */
     
@@ -511,6 +552,8 @@ void _c_int00(void)
 /* USER CODE END */
 /*SAFETYMCUSW 122 S MR:20.11 <APPROVED> "Startup code(exit and abort need to be present)" */
     exit();
+
+    /* call the application */
 /* USER CODE BEGIN (77) */
 /* USER CODE END */
 }

@@ -1,7 +1,7 @@
 /** @file reg_lin.h
 *   @brief LIN Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,13 +11,13 @@
 *   which are relevant for the LIN driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_LIN_H__
 #define __REG_LIN_H__
 
 #include "sys_common.h"
-#include "gio.h"
+#include "reg_gio.h"
 
 
 

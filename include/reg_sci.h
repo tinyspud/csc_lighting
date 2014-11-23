@@ -1,7 +1,7 @@
 /** @file reg_sci.h
 *   @brief SCI Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,13 +11,13 @@
 *   which are relevant for the SCI driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_SCI_H__
 #define __REG_SCI_H__
 
 #include "sys_common.h"
-#include "gio.h"
+#include "reg_gio.h"
 
 
 
@@ -39,7 +39,7 @@ typedef volatile struct sciBase
 {
     uint32 GCR0;          /**< 0x0000 Global Control Register 0 */
     uint32 GCR1;          /**< 0x0004 Global Control Register 1 */
-    uint32 rsdv1;         /**< 0x0008 Global Control Register 2 */
+    uint32 GCR2;         /**< 0x0008 Global Control Register 2.  */
     uint32 SETINT;       /**< 0x000C Set Interrupt Enable Register */
     uint32 CLEARINT;      /**< 0x0010 Clear Interrupt Enable Register */
     uint32 SETINTLVL;    /**< 0x0014 Set Interrupt Level Register */

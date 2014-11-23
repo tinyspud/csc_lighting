@@ -1,7 +1,7 @@
 /** @file CRC.h
 *   @brief CRC Driver Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,13 +11,16 @@
 *   which are relevant for the CRC driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __CRC_H__
 #define __CRC_H__
 
 #include "reg_crc.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
@@ -211,29 +214,11 @@ typedef struct crc_config_reg
     uint32 CONFIG_CTRL0;
 	uint32 CONFIG_CTRL1;
 	uint32 CONFIG_CTRL2;
-    uint32 CONFIG_INTS;
-    uint32 CONFIG_PCOUNT_REG1;
-    uint32 CONFIG_SCOUNT_REG1;
-    uint32 CONFIG_WDTOPLD1;
-    uint32 CONFIG_BCTOPLD1;
-    uint32 CONFIG_PCOUNT_REG2;
-    uint32 CONFIG_SCOUNT_REG2;
-    uint32 CONFIG_WDTOPLD2;
-    uint32 CONFIG_BCTOPLD2;
 }crc_config_reg_t;
 		
 #define CRC_CTRL0_CONFIGVALUE			0x00000000U
 #define CRC_CTRL1_CONFIGVALUE			0x00000000U
-#define CRC_CTRL2_CONFIGVALUE			((0U << 4U) | (CRC_FULL_CPU)  | (CRC_FULL_CPU << 8U))
-#define CRC_INTS_CONFIGVALUE			(0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U | 0x00000000U)
-#define CRC_PCOUNT_REG1_CONFIGVALUE		(0x00000000U)
-#define CRC_SCOUNT_REG1_CONFIGVALUE		(0x00000000U)
-#define CRC_WDTOPLD1_CONFIGVALUE		(0x00000000U)
-#define CRC_BCTOPLD1_CONFIGVALUE		(0x00000000U)
-#define CRC_PCOUNT_REG2_CONFIGVALUE		(0x00000000U)
-#define CRC_SCOUNT_REG2_CONFIGVALUE		(0x00000000U)
-#define CRC_WDTOPLD2_CONFIGVALUE		(0x00000000U)
-#define CRC_BCTOPLD2_CONFIGVALUE		(0x00000000U)
+#define CRC_CTRL2_CONFIGVALUE			((uint32)((uint32)0U << 4U) | (uint32)(CRC_FULL_CPU)  | (uint32)((uint32)CRC_FULL_CPU << 8U))
 
 /** 
  *  @defgroup CRC CRC
@@ -258,14 +243,8 @@ typedef struct crc_config_reg
 void crcInit(void);
 void crcSendPowerDown(crcBASE_t *crc);
 void crcSignGen(crcBASE_t *crc,crcModConfig_t *param);
-void crcSetConfig(crcBASE_t *crc,crcConfig_t *param);
 uint64 crcGetPSASig(crcBASE_t *crc,uint32 channel);
-uint64 crcGetSectorSig(crcBASE_t *crc,uint32 channel);
-uint32 crcGetFailedSector(crcBASE_t *crc,uint32 channel);
-uint32 crcGetIntrPend(crcBASE_t *crc,uint32 channel);
 void crcChannelReset(crcBASE_t *crc,uint32 channel);
-void crcEnableNotification(crcBASE_t *crc, uint32 flags);
-void crcDisableNotification(crcBASE_t *crc, uint32 flags);
 void crcGetConfigValue(crc_config_reg_t *config_reg, config_value_type_t type);
 
 /** @fn void crcNotification(crcBASE_t *crc, uint32 flags)
@@ -279,9 +258,12 @@ void crcGetConfigValue(crc_config_reg_t *config_reg, config_value_type_t type);
 */
 void crcNotification(crcBASE_t *crc, uint32 flags);
 
-
-/**@}*/
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
+
+/**@}*/
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 
 #endif

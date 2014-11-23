@@ -9,6 +9,9 @@
 
 ;-------------------------------------------------------------------------------
 ; Initialize CPU Registers
+; SourceId : CORE_SourceId_001
+; DesignId : CORE_DesignId_001
+; Requirements: HL_SR477, HL_SR476, HL_SR492
 
     .def     _coreInitRegisters_
     .asmfunc
@@ -80,6 +83,9 @@ next4
 
 ;-------------------------------------------------------------------------------
 ; Initialize Stack Pointers
+; SourceId : CORE_SourceId_002
+; DesignId : CORE_DesignId_002
+; Requirements: HL_SR478
 
     .def     _coreInitStackPointer_
     .asmfunc
@@ -111,6 +117,9 @@ undefSp .word 0x08000000+0x00001000+0x00000100+0x00000100+0x00000100+0x00000100+
 
 ;-------------------------------------------------------------------------------
 ; Get CPSR Value
+; SourceId : CORE_SourceId_003
+; DesignId : CORE_DesignId_003
+; Requirements: 
 
     .def     _getCPSRValue_
     .asmfunc
@@ -124,6 +133,9 @@ _getCPSRValue_
     
 ;-------------------------------------------------------------------------------
 ; Take CPU to IDLE state
+; SourceId : CORE_SourceId_004
+; DesignId : CORE_DesignId_004
+; Requirements: HL_SR493
 
     .def     _gotoCPUIdle_
     .asmfunc
@@ -142,6 +154,9 @@ _gotoCPUIdle_
 
 ;-------------------------------------------------------------------------------
 ; Enable Event Bus Export
+; SourceId : CORE_SourceId_006
+; DesignId : CORE_DesignId_007
+; Requirements: HL_SR479
 
     .def     _coreEnableEventBusExport_
     .asmfunc
@@ -160,6 +175,10 @@ _coreEnableEventBusExport_
 
 ;-------------------------------------------------------------------------------
 ; Disable Event Bus Export
+; SourceId : CORE_SourceId_007
+; DesignId : CORE_DesignId_008
+; Requirements: HL_SR481
+
 
     .def     _coreDisableEventBusExport_
     .asmfunc
@@ -178,6 +197,9 @@ _coreDisableEventBusExport_
 
 ;-------------------------------------------------------------------------------
 ; Enable RAM ECC Support
+; SourceId : CORE_SourceId_008
+; DesignId : CORE_DesignId_009
+; Requirements: HL_SR480
 
     .def     _coreEnableRamEcc_
     .asmfunc
@@ -196,6 +218,9 @@ _coreEnableRamEcc_
 
 ;-------------------------------------------------------------------------------
 ; Disable RAM ECC Support
+; SourceId : CORE_SourceId_009
+; DesignId : CORE_DesignId_010
+; Requirements: HL_SR482
 
     .def     _coreDisableRamEcc_
     .asmfunc
@@ -214,6 +239,9 @@ _coreDisableRamEcc_
 
 ;-------------------------------------------------------------------------------
 ; Enable Flash ECC Support
+; SourceId : CORE_SourceId_010
+; DesignId : CORE_DesignId_011
+; Requirements: HL_SR480, HL_SR458
 
     .def     _coreEnableFlashEcc_
     .asmfunc
@@ -233,6 +261,9 @@ _coreEnableFlashEcc_
 
 ;-------------------------------------------------------------------------------
 ; Disable Flash ECC Support
+; SourceId : CORE_SourceId_011
+; DesignId : CORE_DesignId_012
+; Requirements: HL_SR482
 
     .def     _coreDisableFlashEcc_
     .asmfunc
@@ -251,6 +282,9 @@ _coreDisableFlashEcc_
 
 ;-------------------------------------------------------------------------------
 ; Enable Offset via Vic controller
+; SourceId : CORE_SourceId_012
+; DesignId : CORE_DesignId_005
+; Requirements: HL_SR483, HL_SR491
 
     .def     _coreEnableIrqVicOffset_
     .asmfunc
@@ -269,6 +303,9 @@ _coreEnableIrqVicOffset_
 
 ;-------------------------------------------------------------------------------
 ; Get data fault status register
+; SourceId : CORE_SourceId_013
+; DesignId : CORE_DesignId_013
+; Requirements: HL_SR495
 
     .def     _coreGetDataFault_
     .asmfunc
@@ -283,6 +320,9 @@ _coreGetDataFault_
 
 ;-------------------------------------------------------------------------------
 ; Clear data fault status register
+; SourceId : CORE_SourceId_014
+; DesignId : CORE_DesignId_014
+; Requirements: HL_SR495
 
     .def     _coreClearDataFault_
     .asmfunc
@@ -300,6 +340,9 @@ _coreClearDataFault_
 
 ;-------------------------------------------------------------------------------
 ; Get instruction fault status register
+; SourceId : CORE_SourceId_015
+; DesignId : CORE_DesignId_015
+; Requirements: HL_SR495
 
     .def     _coreGetInstructionFault_
     .asmfunc
@@ -314,6 +357,9 @@ _coreGetInstructionFault_
 
 ;-------------------------------------------------------------------------------
 ; Clear instruction fault status register
+; SourceId : CORE_SourceId_016
+; DesignId : CORE_DesignId_016
+; Requirements: HL_SR495
 
     .def     _coreClearInstructionFault_
     .asmfunc
@@ -331,6 +377,9 @@ _coreClearInstructionFault_
 
 ;-------------------------------------------------------------------------------
 ; Get data fault address register
+; SourceId : CORE_SourceId_017
+; DesignId : CORE_DesignId_017
+; Requirements: HL_SR495
 
     .def     _coreGetDataFaultAddress_
     .asmfunc
@@ -345,6 +394,9 @@ _coreGetDataFaultAddress_
 
 ;-------------------------------------------------------------------------------
 ; Clear data fault address register
+; SourceId : CORE_SourceId_018
+; DesignId : CORE_DesignId_018
+; Requirements: HL_SR495
 
     .def     _coreClearDataFaultAddress_
     .asmfunc
@@ -362,6 +414,9 @@ _coreClearDataFaultAddress_
 
 ;-------------------------------------------------------------------------------
 ; Get instruction fault address register
+; SourceId : CORE_SourceId_019
+; DesignId : CORE_DesignId_019
+; Requirements: HL_SR495
 
     .def     _coreGetInstructionFaultAddress_
     .asmfunc
@@ -376,6 +431,9 @@ _coreGetInstructionFaultAddress_
 
 ;-------------------------------------------------------------------------------
 ; Clear instruction fault address register
+; SourceId : CORE_SourceId_020
+; DesignId : CORE_DesignId_020
+; Requirements: HL_SR495
 
     .def     _coreClearInstructionFaultAddress_
     .asmfunc
@@ -393,6 +451,9 @@ _coreClearInstructionFaultAddress_
 
 ;-------------------------------------------------------------------------------
 ; Get auxiliary data fault status register
+; SourceId : CORE_SourceId_021
+; DesignId : CORE_DesignId_021
+; Requirements: HL_SR496
 
     .def     _coreGetAuxiliaryDataFault_
     .asmfunc
@@ -407,6 +468,9 @@ _coreGetAuxiliaryDataFault_
 
 ;-------------------------------------------------------------------------------
 ; Clear auxiliary data fault status register
+; SourceId : CORE_SourceId_022
+; DesignId : CORE_DesignId_022
+; Requirements: HL_SR496
 
     .def     _coreClearAuxiliaryDataFault_
     .asmfunc
@@ -424,6 +488,9 @@ _coreClearAuxiliaryDataFault_
 
 ;-------------------------------------------------------------------------------
 ; Get auxiliary instruction fault status register
+; SourceId : CORE_SourceId_023
+; DesignId : CORE_DesignId_023
+; Requirements: HL_SR496
 
     .def     _coreGetAuxiliaryInstructionFault_
     .asmfunc
@@ -437,6 +504,9 @@ _coreGetAuxiliaryInstructionFault_
 
 ;-------------------------------------------------------------------------------
 ; Clear auxiliary instruction fault status register
+; SourceId : CORE_SourceId_024
+; DesignId : CORE_DesignId_024
+; Requirements: HL_SR496
 
     .def     _coreClearAuxiliaryInstructionFault_
     .asmfunc
@@ -453,6 +523,9 @@ _coreClearAuxiliaryInstructionFault_
 
 ;-------------------------------------------------------------------------------
 ; Disable interrupts - R4 IRQ & FIQ
+; SourceId : CORE_SourceId_025
+; DesignId : CORE_DesignId_025
+; Requirements: HL_SR494
 
         .def _disable_interrupt_
         .asmfunc

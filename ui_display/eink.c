@@ -29,6 +29,7 @@
 #include "spi.h"
 #include "vis.h"
 #include "het.h"
+#include "gio.h"
 #include "eink.h"
 
 

@@ -1,7 +1,7 @@
 /** @file reg_gio.h
 *   @brief GIO Register Layer Header File
-*   @date 25.July.2013
-*   @version 03.06.00
+*   @date 9.Sep.2014
+*   @version 04.01.00
 *   
 *   This file contains:
 *   - Definitions
@@ -11,7 +11,7 @@
 *   which are relevant for the GIO driver.
 */
 
-/* (c) Texas Instruments 2009-2013, All rights reserved. */
+/* (c) Texas Instruments 2009-2014, All rights reserved. */
 
 #ifndef __REG_GIO_H__
 #define __REG_GIO_H__
@@ -84,13 +84,6 @@ typedef volatile struct gioPort
 *   Pointer used by the GIO driver to access PORTA
 */
 #define gioPORTA ((gioPORT_t *)0xFFF7BC34U)
-
-/** @def gioPORTB
-*   @brief GIO Port (B) Register Pointer
-*
-*   Pointer used by the GIO driver to access PORTB
-*/
-#define gioPORTB ((gioPORT_t *)0xFFF7BC54U)
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

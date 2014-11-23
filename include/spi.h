@@ -1,9 +1,9 @@
 /** @file spi.h
 *   @brief SPI Driver Definition File
-*   @date 25.July.2013
-*   @version 03.06.00
-*   
-*   (c) Texas Instruments 2009-2013, All rights reserved.
+*   @date 9.Sep.2014
+*   @version 04.01.00
+*
+*   (c) Texas Instruments 2009-2014, All rights reserved.
 */
 
 
@@ -11,6 +11,11 @@
 #define __SPI_H__
 
 #include "reg_spi.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 /** @enum chipSelect
 *   @brief Transfer Group Chip Select
@@ -89,7 +94,7 @@ typedef struct spiDAT1RegConfig
 typedef enum SpiTxRxDataStatus
 {
     SPI_READY = 0U,
-	SPI_PENDING = 1U,
+    SPI_PENDING = 1U,
     SPI_COMPLETED = 2U
 }SpiDataStatus_t;
 
@@ -113,182 +118,78 @@ typedef struct spi_config_reg
     uint32 CONFIG_FMT3;
 }spi_config_reg_t;
 
-#define SPI1_GCR1_CONFIGVALUE		((1U << 24U) | (1U << 1U) | 1U)
+#define SPI1_GCR1_CONFIGVALUE       (0x01000000U | (uint32)((uint32)1U << 1U) | 1U)
 
-#define SPI1_INT0_CONFIGVALUE		((0U << 24U) | (0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U)  | (0U << 2U) | (0U << 1U) | (0U))
-#define SPI1_LVL_CONFIGVALUE		((0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U))
+#define SPI1_INT0_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
+#define SPI1_LVL_CONFIGVALUE        ((uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
 
-#define SPI1_PC0_CONFIGVALUE		(0U | (0U << 8U) | (1U << 9U)  | (1U << 10U) | (1U << 11U))
-#define SPI1_PC1_CONFIGVALUE		(1U | (1U << 8U) | (1U << 9U)  | (1U << 10U) | (0U << 11U))
-#define SPI1_PC6_CONFIGVALUE		(0U | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI1_PC7_CONFIGVALUE		(0U | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI1_PC8_CONFIGVALUE		(1U | (1U << 8U) | (1U << 9U) | (1U << 10U) | (1U << 11U))
+#define SPI1_PC0_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
+#define SPI1_PC1_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 1U) | (uint32)((uint32)1U << 2U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)1U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI1_PC6_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI1_PC7_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI1_PC8_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 1U) | (uint32)((uint32)1U << 2U) | (uint32)((uint32)1U << 3U) | (uint32)((uint32)1U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
 
-#define SPI1_DELAY_CONFIGVALUE		((0U << 24U) | (0U << 16U) | (0U << 8U) | 0U)
+#define SPI1_DELAY_CONFIGVALUE      ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 0U))
 
-#define SPI1_FMT0_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (1U << 17U)\
-									| (1U << 16U)\
-									| (66U << 8U)\
-									| 8U)
-
-#define SPI1_FMT1_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-
-#define SPI1_FMT2_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-					
-#define SPI1_FMT3_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U) \
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
+#define SPI1_FMT0_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)1U << 17U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)66U << 8U) | (uint32)((uint32)8U << 0U))
+#define SPI1_FMT1_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI1_FMT2_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI1_FMT3_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
 
 
-#define SPI2_GCR1_CONFIGVALUE		((1U << 24U) | (1U << 1U) | 1U)
+#define SPI2_GCR1_CONFIGVALUE       (0x01000000U | (uint32)((uint32)1U << 1U) | 1U)
 
-#define SPI2_INT0_CONFIGVALUE		((0U << 24U) | (0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U)  | (0U << 2U) | (0U << 1U) | (0U))
-#define SPI2_LVL_CONFIGVALUE		((0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U))
+#define SPI2_INT0_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
+#define SPI2_LVL_CONFIGVALUE        ((uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
 
-#define SPI2_PC0_CONFIGVALUE		(0U | (0U << 1U) | (1U << 8U) | (1U << 9U)  | (1U << 10U) | (1U << 11U))
-#define SPI2_PC1_CONFIGVALUE		(1U | (1U << 1U) | (0U << 8U) | (1U << 9U)  | (1U << 10U) | (0U << 11U))
-#define SPI2_PC6_CONFIGVALUE		(0U | (0U << 1U) | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI2_PC7_CONFIGVALUE		(0U | (0U << 1U) | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI2_PC8_CONFIGVALUE		(1U | (1U << 1U) | (1U << 8U) | (1U << 9U) | (1U << 10U) | (1U << 11U))
+#define SPI2_PC0_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
+#define SPI2_PC1_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI2_PC6_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI2_PC7_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI2_PC8_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
 
-#define SPI2_DELAY_CONFIGVALUE		((255U << 24U) | (255U << 16U) | (0U << 8U) | 0U)
+#define SPI2_DELAY_CONFIGVALUE      ((uint32)((uint32)255U << 24U) | (uint32)((uint32)255U << 16U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 0U))
 
-#define SPI2_FMT0_CONFIGVALUE		((63U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (1U << 16U)\
-									| (99U << 8U)\
-									| 8U)
-
-#define SPI2_FMT1_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-
-#define SPI2_FMT2_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-					
-#define SPI2_FMT3_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U) \
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
+#define SPI2_FMT0_CONFIGVALUE       ((uint32)((uint32)63U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)8U << 0U))
+#define SPI2_FMT1_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI2_FMT2_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI2_FMT3_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
 
 
-#define SPI3_GCR1_CONFIGVALUE		((1U << 24U) | (1U << 1U) | 1U)
+#define SPI3_GCR1_CONFIGVALUE       (0x01000000U | (uint32)((uint32)1U << 1U) | 1U)
 
-#define SPI3_INT0_CONFIGVALUE		((0U << 24U) | (0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U)  | (0U << 2U) | (0U << 1U) | (0U))
-#define SPI3_LVL_CONFIGVALUE		((0U << 9U) | (0U << 8U) | (0U << 6U) | (0U << 4U)  | (0U << 3U) | (0U << 2U) | (0U << 1U) | (0U))
+#define SPI3_INT0_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
+#define SPI3_LVL_CONFIGVALUE        ((uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 6U) | (uint32)((uint32)0U << 4U) | (uint32)((uint32)0U << 3U) | (uint32)((uint32)0U << 2U) | (uint32)((uint32)0U << 1U) | (uint32)((uint32)0U << 0U))
 
-#define SPI3_PC0_CONFIGVALUE		(1U | (1U << 8U) | (1U << 9U)  | (1U << 10U) | (1U << 11U))
-#define SPI3_PC1_CONFIGVALUE		(1U | (0U << 8U) | (1U << 9U)  | (1U << 10U) | (0U << 11U))
-#define SPI3_PC6_CONFIGVALUE		(0U | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI3_PC7_CONFIGVALUE		(0U | (0U << 8U) | (0U << 9U) | (0U << 10U) | (0U << 11U))
-#define SPI3_PC8_CONFIGVALUE		(1U | (1U << 8U) | (1U << 9U) | (1U << 10U) | (1U << 11U))
+#define SPI3_PC0_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
+#define SPI3_PC1_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI3_PC6_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI3_PC7_CONFIGVALUE        ((uint32)((uint32)0U << 0U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 9U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 10U) | (uint32)((uint32)0U << 11U) | (uint32)((uint32)0U << 24U))
+#define SPI3_PC8_CONFIGVALUE        ((uint32)((uint32)1U << 0U) | (uint32)((uint32)1U << 8U) | (uint32)((uint32)1U << 9U) | (uint32)((uint32)1U << 10U) | (uint32)((uint32)1U << 16U) | (uint32)((uint32)1U << 11U) | (uint32)((uint32)1U << 24U))
 
-#define SPI3_DELAY_CONFIGVALUE		((0U << 24U) | (0U << 16U) | (0U << 8U) | 0U)
+#define SPI3_DELAY_CONFIGVALUE      ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)0U << 0U))
 
-#define SPI3_FMT0_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
+#define SPI3_FMT0_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI3_FMT1_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI3_FMT2_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
+#define SPI3_FMT3_CONFIGVALUE       ((uint32)((uint32)0U << 24U) | (uint32)((uint32)0U << 23U) | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 21U) | (uint32)((uint32)0U << 20U) | (uint32)((uint32)0U << 17U) | (uint32)((uint32)0U << 16U) | (uint32)((uint32)99U << 8U) | (uint32)((uint32)16U << 0U))
 
-#define SPI3_FMT1_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
 
-#define SPI3_FMT2_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U)\
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-					
-#define SPI3_FMT3_CONFIGVALUE		((0U << 24U)\
-									| (0U << 23U) \
-									| (0U << 22U)\
-									| (0U << 21U)\
-									| (0U << 20U)\
-									| (0U << 17U)\
-									| (0U << 16U)\
-									| (99U << 8U)\
-									| 16U)
-
-/** 
+/**
  *  @defgroup SPI SPI
  *  @brief Serial Peripheral Interface Module.
- *  
+ *
  *  SPI is a high-speed synchronous serial input/output port that allows a serial bit stream of
  *  programmed length (2 to 16 bits) to be shifted in and out of the device at a programmed bit-transfer rate.
  *
- *	Related Files
+ *  Related Files
  *   - reg_spi.h
  *   - spi.h
  *   - spi.c
  *  @addtogroup SPI
  *  @{
  */
- 
+
 /* SPI Interface Functions */
 void spiInit(void);
 void spiSetFunctional(spiBASE_t *spi, uint32 port);
@@ -314,7 +215,7 @@ void spi3GetConfigValue(spi_config_reg_t *config_reg, config_value_type_t type);
 *   @param[in] flags - Copy of error interrupt flags
 *
 * This is a callback that is provided by the application and is called upon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void spiNotification(spiBASE_t *spi, uint32 flags);
@@ -331,5 +232,9 @@ void spiEndNotification(spiBASE_t *spi);
 /**@}*/
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
+
+#ifdef __cplusplus
+}
+#endif /*extern "C" */
 
 #endif
