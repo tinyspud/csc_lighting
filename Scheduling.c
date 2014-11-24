@@ -31,21 +31,7 @@ portBaseType xTimerStart( timerHandleType xTimer, portTickType xBlockTime ){
 
 portBaseType xTimerReset( timerHandleType xTimer, portTickType xBlockTime )
 {
-	//portBaseType xReturn;
-	//portBaseType xRunningPrivileged;
-	//
-	//	xRunningPrivileged = portRAISE_PRIVILEGE( );
-	//
-	//	xReturn = xTimerReset( xTimer, xBlockTime );
-	//
-	//	/* Was Privilege Level Raised for Wrapper Function? */
-	//	if( xRunningPrivileged != pdTRUE )
-	//	{
-	//		/* Yes, Lower Privilege Level Back to Original Level */
-	//		portLOWER_PRIVILEGE( );
-	//	}
-	//
-	//	return xReturn;
+	/* Stop then restart the timer */
 	return pdPASS;
 }
 

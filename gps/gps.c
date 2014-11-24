@@ -88,7 +88,6 @@ void send_string_to_gps(uint8_t *strin, uint16_t len) {
 
 	for (i = 0; i < len; i++) {
 		send_byte_on_uart(strin[i]);
-		//UART_putChar(UART, strin[i]);
 	}
 
 }
@@ -142,46 +141,6 @@ uint16_t send_nmea_query_msg(NMEAType querytype) {
 
 	return pdPASS ;
 }
-
-/* send nmea message to alter baud rate */
-uint16_t send_nmea_setmaxbaud_msg(void) {
-
-	if (g_current_gps_baud == GPS_9600) {
-
-		/* append checksum */
-		gen_and_append_checksum(&at_PSRF100[0]);
-		/* send command */
-		send_string_to_gps(&at_PSRF100[0], 25);
-		/* send return carriage */
-		send_new_line_string_for_gps();
-
-		g_current_gps_baud = GPS_38400;
-		return pdPASS ;
-	} else {
-		return pdFAIL ;
-	}
-}
-
-///* convert ascii type of gps messages to ints */
-//int16_t mcs_asciihex_to_int(char* instr, uint8_t len) {
-//	uint16_t val = 0;
-//	uint8_t i;
-//
-//	for (i = 0; i < len; i++) {
-//
-//		/* make sure ascii values are in range */
-//		if ((instr[i] > '9') || (instr[i] < '0')) {
-//			return -1;
-//		} else {
-//			val += ((instr[i] - '0') * mcs_pow(10, (len - i - 1)));
-//		}
-//
-//	}
-//
-//	return val;
-//}
-
-
 
 /* parse rmc type gps messages */
 uint32_t parse_rmc_msg(GPSDATA_S* rmc, uint8_t *instr) {
@@ -590,9 +549,6 @@ static uint32_t flush_gps_responses(const uint32_t timeout) {
 		//wait detect error or ok response
 		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) 0x07d0))) {
 			send_byte_on_uart(cByteRxed);
-			//if( xTimerStart(xGPSTimer, portMAX_DELAY) != pdPASS){
-			//	error_flag = pdFAIL;
-			//}
 		}
 	}
 
