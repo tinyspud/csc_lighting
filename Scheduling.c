@@ -21,12 +21,12 @@ portBaseType xTimerChangePeriod( timerHandleType xTimer,
 		portTickType xNewPeriod,
 		portTickType xBlockTime )
 {
-	return 0;
+	return pdPASS;
 }
 
 
 portBaseType xTimerStart( timerHandleType xTimer, portTickType xBlockTime ){
-	return 0;
+	return pdPASS;
 }
 
 portBaseType xTimerReset( timerHandleType xTimer, portTickType xBlockTime )
@@ -46,7 +46,7 @@ portBaseType xTimerReset( timerHandleType xTimer, portTickType xBlockTime )
 	//	}
 	//
 	//	return xReturn;
-	return 0;
+	return pdPASS;
 }
 
 portBaseType xTimerStop( timerHandleType xTimer, portTickType xBlockTime )
@@ -66,7 +66,7 @@ portBaseType xTimerStop( timerHandleType xTimer, portTickType xBlockTime )
 	//	}
 	//
 	//	return xReturn;
-	return 0;
+	return pdPASS;
 }
 
 
@@ -79,5 +79,5 @@ portBaseType xTimerCreate( const portCharType *pcTimerName,
 		timerHandleType *pxTimerHandle,
 		timerInstanceParametersType *pxTimerInstance )
 {
-	return 0;
+	return pdPASS;
 }

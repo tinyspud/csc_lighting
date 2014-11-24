@@ -91,8 +91,8 @@ void sciInit(void)
 
 
     /** - set SCI pins pullup/pulldown enable */
-    scilinREG->PIO7 = (uint32)((uint32)1U << 2U)  /* tx pin */
-                    | (uint32)((uint32)1U << 1U); /* rx pin */
+    scilinREG->PIO7 = (uint32)((uint32)0U << 2U)  /* tx pin */
+                    | (uint32)((uint32)0U << 1U); /* rx pin */
 
 
     /** - set SCI pins pullup/pulldown select */
@@ -104,8 +104,8 @@ void sciInit(void)
     scilinREG->SETINTLVL = (uint32)((uint32)0U << 26U)  /* Framing error */
                          | (uint32)((uint32)0U << 25U)  /* Overrun error */
                          | (uint32)((uint32)0U << 24U)  /* Parity error */
-                         | (uint32)((uint32)1U << 9U)  /* Receive */
-                         | (uint32)((uint32)1U << 8U)  /* Transmit */
+                         | (uint32)((uint32)0U << 9U)  /* Receive */
+                         | (uint32)((uint32)0U << 8U)  /* Transmit */
                          | (uint32)((uint32)0U << 1U)  /* Wakeup */
                          | (uint32)((uint32)0U << 0U);  /* Break detect */
 

@@ -150,10 +150,10 @@ typedef enum {
 #define GPS_RECOMMENDED_DATE_STR	9
 
 
-#define GPS_1PPS_PORT		hetPORT
-#define GPS_LOCKIND_PORT	hetPORT
-#define GPS_RFPWRUP_PORT	hetPORT
-#define GPS_ON_OFF_PORT		hetPORT
+#define GPS_1PPS_PORT		hetPORT1
+#define GPS_LOCKIND_PORT	hetPORT1
+#define GPS_RFPWRUP_PORT	hetPORT1
+#define GPS_ON_OFF_PORT		hetPORT1
 
 #define GPS_1PPS_PIN	14
 #define GPS_LOCKIND_PIN	16

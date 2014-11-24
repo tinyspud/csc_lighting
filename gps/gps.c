@@ -18,6 +18,7 @@
 #include "sci.h"
 #include "gps.h"
 #include "gio.h"
+#include "het.h"
 
 
 #define WDCNTMAX	6	//maximum word size for parsing
@@ -705,11 +706,9 @@ void prvGPSTimerCallback(timerHandleType xExpiredTimer) {
 
 /*turn device on, get out of reset */
 void power_on_gps(void) {
-	/*GIOA4 = EN_3O3V */
-	gioSetBit(gioPORTA, 4, 1);
 	/* take GPS out of reset */
-	gioSetBit(gioPORTA, 6, 1);
-
+//	gioSetBit(gioPORTA, 6, 1);
+/* TODO rewrite */
 	/*GIOA5= GPS_EN */
 	//	gioSetBit(gioPORTA, 5, 1);
 	/*delay for one second and then raise GPS_EN */
@@ -718,7 +717,7 @@ void power_on_gps(void) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 			for (;;) {
 				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-					gioSetBit(gioPORTA, 5, 1);
+//					gioSetBit(gioPORTA, 5, 1);
 					break;
 				}
 			}
@@ -729,7 +728,8 @@ void power_on_gps(void) {
 	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 		for (;;) {
 			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-				gioSetBit(gioPORTA, 5, 0);
+//				gioSetBit(gioPORTA, 5, 0);
+				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
 				break;
 			}
 		}
@@ -739,7 +739,7 @@ void power_on_gps(void) {
 }
 
 void reset_gps(void) {
-	gioSetBit(gioPORTA, 6, 0);
+//	gioSetBit(gioPORTA, 6, 0);
 	g_gps_timer_expired_flag = FALSE_FLAG;
 	if (xTimerChangePeriod(xGPSTimer, 1000, portMAX_DELAY) == pdPASS ) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
@@ -751,7 +751,7 @@ void reset_gps(void) {
 			break;
 		}
 	}
-	gioSetBit(gioPORTA, 6, 1);
+//	gioSetBit(gioPORTA, 6, 1);
 
 	/*delay for one second and then raise GPS_EN */
 	g_gps_timer_expired_flag = FALSE_FLAG;
@@ -759,7 +759,8 @@ void reset_gps(void) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 			for (;;) {
 				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-					gioSetBit(gioPORTA, 5, 1);
+//					gioSetBit(gioPORTA, 5, 1);
+					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
 					break;
 				}
 			}
@@ -770,7 +771,8 @@ void reset_gps(void) {
 	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 		for (;;) {
 			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-				gioSetBit(gioPORTA, 5, 0);
+//				gioSetBit(gioPORTA, 5, 0);
+				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
 				break;
 			}
 		}
@@ -796,21 +798,21 @@ uint32_t init_gps(void) {
 	}
 
 	/*make sure GPS is powered on */
-	power_on_gps();
-
-	/*Delay for one second after starting GPS */
-	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, 1000, portMAX_DELAY) == pdPASS ) {
-		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
-
-		}
-	}
-	for (;;) {
-		if (g_gps_timer_expired_flag == TRUE_FLAG) {
-			break;
-		}
-	}
-
+//	power_on_gps();
+/* TODO fix */
+//	/*Delay for one second after starting GPS */
+//	g_gps_timer_expired_flag = FALSE_FLAG;
+//	if (xTimerChangePeriod(xGPSTimer, 1000, portMAX_DELAY) == pdPASS ) {
+//		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
+//
+//		}
+//	}
+//	for (;;) {
+//		if (g_gps_timer_expired_flag == TRUE_FLAG) {
+//			break;
+//		}
+//	}
+//
 	/* set all rates to zero */
 	disable_gps_msg(RMC);
 	disable_gps_msg(GLL);
