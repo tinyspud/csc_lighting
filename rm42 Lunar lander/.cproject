@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="out" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.273440030" name="Debug" parent="com.ti.ccstudio.buildDefinitions.TMS470.Debug" prebuildStep=".\..\GitGrabber.exe --dir=&quot;.\..\&quot; --dest=&quot;.\..\&quot;">
+				<configuration artifactExtension="out" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.273440030" name="Debug" parent="com.ti.ccstudio.buildDefinitions.TMS470.Debug" prebuildStep=".\..\..\GitGrabber.exe --dir=&quot;.\..\..\&quot; --dest=&quot;.\..\&quot;">
 					<folderInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.273440030." name="/" resourcePath="">
 						<toolChain id="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.DebugToolchain.2084452142" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.DebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.linkerDebug.1612381810">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.55044396" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">
@@ -164,4 +164,12 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/Penetrometer"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/Penetrometer"/>
+		</configuration>
+	</storageModule>
 </cproject>
