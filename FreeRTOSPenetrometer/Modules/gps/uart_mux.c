@@ -193,11 +193,11 @@ uint32_t init_uartmux(void) {
 
 	/* Create generic UARTMUX timer */
 	xUARTMUXTimer = xTimerCreate(
-			"UARTMUX generic Timer",	/* Unique name */
-			125,					/* Period (# ticks) */
-			pdFALSE,				/* Auto reload timer? */
-			"UART_MUX_TIMER_ID",						/* Unique ID (so callback can link to several timers) */
-			prvUARTMUXTimerCallback	/* Callback function (see above) */
+			"UARTMUX generic Timer",		/* Unique name */
+			(0.125 * configTICK_RATE_HZ),	/* Period (# ticks) */
+			pdFALSE,						/* Auto reload timer? */
+			"UART_MUX_TIMER_ID",			/* Unique ID (so callback can link to several timers) */
+			prvUARTMUXTimerCallback			/* Callback function (see above) */
 	);
 
 	/* Start UARTMUX timer - if it's already started, calling this just restarts it */

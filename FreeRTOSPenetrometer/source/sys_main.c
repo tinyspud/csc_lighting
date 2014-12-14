@@ -63,6 +63,7 @@
 #include "eink.h"
 #include "sys_vim.h"
 
+#include "uart_mux.h"
 #include "gps.h"
 #include "mcs_time.h"
 
@@ -131,13 +132,8 @@ void main(void)
 	/* Init the clock */
 	init_system_clock();
 
-		/* Create generic GPS timer */
-		xGPSTimer = xTimerCreate("GPS generic Timer", /* Unique name */
-				3000, /* Period (# ticks) */
-				pdFALSE, /* Auto reload timer? */
-				"GPS_TIMER_ID", /* Unique ID (so callback can link to several timers) */
-				prvGPSTimerCallback /* Callback function (see above) */
-		);
+	/* Init UART Mux */
+	uartmux_sci_init();
 
     /* Create Task 1 */
     if (xTaskCreate(
