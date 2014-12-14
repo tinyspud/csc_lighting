@@ -11,6 +11,7 @@
 ; import reference for interrupt routines
 
     .ref _c_int00
+    .ref vPortSWI
     .ref _dabort
     .ref phantomInterrupt
     .def resetEntry
@@ -22,8 +23,7 @@ resetEntry
         b   _c_int00
 undefEntry
         b   undefEntry
-svcEntry
-        b   svcEntry
+        b   vPortSWI
 prefetchEntry
         b   prefetchEntry
         b   _dabort

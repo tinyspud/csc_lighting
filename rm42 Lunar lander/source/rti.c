@@ -811,19 +811,19 @@ void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 /* USER CODE BEGIN (73) */
 /* USER CODE END */
 
-/** @fn void rtiCompare0Interrupt(void)
+/** @fn void vPortPreemptiveTick(void)
 *   @brief RTI1 Compare 0 Interrupt Handler
 *
 *   RTI1 Compare 0 interrupt handler 
 *
 */
-#pragma CODE_STATE(rtiCompare0Interrupt, 32)
-#pragma INTERRUPT(rtiCompare0Interrupt, IRQ)
+#pragma CODE_STATE(vPortPreemptiveTick, 32)
+#pragma INTERRUPT(vPortPreemptiveTick, IRQ)
 
 /* SourceId : RTI_SourceId_022 */
 /* DesignId : RTI_DesignId_022 */
 /* Requirements : HL_SR95 */
-void rtiCompare0Interrupt(void)
+void vPortPreemptiveTick(void)
 {
 /* USER CODE BEGIN (74) */
 /* USER CODE END */

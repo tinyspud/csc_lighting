@@ -58,7 +58,7 @@ typedef enum systemInterrupt
 
 extern void esmHighInterrupt(void);
 extern void phantomInterrupt(void);
-extern void rtiCompare0Interrupt(void);
+extern void vPortPreemptiveTick(void);
 extern void rtiCompare1Interrupt(void);
 extern void rtiCompare2Interrupt(void);
 extern void rtiCompare3Interrupt(void);

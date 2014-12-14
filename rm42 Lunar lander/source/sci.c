@@ -1,4 +1,4 @@
-/** @file sci.c
+/** @file sci.c 
 *   @brief SCI Driver Implementation File
 *   @date 9.Sep.2014
 *   @version 04.01.00
@@ -24,11 +24,11 @@
 */
 static struct g_sciTransfer
 {
-    uint32   mode;         /* Used to check for TX interrupt Enable */
+    uint32   mode;         /* Used to check for TX interrupt Enable */  
     uint32   tx_length;    /* Transmit data length in number of Bytes */
-	uint32   rx_length;    /* Receive data length in number of Bytes */
-    uint8    * tx_data;    /* Transmit data pointer */
-    uint8    * rx_data;    /* Receive data pointer */
+	uint32   rx_length;    /* Receive data length in number of Bytes */  
+    uint8    * tx_data;    /* Transmit data pointer */  	
+    uint8    * rx_data;    /* Receive data pointer */  
 } g_sciTransfer_t;
 
 
@@ -63,7 +63,7 @@ void sciInit(void)
                     | (uint32)((uint32)0U << 3U)  /* even parity, otherwise odd */
                     | (uint32)((uint32)0U << 2U)  /* enable parity */
                     | (uint32)((uint32)1U << 1U);  /* asynchronous timing mode */
-
+                    
     /** - set baudrate */
     scilinREG->BRS = 650U;  /* baudrate */
 
@@ -177,7 +177,7 @@ void sciSetBaudrate(sciBASE_t *sci, uint32 baud)
 	temp = (f*(baud + 1U));
 	temp2 = ((vclk)/((float64)temp));
 	sci->BRS = (uint32)((uint32)temp2 & 0x00FFFFFFU);
-
+	
 /* USER CODE BEGIN (7) */
 /* USER CODE END */
 }
@@ -223,8 +223,8 @@ void sciSendByte(sciBASE_t *sci, uint8 byte)
 /* USER CODE END */
 
 	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
-    while ((sci->FLR & (uint32)SCI_TX_INT) == 0U)
-    {
+    while ((sci->FLR & (uint32)SCI_TX_INT) == 0U) 
+    { 
     } /* Wait */
     sci->TD = byte;
 
@@ -245,7 +245,7 @@ void sciSendByte(sciBASE_t *sci, uint8 byte)
 *   mode transmission of the first byte is started and the routine
 *   returns immediately, sciSend must not be called again until the
 *   transfer is complete, when the sciNotification callback will
-*   be called.  In polling mode, sciSend will not return  until
+*   be called.  In polling mode, sciSend will not return  until 
 *   the transfer is complete.
 *
 *   @note if data word is less than 8 bits, then the data must be left
@@ -257,19 +257,19 @@ void sciSendByte(sciBASE_t *sci, uint8 byte)
 void sciSend(sciBASE_t *sci, uint32 length, uint8 * data)
 {
     uint8 txdata;
-
+	
 /* USER CODE BEGIN (11) */
 /* USER CODE END */
 /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Mode variable is configured in sciEnableNotification()" */
     if ((g_sciTransfer_t.mode & (uint32)SCI_TX_INT) != 0U)
     {
         /* we are in interrupt mode */
-
+        
         g_sciTransfer_t.tx_length = length;
         /*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
         g_sciTransfer_t.tx_data   = data;
 
-        /* start transmit by sending first byte */
+        /* start transmit by sending first byte */        
         /*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
 		txdata = *g_sciTransfer_t.tx_data;
 		sci->TD     = (uint32)(txdata);
@@ -285,7 +285,7 @@ void sciSend(sciBASE_t *sci, uint32 length, uint8 * data)
         {
 	        /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
             while ((sci->FLR & (uint32)SCI_TX_INT) == 0U)
-            {
+            { 
             } /* Wait */
 			/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
 			txdata = *data;
@@ -328,7 +328,7 @@ uint32 sciIsRxReady(sciBASE_t *sci)
 *
 *   @return The Idle flag
 *
-*   Checks to see if the SCI Idle flag is set, returns 0 is flags
+*   Checks to see if the SCI Idle flag is set, returns 0 is flags 
 *   not set otherwise will return the Ilde flag itself.
 */
 /* SourceId : SCI_SourceId_008 */
@@ -387,8 +387,8 @@ uint32 sciReceiveByte(sciBASE_t *sci)
 /* USER CODE END */
 
 	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
-    while ((sci->FLR & (uint32)SCI_RX_INT) == 0U)
-    {
+    while ((sci->FLR & (uint32)SCI_RX_INT) == 0U) 
+    { 
     } /* Wait */
 
     return (sci->RD & (uint32)0x000000FFU);
@@ -401,12 +401,12 @@ uint32 sciReceiveByte(sciBASE_t *sci)
 *   @param[in] length - number of data words to transfer
 *   @param[in] data   - pointer to data buffer to receive data
 *
-*   Receive a block of 'length' bytes long and place it into the
-*   data buffer pointed to by 'data'.  If interrupts have been
+*   Receive a block of 'length' bytes long and place it into the 
+*   data buffer pointed to by 'data'.  If interrupts have been 
 *   enabled the data is received using interrupt mode, otherwise
 *   polling mode is used.  In interrupt mode receive is setup and
-*   the routine returns immediately, sciReceive must not be called
-*   again until the transfer is complete, when the sciNotification
+*   the routine returns immediately, sciReceive must not be called 
+*   again until the transfer is complete, when the sciNotification 
 *   callback will be called.  In polling mode, sciReceive will not
 *   return  until the transfer is complete.
 */
@@ -421,7 +421,7 @@ void sciReceive(sciBASE_t *sci, uint32 length, uint8 * data)
     if ((sci->SETINT & (uint32)SCI_RX_INT) == (uint32)SCI_RX_INT)
     {
         /* we are in interrupt mode */
-
+        
         /* clear error flags */
         sci->FLR = ((uint32) SCI_FE_INT | (uint32) SCI_OE_INT | (uint32) SCI_PE_INT);
 
@@ -430,18 +430,18 @@ void sciReceive(sciBASE_t *sci, uint32 length, uint8 * data)
         g_sciTransfer_t.rx_data   = data;
     }
     else
-    {
+    {   
 	    /*SAFETYMCUSW 30 S MR:12.2,12.3 <APPROVED> "Used for data count in Transmit/Receive polling and Interrupt mode" */
         while (length > 0U)
         {
 	        /*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
-            while ((sci->FLR & (uint32)SCI_RX_INT) == 0U)
-            {
+            while ((sci->FLR & (uint32)SCI_RX_INT) == 0U) 
+            { 
             } /* Wait */
 			/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
             *data = (uint8)(sci->RD & 0x000000FFU);
 			/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
-			/*SAFETYMCUSW 567 S MR:17.1,17.4 <APPROVED> "Pointer operation required." */
+			/*SAFETYMCUSW 567 S MR:17.1,17.4 <APPROVED> "Pointer operation required." */		  			
             data++;
 			length--;
         }
@@ -464,14 +464,14 @@ void sciEnableLoopback(sciBASE_t *sci, loopBackType_t Loopbacktype)
 {
 /* USER CODE BEGIN (19) */
 /* USER CODE END */
-
+    
     /* Clear Loopback incase enabled already */
     sci->IODFTCTRL = 0U;
-
+    
     /* Enable Loopback either in Analog or Digital Mode */
     sci->IODFTCTRL = (uint32)0x00000A00U
                    | (uint32)((uint32)Loopbacktype << 1U);
-
+    
 /* USER CODE BEGIN (20) */
 /* USER CODE END */
 }
@@ -489,10 +489,10 @@ void sciDisableLoopback(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (21) */
 /* USER CODE END */
-
+    
     /* Disable Loopback Mode */
     sci->IODFTCTRL = 0x00000500U;
-
+    
 /* USER CODE BEGIN (22) */
 /* USER CODE END */
 }
@@ -554,15 +554,15 @@ void sciDisableNotification(sciBASE_t *sci, uint32 flags)
 /** @fn void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type)
 *   @brief Get the initial or current values of the SCILIN ( SCI2) configuration registers
 *
-*	@param[in] *config_reg: pointer to the struct to which the initial or current
+*	@param[in] *config_reg: pointer to the struct to which the initial or current 
 *                           value of the configuration registers need to be stored
 *	@param[in] type: 	whether initial or current value of the configuration registers need to be stored
-*						- InitialValue: initial value of the configuration registers will be stored
+*						- InitialValue: initial value of the configuration registers will be stored 
 *                                       in the struct pointed by config_reg
-*						- CurrentValue: initial value of the configuration registers will be stored
+*						- CurrentValue: initial value of the configuration registers will be stored 
 *                                       in the struct pointed by config_reg
 *
-*   This function will copy the initial or current value (depending on the parameter 'type')
+*   This function will copy the initial or current value (depending on the parameter 'type') 
 *   of the configuration registers to the struct pointed by config_reg
 *
 */
@@ -584,22 +584,22 @@ void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type
 		config_reg->CONFIG_PIO1      = SCILIN_PIO1_CONFIGVALUE;
 		config_reg->CONFIG_PIO6      = SCILIN_PIO6_CONFIGVALUE;
 		config_reg->CONFIG_PIO7	     = SCILIN_PIO7_CONFIGVALUE;
-		config_reg->CONFIG_PIO8      = SCILIN_PIO8_CONFIGVALUE;
+		config_reg->CONFIG_PIO8      = SCILIN_PIO8_CONFIGVALUE;	
 	}
 	else
 	{
 	/*SAFETYMCUSW 134 S MR:12.2 <APPROVED> "LDRA Tool issue" */
 		config_reg->CONFIG_GCR0      = scilinREG->GCR0;
-		config_reg->CONFIG_GCR1      = scilinREG->GCR1;
-		config_reg->CONFIG_SETINT    = scilinREG->SETINT;
-		config_reg->CONFIG_SETINTLVL = scilinREG->SETINTLVL;
-		config_reg->CONFIG_FORMAT    = scilinREG->FORMAT;
-		config_reg->CONFIG_BRS       = scilinREG->BRS;
-		config_reg->CONFIG_PIO0      = scilinREG->PIO0;
-		config_reg->CONFIG_PIO1      = scilinREG->PIO1;
-		config_reg->CONFIG_PIO6      = scilinREG->PIO6;
-		config_reg->CONFIG_PIO7	     = scilinREG->PIO7;
-		config_reg->CONFIG_PIO8      = scilinREG->PIO8;
+		config_reg->CONFIG_GCR1      = scilinREG->GCR1; 
+		config_reg->CONFIG_SETINT    = scilinREG->SETINT; 
+		config_reg->CONFIG_SETINTLVL = scilinREG->SETINTLVL; 
+		config_reg->CONFIG_FORMAT    = scilinREG->FORMAT; 
+		config_reg->CONFIG_BRS       = scilinREG->BRS; 
+		config_reg->CONFIG_PIO0      = scilinREG->PIO0; 
+		config_reg->CONFIG_PIO1      = scilinREG->PIO1; 
+		config_reg->CONFIG_PIO6      = scilinREG->PIO6; 
+		config_reg->CONFIG_PIO7	     = scilinREG->PIO7;	 
+		config_reg->CONFIG_PIO8      = scilinREG->PIO8; 
 	}
 }
 
