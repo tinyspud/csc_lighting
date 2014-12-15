@@ -63,8 +63,13 @@
 
 #define MAX_PACKETS 60
 #define MAX_BYTES_PER_REGIDX	110
-#define MAX_BYTES_RECEIVED_PACKET	2
+#define MAX_BYTES_RECEIVED_PACKET	(2 + 1)
+#define MAX_BYTES_COMMAND_PACKET	2
 #define MAX_BYTES_PER_PACKET	(EINK_COMMAND_OVERHEAD + MAX_BYTES_PER_REGIDX)
+#define EINK_COG_ID_PACKET_LEN	2
+
+#define EINK_VERSION		0x02
+#define EINK_VERSION_MASK	0x0F
 
 /* Pixel color - only 2 bits active */
 typedef enum PixelColor{
@@ -159,7 +164,7 @@ static int l_current_row;
 /* SPI port config data */
 spiDAT1_t dataconfig1_t;
 
-void init_display_buffers(void);
+void init_display_buffers_and_pins(void);
 
 void uploadImageLine_post_bitflip(spiDAT1_t, uint16 *);
 
@@ -226,5 +231,7 @@ boolean is_scratch_on_screen(void);
 void epaper_power_on_sequence();
 
 void epaper_start_COG_driver();
+
+uint16_t read_epaper_version();
 
 #endif /* EINK_H_ */

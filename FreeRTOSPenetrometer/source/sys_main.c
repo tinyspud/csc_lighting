@@ -106,7 +106,7 @@ void main(void)
     if (xTaskCreate(
     		display_task,	/* Task code */
     		"DisplayTask",	/* Name */
-    		1024,			/* Stack Depth */
+    		2048,			/* Stack Depth */
     		NULL,			/* Parameters */
     		1 | portPRIVILEGE_BIT ,	/* Priority */
     		&xDisplayTaskHandle	/* Created task */

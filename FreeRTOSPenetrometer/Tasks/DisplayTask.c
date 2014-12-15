@@ -39,7 +39,7 @@ void display_task( void* p_params )
 	__display_load_state = EINK_UNINIT;
 
 	/* Init the display buffers (they're very large) */
-	init_display_buffers();
+	init_display_buffers_and_pins();
 	gc_is_display_busy = false;
 
 	l_can_press = false;

@@ -74,6 +74,10 @@ extern char g_mcs_nickname[MAX_KEYVALUE_LENGTH];
 
 #define PRINTED_RECEIPT_LENGTH	(300)
 
+#define MAKE_UINT8_T_INTO_UINT16_T_LSB(x)	((uint16_t)(0x00FF & (uint16_t)x))
+#define MAKE_UINT16_T_LSB_INTO_UINT8_T(x)	((uint8_t)(0x00FF & x))
+
+#define MASK_AND_CHECK_VALUE(val, mask)		((mask) & (val))
 
 uint16_t pow10uint16(int);
 

@@ -49,7 +49,7 @@
 #include "eink.h"
 #include "gio.h"
 #include "DisplayTask.h"
-
+#include "common.h"
 
 /* scratch_screen is memory copy of what's been transmitted to the
  * display.  This is stored in the non-bit-flipped version */
@@ -62,7 +62,7 @@ uint8 scratch_screen[LINES_ON_SCREEN][BYTES_IN_1_LINE];
  * Upon a load, the local copy will be updated and the working copy is
  * cleared.
  */
-void init_display_buffers(void) {
+void init_display_buffers_and_pins(void) {
 	__display_black_on_white = TRUE;
 
 	int i = 0;
@@ -80,7 +80,21 @@ void init_display_buffers(void) {
 			scratch_screen[i][j] = 0;
 		}
 	}
+
+	/* Init the data config parameter too */
+	dataconfig1_t.CS_HOLD = FALSE;
+	dataconfig1_t.WDEL    = TRUE;
+	dataconfig1_t.DFSEL   = SPI_FMT_0;
+	dataconfig1_t.CSNR    = 0xFE;
+
+	/* Set all pins high */
+	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1); // border pin ignored on 2" display
+	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 1);
 }
+
+
 
 void epaper_power_on_sequence(){
 	/* Power on sequence for G2 COG driver - taken from Pervasive Displays Doc
@@ -112,10 +126,19 @@ void epaper_power_on_sequence(){
 
 /* Start EPaper COG (chip-on-glass) driver */
 void epaper_start_COG_driver(){
+	uint8_t epaper_version = 0;
 	/* Start with power on sequence, then wait for busy pin to go high */
 	wait_to_not_busy();
 
 	/* Check the COG ID */
+	epaper_version = MAKE_UINT16_T_LSB_INTO_UINT8_T(read_epaper_version());
+//	epaper_version = (uint8_t)(read_epaper_version());
+//	read_epaper_version();
+	/* Check the version against what this code is written for */
+	if(MASK_AND_CHECK_VALUE(epaper_version, EINK_VERSION_MASK) != EINK_VERSION)
+		return; /* version mismatch */
+
+
 }
 
 
@@ -131,11 +154,11 @@ int manage_eink(int state){
 	switch(state){
 	default:
 	case EINK_UNINIT:
-		// init spi port configuration parameters
-		dataconfig1_t.CS_HOLD = FALSE;
-		dataconfig1_t.WDEL    = TRUE;
-		dataconfig1_t.DFSEL   = SPI_FMT_0;
-		dataconfig1_t.CSNR    = 0xFE;
+//		// init spi port configuration parameters
+//		dataconfig1_t.CS_HOLD = FALSE;
+//		dataconfig1_t.WDEL    = TRUE;
+//		dataconfig1_t.DFSEL   = SPI_FMT_0;
+//		dataconfig1_t.CSNR    = 0xFE;
 
 		display_cs_on();
 		display_cs_off();
@@ -500,7 +523,6 @@ uint16 do_bit_flip_for_epd(uint8 bit_in){
 	return x;
 }
 
-#define MAKE_UINT8_T_INTO_UINT16_T_LSB(x)	((uint16_t)(0x00FF | (uint16_t)x))
 
 void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
 	/* This function assumes the user has formatted [arguments] properly
@@ -508,11 +530,11 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 
 	int len = 0, i = 0;
 	static uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
-			receive_data[MAX_BYTES_RECEIVED_PACKET] = { 0 };
+			receive_data[MAX_BYTES_PER_PACKET] = { 0 };
 
-	for(i = 0; (i < MAX_BYTES_PER_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
+	for(i = 0; (i < MAX_BYTES_PER_PACKET); i++){
 		if(i < MAX_BYTES_PER_PACKET){ send_data[i] = 0U; }
-		if(i < MAX_BYTES_RECEIVED_PACKET){ receive_data[i] = 0U; }
+		if(i < MAX_BYTES_PER_PACKET){ receive_data[i] = 0U; }
 	}
 
 	len = get_eink_reg_len(regidx);
@@ -543,22 +565,22 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 	}
 }
 
-void read_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
+int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 	/* This function assumes the user has formatted [arguments] properly
 	 * and will use the reg idx length */
 
 	int len = 0, i = 0;
-	static uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
-			receive_data[MAX_BYTES_RECEIVED_PACKET] = { 0 };
+	static uint16_t send_data[MAX_BYTES_COMMAND_PACKET] = { 0 },
+			receive_data[MAX_BYTES_COMMAND_PACKET] = { 0 };
 
-	for(i = 0; (i < MAX_BYTES_PER_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
-		if(i < MAX_BYTES_PER_PACKET){ send_data[i] = 0U; }
+	for(i = 0; (i < MAX_BYTES_COMMAND_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
+		if(i < MAX_BYTES_COMMAND_PACKET){ send_data[i] = 0U; }
 		if(i < MAX_BYTES_RECEIVED_PACKET){ receive_data[i] = 0U; }
 	}
 
 	len = get_eink_reg_len(regidx);
 
-	if((len > 0) && (len >= arg_len)){
+	if(len > 0){
 		/* Load in the command and reg index */
 		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_HEADER);
 		send_data[1] = MAKE_UINT8_T_INTO_UINT16_T_LSB(regidx);
@@ -572,16 +594,46 @@ void read_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
 
 		/* Send data */
 		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_WRITE);
-		for(i = 0; i < arg_len; i++)
-			send_data[i + 1] = arguments[i];
+		for(i = 0; i < len; i++)
+			send_data[i + 1] = 0U;
 
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 	}
+
+	return len;
+}
+
+uint16_t read_epaper_version(){
+
+	/* This function assumes the user has formatted [arguments] properly
+	 * and will use the reg idx length */
+
+	int len = 0, i = 0;
+	uint16_t send_data[EINK_COG_ID_PACKET_LEN] = { 0 },
+			receive_data[EINK_COG_ID_PACKET_LEN] = { 0 };
+
+	for(i = 0; i < EINK_COG_ID_PACKET_LEN; i++){
+		if(i < EINK_COG_ID_PACKET_LEN){ send_data[i] = 0U; }
+		if(i < EINK_COG_ID_PACKET_LEN){ receive_data[i] = 0U; }
+	}
+
+	/* Load in the command and reg index */
+	send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_COG_ID);
+	send_data[1] = 0U;
+
+	/* Send write to register */
+	display_cs_on();
+	waitDisplayDrver(EINK_CS_DELAY);
+	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+	waitDisplayDrver(EINK_CS_DELAY);
+	display_cs_off();
+
+	return receive_data[1];
 }
 
 
