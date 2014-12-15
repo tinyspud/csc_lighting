@@ -44,6 +44,12 @@ void display_task( void* p_params )
 
 	l_can_press = false;
 
+	/* Wait from the time that the RTOS started 5 ms before you put the display into reset */
+	epaper_power_on_sequence();
+
+	/* Start the epaper COG driver */
+	epaper_start_COG_driver();
+
 	for (;;){
 		/* Look at who's calling so you know where to give the response */
 

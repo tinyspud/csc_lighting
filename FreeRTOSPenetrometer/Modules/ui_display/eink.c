@@ -22,8 +22,24 @@
  *  created.
  *
  *  Jan 31, '14 - C Chock, IDG
+ *
+ *
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *  Modifying for use on pervisave displays 2.0" and 2.7" e apper displays
+ *
+ *  Modified for use on RM42 (smaller ARM) so the current screen parameter is
+ *  deleted and the screen is only modified upon changes from anyone who wants
+ *  display to UI
+ *
+ *  Modified Dec. 14, '14 - C Chock, Beaumont
+ *  chris@beaumontdesign.com
+ *
  */
 
+#include "FreeRTOSConfig.h"
+#include "FreeRTOS.h"
+#include "os_mpu_wrappers.h"
 #include "sys_common.h"
 #include "system.h"
 #include "spi.h"
@@ -34,8 +50,6 @@
 #include "gio.h"
 #include "DisplayTask.h"
 
-//spiREG1
-#define EINK_SPIPORT 	spiREG1
 
 /* scratch_screen is memory copy of what's been transmitted to the
  * display.  This is stored in the non-bit-flipped version */
@@ -67,6 +81,43 @@ void init_display_buffers(void) {
 		}
 	}
 }
+
+void epaper_power_on_sequence(){
+	/* Power on sequence for G2 COG driver - taken from Pervasive Displays Doc
+	 * #4P015-00 */
+
+	/* Set CS, border, reset high */
+	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1); // border pin ignored on 2" display
+
+	/* Wait 5 ms */
+	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+
+	/* After 5 ms delay, set reset low */
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+
+	/* Wait 5 ms */
+	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+
+	/* After 5 ms delay, set reset back high */
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
+
+	/* Wait 5 ms */
+	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+
+	/* Now can use COG driver */
+	return;
+}
+
+/* Start EPaper COG (chip-on-glass) driver */
+void epaper_start_COG_driver(){
+	/* Start with power on sequence, then wait for busy pin to go high */
+	wait_to_not_busy();
+
+	/* Check the COG ID */
+}
+
 
 /* Break code into blocks that can be executed on timer ticks by the RTOS -
  * advance the execution through blocks at states since the RM48 is so fast and the
@@ -106,7 +157,6 @@ int manage_eink(int state){
 		// reset pointer
 		if(waiter > 0)
 			waiter--;
-
 
 		if(waiter < 1){
 			temp = 0;
@@ -159,8 +209,6 @@ int manage_eink(int state){
 		rtnval = EINK_REFRESH;
 		break;
 	case EINK_REFRESH:
-
-
 		wait_to_not_busy();
 		displayUpdate(dataconfig1_t);
 		waiter = EINK_WAIT_PERIOD;
@@ -252,11 +300,40 @@ uint32 getCmdResponse(spiDAT1_t dataconfig1_t) {
 	return value;
 }
 
+uint8_t get_eink_reg_len(uint16_t RegIdx){
+	switch(RegIdx){
+	case 0x01:
+		return EINK_REG_IDX_1_LEN;
+	case 0x02:
+		return EINK_REG_IDX_2_LEN;
+	case 0x03:
+		return EINK_REG_IDX_3_LEN;
+	case 0x04:
+		return EINK_REG_IDX_4_LEN;
+	case 0x05:
+		return EINK_REG_IDX_5_LEN;
+	case 0x07:
+		return EINK_REG_IDX_7_LEN;
+	case 0x08:
+		return EINK_REG_IDX_8_LEN;
+	case 0x09:
+		return EINK_REG_IDX_9_LEN;
+	case 0x0A:
+		return EINK_REG_IDX_A_LEN;
+	case 0x0B:
+		return EINK_REG_IDX_B_LEN;
+	case 0x0F:
+		return EINK_REG_IDX_F_LEN;
+	default:
+		return 0;
+	}
+}
+
 uint32 getDevInfo(spiDAT1_t dataconfig1_t) {
 	// max 250
-	dummysenddata[0] = 0x30;
-	dummysenddata[1] = 0x01;
-	dummysenddata[2] = 0x01;
+	dummysenddata[0] = 0x70;
+	dummysenddata[1] = 0x01;	// register index
+	dummysenddata[2] = 0x72;
 	dummysenddata[3] = 0x00;
 	uint16 dummysenddata2[30];
 	uint16 returnValue2[30] = {0U,0U};
@@ -279,10 +356,6 @@ uint32 getDevInfo(spiDAT1_t dataconfig1_t) {
 	waitDisplayDrver(7000);
 
 	wait_to_not_busy();
-	//	while(gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN) != 1 && (i++ < 40)) {
-	//		//do nothing wait while busy
-	//		waitDisplayDrver(420);
-	//	}
 
 	display_cs_on();
 	waitDisplayDrver(EINK_CS_DELAY);
@@ -301,12 +374,10 @@ uint32 getDevInfo(spiDAT1_t dataconfig1_t) {
 
 void display_cs_on(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
-	gioSetBit(hetPORT1, 2, 1);
 }
 
 void display_cs_off(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
-	gioSetBit(hetPORT1, 2, 0);
 }
 
 void display_en_on(){
@@ -315,98 +386,6 @@ void display_en_on(){
 
 void display_en_off(){
 	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 1);
-}
-
-/* Deprecated */
-void uploadImageData(spiDAT1_t dataconfig1_t,uint16 *displayBuf) {
-	dummysenddata[0] = 0x20;
-	dummysenddata[1] = 0x01;
-	dummysenddata[2] = 0x00;
-	dummysenddata[3] = 250U;
-	uint16 i = 0;
-	//uint16 temp = 0U;
-
-	for(i = 0; i < 250  ; i++) {
-		dummysenddata[i+4] = displayBuf[i];
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 254U, dummysenddata, returnValue);
-
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-	i = 0;
-	gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN);
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
-}
-
-///* Show test text and snoopy */
-//void splash_sample(){
-//	/* Set the write buffer to the sample image */
-//	int i = 0;
-//	int j = 0;
-//	for(i = 0; i < __SAMPLE_IMAGE_NUM_ROWS; i++){
-//		for(j = 0; j < __SAMPLE_IMAGE_NUM_BYTES; j++){
-//			scratch_screen[i][j] = sample_image[i][j];
-//		}
-//	}
-//}
-
-void uploadImageFromHeader(spiDAT1_t dataconfig1_t,uint16 *displayBuf) {
-
-	dummysenddata[0] = 0x20;
-	dummysenddata[1] = 0x01;
-	dummysenddata[2] = 0x00;
-	dummysenddata[3] = BYTES_IN_1_LINE;
-	uint16 i = 0;
-
-	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
-		dummysenddata[i+4] = displayBuf[i];
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, BYTES_IN_1_LINE_PACKET, dummysenddata, returnValue);
-
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
-}
-
-void uploadImageLine_post_bitflip(spiDAT1_t dataconfig1_t,uint16 *displayBuf) {
-
-	dummysenddata[0] = 0x20;
-	dummysenddata[1] = 0x01;
-	dummysenddata[2] =  0x00;
-	dummysenddata[3] = BYTES_IN_1_LINE;
-	uint16 i = 0;
-
-	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
-		dummysenddata[i+4] = __display_black_on_white ? displayBuf[i] : ~displayBuf[i];
-		/* TODO:make copy to scratch_screen[][] here */
-		scratch_screen[l_current_row][i] = undo_bit_flip_for_epd(dummysenddata[i+4]);
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, BYTES_IN_1_LINE_PACKET, dummysenddata, returnValue);
-
-	/* Only can load that many lines */
-	if(l_current_row < LINES_ON_SCREEN)
-		l_current_row++;
-
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
 }
 
 void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf) {
@@ -521,21 +500,90 @@ uint16 do_bit_flip_for_epd(uint8 bit_in){
 	return x;
 }
 
-uint8 undo_bit_flip_for_epd(uint16 bit_in){
-	uint8 x = 0;
+#define MAKE_UINT8_T_INTO_UINT16_T_LSB(x)	((uint16_t)(0x00FF | (uint16_t)x))
 
-	/* do the bit flipping */
-	x |= (uint8)(bit_in & 0x01U);  /* Bit 0 */
-	x |= (uint8)((bit_in & 0x02U) >> 1 << 2);  /* Bit 1 */
-	x |= (uint8)((bit_in & 0x04U) >> 2 << 4);  /* Bit 2 */
-	x |= (uint8)((bit_in & 0x08U) >> 3 << 6);  /* Bit 3 */
-	x |= (uint8)((bit_in & 0x10U) >> 4 << 1);  /* Bit 4 */
-	x |= (uint8)((bit_in & 0x20U) >> 5 << 3);  /* Bit 5 */
-	x |= (uint8)((bit_in & 0x40U) >> 6 << 5);  /* Bit 6 */
-	x |= (uint8)((bit_in & 0x80U) >> 7 << 7);  /* Bit 7 */
+void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
+	/* This function assumes the user has formatted [arguments] properly
+	 * and will use the reg idx length */
 
-	return x;
+	int len = 0, i = 0;
+	static uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
+			receive_data[MAX_BYTES_RECEIVED_PACKET] = { 0 };
+
+	for(i = 0; (i < MAX_BYTES_PER_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
+		if(i < MAX_BYTES_PER_PACKET){ send_data[i] = 0U; }
+		if(i < MAX_BYTES_RECEIVED_PACKET){ receive_data[i] = 0U; }
+	}
+
+	len = get_eink_reg_len(regidx);
+
+	if((len > 0) && (len >= arg_len)){
+		/* Load in the command and reg index */
+		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_HEADER);
+		send_data[1] = MAKE_UINT8_T_INTO_UINT16_T_LSB(regidx);
+
+		/* Send write to register */
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+
+		/* Send data */
+		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_WRITE);
+		for(i = 0; i < arg_len; i++)
+			send_data[i + 1] = arguments[i];
+
+		/* Send write to register */
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+	}
 }
+
+void read_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
+	/* This function assumes the user has formatted [arguments] properly
+	 * and will use the reg idx length */
+
+	int len = 0, i = 0;
+	static uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
+			receive_data[MAX_BYTES_RECEIVED_PACKET] = { 0 };
+
+	for(i = 0; (i < MAX_BYTES_PER_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
+		if(i < MAX_BYTES_PER_PACKET){ send_data[i] = 0U; }
+		if(i < MAX_BYTES_RECEIVED_PACKET){ receive_data[i] = 0U; }
+	}
+
+	len = get_eink_reg_len(regidx);
+
+	if((len > 0) && (len >= arg_len)){
+		/* Load in the command and reg index */
+		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_HEADER);
+		send_data[1] = MAKE_UINT8_T_INTO_UINT16_T_LSB(regidx);
+
+		/* Send write to register */
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+
+		/* Send data */
+		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_WRITE);
+		for(i = 0; i < arg_len; i++)
+			send_data[i + 1] = arguments[i];
+
+		/* Send write to register */
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+	}
+}
+
 
 void uploadEpdHeader(spiDAT1_t dataconfig1_t) {
 	uint16 dummysenddata[30] = {0x20,0x01,0x00,16U,0x33, 0x01, 0x90, 0x01, 0x2C, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -579,10 +627,13 @@ void displayResetPointer(spiDAT1_t dataconfig1_t) {
 	waitDisplayDrver(EINK_CS_DELAY);
 	display_cs_off();
 }
-static void waitDisplayDrver(uint32 time)
+
+/* Wait [time] x 10 us */
+/* TODO fix all magic values coming into here */
+static void waitDisplayDrver(TickType_t time)
 {
-	while(time != 0)
-		time--;
+	TickType_t start_tick = xTaskGetTickCount();
+	while((xTaskGetTickCount()) < (time + start_tick)) { }
 }
 
 /* return true if port is busy, false if not busy
@@ -615,14 +666,12 @@ boolean timeout_to_not_busy(boolean inval){
 
 /* Stalls until the busy pin goes high (indicating not busy) */
 void wait_to_not_busy(){
-	//	gioSetBit(gioPORTA, 2, 1);
 	while((gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN) &
 			gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN))!= 1) {
 		//do nothing wait while busy
-		waitDisplayDrver(420);
+		waitDisplayDrver(10);
 		_nop();
 	}
-	//	gioSetBit(gioPORTA, 2, 0);
 }
 
 void ui_display_set_black_on_white(){

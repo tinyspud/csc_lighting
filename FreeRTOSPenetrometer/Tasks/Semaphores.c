@@ -10,39 +10,29 @@
 #include "Semaphores.h"
 
 /* Array of semaphore handles */
-static SemaphoreHandle_t bsemaphores[NUM_BSEMAPHORES] =
-{
-		/* UARTMUX binary semaphore */
-		NULL,
-
-		/* MCS CLOCK binary semaphore */
-		NULL,
-
-		/* COM binary semaphore */
-		NULL,
-
-		/* ALFAT read/write (access) binary semaphore */
-		NULL,
-
-};
-
+static SemaphoreHandle_t bsemaphores[NUM_BSEMAPHORES];
 
 /* Binary semaphores function */
-portBASE_TYPE xCreateBinarySemaphores( void )
+BaseType_t xCreateBinarySemaphores( void )
 {
-	portBASE_TYPE xCreateResult = pdFAIL;
+	BaseType_t xCreateResult = pdFAIL;
 	unsigned int bsemaphore_index = 0;
 
 	for (bsemaphore_index=0; bsemaphore_index < NUM_BSEMAPHORES; ++bsemaphore_index)
 	{
+		/* Initialize value to 0 */
+		bsemaphores[bsemaphore_index] = NULL;
+
+		/* Create the semaphore */
 		bsemaphores[bsemaphore_index] = xSemaphoreCreateBinary();
+
+		/* Check to see if semaphore was created */
 		if(bsemaphores[bsemaphore_index] == NULL)
 		{
 			/* Sempahore creation failed */
 			xCreateResult = pdFAIL;
 		}
 	}
-
 	return xCreateResult;
 }
 
@@ -50,44 +40,17 @@ portBASE_TYPE xCreateBinarySemaphores( void )
 /* Get RTOS queue handle for a specified queue index */
 SemaphoreHandle_t bsemaphores_get_semaphore_handle( unsigned bsemaphore_id )
 {
-	if (bsemaphore_id < NUM_BSEMAPHORES)
-	{
-		return bsemaphores[bsemaphore_id];
-	}
-
-	return NULL;
+	return (bsemaphore_id < NUM_BSEMAPHORES) ? bsemaphores[bsemaphore_id] : NULL;
 }
 
-portBASE_TYPE take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay)
+BaseType_t take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay)
 {
-	SemaphoreHandle_t bsemaphore;
-
-
-	bsemaphore = bsemaphores_get_semaphore_handle( bsemaphore_id );
-
-	if (bsemaphore == NULL)
-	{
-		return pdFAIL;
-	}
-
-
-	return xSemaphoreTake(bsemaphore, send_delay);
+	return (bsemaphores_get_semaphore_handle( bsemaphore_id ) == NULL) ? pdFAIL : xSemaphoreTake(bsemaphores_get_semaphore_handle( bsemaphore_id ), send_delay);
 }
 
-portBASE_TYPE give_bsemaphores(unsigned bsemaphore_id)
+BaseType_t give_bsemaphores(unsigned bsemaphore_id)
 {
-	SemaphoreHandle_t bsemaphore;
-
-
-	bsemaphore = bsemaphores_get_semaphore_handle( bsemaphore_id );
-
-	if (bsemaphore == NULL)
-	{
-		return pdFAIL;
-	}
-
-
-	return xSemaphoreGive(bsemaphore);
+	return (bsemaphores_get_semaphore_handle( bsemaphore_id ) == NULL) ? pdFAIL : xSemaphoreGive(bsemaphores_get_semaphore_handle( bsemaphore_id ));
 }
 
 

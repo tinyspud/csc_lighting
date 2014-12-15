@@ -10,11 +10,49 @@
 
 #include "spi.h"
 
-//#define DEBUG_DISPLAY_CS_TIMING
-#define DEBUG_DISPLAY_COMMAND
+
+//#define USING_2_0_INCH_EPAPER
+#define USING_2_7_INCH_EPAPER
 
 //measured at 10.6usec.  check with actually processor setting
-#define EINK_CS_DELAY 140U
+/* CS delay needs to be >= 10 us */
+/* Delay is measured in ticks of 10 us so waiting 2 ticks is sufficient */
+#define EINK_CS_DELAY 		2
+
+#define EINK_REG_HEADER		0x70
+#define EINK_REG_READ		0x73
+#define EINK_REG_WRITE		0x72
+#define EINK_REG_COG_ID		0x71
+
+#define EINK_COMMAND_OVERHEAD	1
+
+#define EINK_REG_IDX_1_LEN	8
+#define EINK_REG_IDX_2_LEN	1
+#define EINK_REG_IDX_3_LEN	1
+#define EINK_REG_IDX_4_LEN	1
+#define EINK_REG_IDX_5_LEN	1
+#define EINK_REG_IDX_7_LEN	1
+#define EINK_REG_IDX_8_LEN	1
+#define EINK_REG_IDX_9_LEN	1
+#define EINK_REG_IDX_A_LEN	110
+#define EINK_REG_IDX_B_LEN	1
+#define EINK_REG_IDX_F_LEN	1
+
+#define EINK_2_0_INCH_COG_ID	0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, 0xE0, 0x00
+#define EINK_2_7_INCH_COG_ID	0x00, 0x00, 0x00, 0x7F, 0xFF, 0xFE, 0x00, 0x00
+
+#define EINK_REG_IDX_SCREEN_SIZE		0x01
+#define EINK_REG_IDX_OE_CTRL			0x02
+#define EINK_REG_IDX_DRIVER_LATCH		0x03
+#define EINK_REG_IDX_POWER_SETTING_1	0x04
+#define EINK_REG_IDX_CHARGE_PUMP_CTRL	0x05
+#define EINK_REG_IDX_PWR_OSC_SETTING	0x07
+#define EINK_REG_IDX_POWER_SETTING_2	0x08
+#define EINK_REG_IDX_VCOM_LEVEL			0x09
+#define EINK_REG_IDX_WRITE_LINE			0x0A
+#define EINK_REG_IDX_POWER_SAVING_MODE	0x0B
+#define EINK_REG_IDX_SELF_CHECK			0x0F
+
 
 /*  */
 #define RSP_GOOD			0x9000U
@@ -24,14 +62,40 @@
 #define RSP_NOT_SUPPORTED	0x6D00
 
 #define MAX_PACKETS 60
-#define MAX_BYTES_PER_PACKET 250
+#define MAX_BYTES_PER_REGIDX	110
+#define MAX_BYTES_RECEIVED_PACKET	2
+#define MAX_BYTES_PER_PACKET	(EINK_COMMAND_OVERHEAD + MAX_BYTES_PER_REGIDX)
 
-#define BYTES_IN_1_LINE 50
-#define LINES_ON_SCREEN 300
+/* Pixel color - only 2 bits active */
+typedef enum PixelColor{
+	PixelBlack = 0x03,		/* Black: 0b11 */
+	PixelWhite = 0x02,		/* White: 0b10 */
+	PixelNothing = 0x00,	/* Nothing: 0b00 */
+}PixelColor_t;
+
+/* Scan line - only 2 bits active */
+typedef enum ScanLine{
+	ScanActiveLine = 0x03,		/* Write this line: 0b11 */
+	ScanInactiveLine = 0x00,	/* Not writing this line: 0b00 */
+}ScanLine_t;
+
+
+#ifdef USING_2_0_INCH_EPAPER
+#define BYTES_IN_1_LINE 25
+#define LINES_ON_SCREEN 96
 #define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
 #define BYTES_IN_RETURN_MAX	255
+#define EINK_DPI	111
+#else
+#ifdef USING_2_7_INCH_EPAPER
+#define BYTES_IN_1_LINE 33
+#define LINES_ON_SCREEN 176
+#define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
+#define BYTES_IN_RETURN_MAX	255
+#define EINK_DPI	117
+#endif
+#endif
 
-#define ONE_TEXT_LINE 50
 
 /* Value to wait until the timeout */
 #define EINK_WAIT_TO_TIMEOUT 500
@@ -50,18 +114,30 @@
 #define EINK_WAIT_PERIOD 20
 #define MAX_LOAD_ATTEMPTS 10
 
-#define EINK_DPI	113
-
 /* GPIO Ports Needed */
+#define EINK_SPIPORT 			spiREG1
+
 #define EINK_DISPLAY_EN_PORT 	spiPORT1
 #define EINK_BUSY_PORT 			spiPORT1
 #define EINK_CS_PORT			hetPORT1
+#define EINK_RESET_PORT			gioPORTA
+#define EINK_PANEL_ON_PORT		gioPORTA
+#define EINK_DISCHARGE_PORT		gioPORTA
+#define EINK_BORDER_CTRL_PORT	gioPORTA
+
 
 /* GPIO pin number */
 #define EINK_DISPLAY_EN_PIN 	8U /* spi1 EN - set to port out */
 #define EINK_BUSY_PIN			3U /* spi1 CS3 - set to port in */
 #define EINK_CS_PIN				17U /* HET1 pin 17 - set to port out */
+#define EINK_RESET_PIN			1U
+#define EINK_PANEL_ON_PIN		6U
+#define EINK_DISCHARGE_PIN		7U
+#define EINK_BORDER_CTRL_PIN	4U
 
+#define EINK_PWM_PIN			0U
+
+#define EINK_TICKS_IN_1_MS		(1000 / configTICK_RATE_HZ)
 
 /* information for epd header arrays */
 typedef struct epdArrayData
@@ -91,11 +167,7 @@ void uploadImageLine_pre_bitflip(spiDAT1_t, uint8 *);
 
 void wait_to_not_busy(void);
 
-void ui_display_get_current_screen(void);
-
 void uploadImageFromHeader(spiDAT1_t, uint16 *);
-
-void splash_sample(void);
 
 void uploadArray(spiDAT1_t, uint8 *, int);
 
@@ -150,5 +222,9 @@ boolean check_if_busy(void);
 boolean timeout_to_not_busy(boolean);
 
 boolean is_scratch_on_screen(void);
+
+void epaper_power_on_sequence();
+
+void epaper_start_COG_driver();
 
 #endif /* EINK_H_ */

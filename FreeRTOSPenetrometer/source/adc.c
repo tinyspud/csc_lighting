@@ -95,8 +95,8 @@ void adcInit(void)
     *     - Enable/Disable continuous conversion
     */
     adcREG1->GxMODECR[0U] = (uint32)ADC_12_BIT
-                          | (uint32)0x00000000U
-                          | (uint32)0x00000000U;
+                          | (uint32)0x00000020U
+                          | (uint32)0x00000002U;
 
     /** - Setup event group hardware trigger
      *     - Setup hardware trigger edge
@@ -210,7 +210,7 @@ void adcInit(void)
 /** - s_adcSelect is used as constant table for channel selection */
 static const uint32 s_adcSelect[1U][3U] =
 {
-    {0x00000000U |
+    {0x00000001U |
     0x00000000U |
     0x00000000U |
     0x00000000U |

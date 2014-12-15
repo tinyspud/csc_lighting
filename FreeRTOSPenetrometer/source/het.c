@@ -95,13 +95,13 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
     *         - Next instruction             = 2
     *         - Conditional next instruction = 2
     *         - Interrupt                    = 1
-    *         - Pin                          = 8
+    *         - Pin                          = 0
     */
     {
         /* Program */
         0x000055C0U,
         /* Control */
-        (0x00004006U | (uint32)((uint32)8U << 8U) | (uint32)((uint32)3U << 3U)),
+        (0x00004006U | (uint32)((uint32)0U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
         0x00000000U,
         /* Reserved */
@@ -503,11 +503,11 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
     *         - Next instruction             = 26
     *         - Conditional next instruction = na
     *         - Interrupt                    = na
-    *         - Pin                          = 0
+    *         - Pin                          = 1
     */
     {
         /* Program */
-        0x00034E00U | (uint32)((uint32)0U << 6U)  | (uint32)(0U),
+        0x00034E00U | (uint32)((uint32)0U << 6U)  | (uint32)(1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -520,11 +520,11 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
     *         - Next instruction             = 27
     *         - Conditional next instruction = na
     *         - Interrupt                    = na
-    *         - Pin                          = 0  + 1
+    *         - Pin                          = 1  + 1
     */
     {
         /* Program */
-        0x00036E80U | (uint32)((uint32)0U << 6U)  | (uint32)((0U) + 1U),
+        0x00036E80U | (uint32)((uint32)0U << 6U)  | (uint32)((1U) + 1U),
         /* Control */
         0x00000000U,
         /* Data */
@@ -775,15 +775,15 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
     *         - Next instruction             = 42
     *         - Conditional next instruction = 2
     *         - Interrupt                    = 1
-    *         - Pin                          = 8
+    *         - Pin                          = 0
     */
     {
         /* Program */
         0x00054201U,
         /* Control */
-        (0x00004007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)8U << 8U) | (uint32)((uint32)3U << 3U)),
+        (0x00004007U | (uint32)((uint32)1U << 22U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
-        100224U,
+        1152U,
         /* Reserved */
         0x00000000U
     },
@@ -800,7 +800,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
         /* Control */
         (0x00052007U),
         /* Data */
-        199936U,
+        1920U,
         /* Reserved */
         0x00000000U
     },
@@ -1108,7 +1108,7 @@ void hetInit(void)
                   | (uint32)((uint32)0U << 3U)
                   | (uint32)((uint32)0U << 2U)
                   | (uint32)((uint32)0U << 1U)
-                  | (uint32)((uint32)0U << 0U);
+                  | (uint32)((uint32)1U << 0U);
 
     /** - Set HET pins direction */
     hetREG1->DIR = (uint32) 0x00000000U
@@ -1142,7 +1142,7 @@ void hetInit(void)
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
-                 | (uint32) 0x00000000U;
+                 | (uint32) 0x00000001U;
 
     /** - Set HET pins open drain enable */
     hetREG1->PDR = (uint32) 0x00000000U
@@ -1244,7 +1244,7 @@ void hetInit(void)
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
-                 | (uint32) 0x00000000U;
+                 | (uint32) 0x00000001U;
 
     /** - Set HET pins high resolution share */
     hetREG1->HRSH = (uint32) 0x00008000U
@@ -1262,7 +1262,7 @@ void hetInit(void)
                   | (uint32) 0x00000008U
                   | (uint32) 0x00000004U
                   | (uint32) 0x00000002U
-                  | (uint32) 0x00000001U;
+                  | (uint32) 0x00000000U;
 
     /** - Set HET pins AND share */
     hetREG1->AND = (uint32) 0x00000000U
