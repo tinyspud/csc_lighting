@@ -8,6 +8,9 @@
 #ifndef SEMPAHORES_H_
 #define SEMPAHORES_H_
 
+#include "FreeRTOS.h"
+#include "os_semphr.h"
+
 /* Number of semaphores */
 #define NUM_BSEMAPHORES						(4)
 
@@ -17,12 +20,8 @@
 #define COM_BSEMAPHORE_ID					(2)
 #define ALFAT_BSEMAPHORE_ID					(3)
 
-
-#define DEFAULT_BSEMAPHORE_DELAY			portMAX_DELAY
-
-//portBaseType xCreateBinarySemaphores( void );
-//portBaseType take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay);
-//portBaseType give_bsemaphores(unsigned bsemaphore_id);
-//
-
+portBASE_TYPE xCreateBinarySemaphores( void );
+SemaphoreHandle_t bsemaphores_get_semaphore_handle( unsigned bsemaphore_id );
+portBASE_TYPE take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay);
+portBASE_TYPE give_bsemaphores(unsigned bsemaphore_id);
 #endif /* SEMPAHORES_H_ */

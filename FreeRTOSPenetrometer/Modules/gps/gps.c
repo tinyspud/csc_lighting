@@ -624,9 +624,6 @@ static uint32_t flush_gps_responses(const uint32_t timeout) {
 		//wait detect error or ok response
 		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) 0x07d0))) {
 			UART_putChar(UART, cByteRxed);
-			//if( xTimerStart(xGPSTimer, portMAX_DELAY) != pdPASS){
-			//	error_flag = pdFAIL;
-			//}
 		}
 	}
 

@@ -57,6 +57,8 @@ void gps_task( void* p_params )
 	/* Init GPS */
 	init_gps();
 
+	/* TODO Start looking for a position */
+
 
 	for (;;){
 //		/* Send task check-in message */

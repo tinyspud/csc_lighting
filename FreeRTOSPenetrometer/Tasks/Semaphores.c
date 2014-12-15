@@ -6,86 +6,40 @@
  */
 #include "FreeRTOS.h"
 //#include "semaphore.h"
+#include "os_semphr.h"
 #include "Semaphores.h"
 
-#pragma DATA_ALIGN( cUartMuxBSemaphoreBuffer,8)
-portInt8Type cUartMuxBSemaphoreBuffer[portQUEUE_OVERHEAD_BYTES];
-#pragma DATA_ALIGN( cMCSClockBSemaphoreBuffer,8)
-portInt8Type cMCSClockBSemaphoreBuffer[portQUEUE_OVERHEAD_BYTES];
-#pragma DATA_ALIGN( cCOMBSemaphoreBuffer,8)
-portInt8Type cCOMBSemaphoreBuffer[portQUEUE_OVERHEAD_BYTES];
-#pragma DATA_ALIGN( cALFATBSemaphoreBuffer,8)
-portInt8Type cALFATBSemaphoreBuffer[portQUEUE_OVERHEAD_BYTES];
-
-/* Binary Semaphore creation parameter structure */
-typedef struct bsemaphores_parameters
-{
-	portCharType* 			pcbSemaphoreName;
-	portInt8Type* 			pcbSemaphoreMemory;
-	xSemaphoreHandle		handle;
-} bsemaphores_parameters_t;
-
-
-/* Array of queue creation parameter structures */
-static bsemaphores_parameters_t bsemaphores_creation_parameters[NUM_BSEMAPHORES] =
+/* Array of semaphore handles */
+static SemaphoreHandle_t bsemaphores[NUM_BSEMAPHORES] =
 {
 		/* UARTMUX binary semaphore */
-		{
-			"UARTMUX_BSEMAPHORE",
-			cUartMuxBSemaphoreBuffer,
-			{0}
-		},
+		NULL,
 
 		/* MCS CLOCK binary semaphore */
-		{
-			"MCS_CLOCK_BSEMAPHORE",
-			cMCSClockBSemaphoreBuffer,
-			{0}
-		},
+		NULL,
 
 		/* COM binary semaphore */
-		{
-			"COM_BSEMAPHORE",
-			cCOMBSemaphoreBuffer,
-			{0}
-		},
+		NULL,
 
 		/* ALFAT read/write (access) binary semaphore */
-		{
-			"ALFAT_BSEMAPHORE",
-			cALFATBSemaphoreBuffer,
-			{0}
-		},
+		NULL,
 
 };
 
 
 /* Binary semaphores function */
-portBaseType xCreateBinarySemaphores( void )
+portBASE_TYPE xCreateBinarySemaphores( void )
 {
-	portBaseType xCreateResult;
-	bsemaphores_parameters_t* p_bsemaphore = 0;
+	portBASE_TYPE xCreateResult = pdFAIL;
 	unsigned int bsemaphore_index = 0;
 
 	for (bsemaphore_index=0; bsemaphore_index < NUM_BSEMAPHORES; ++bsemaphore_index)
 	{
-		/* Pointer to queue creation data */
-		p_bsemaphore = &(bsemaphores_creation_parameters[bsemaphore_index]);
-
-		/* Binary Semaphore creation data validation */
-		if (!p_bsemaphore)
+		bsemaphores[bsemaphore_index] = xSemaphoreCreateBinary();
+		if(bsemaphores[bsemaphore_index] == NULL)
 		{
+			/* Sempahore creation failed */
 			xCreateResult = pdFAIL;
-		}
-
-		/* Create each semaphore */
-		if ( xCreateResult = xSemaphoreCreateBinary( p_bsemaphore->pcbSemaphoreMemory,
-									 	 	 	 	 &(p_bsemaphore->handle) ))
-		{
-			if (xCreateResult != pdPASS)
-			{
-				break;
-			}
 		}
 	}
 
@@ -94,19 +48,19 @@ portBaseType xCreateBinarySemaphores( void )
 
 
 /* Get RTOS queue handle for a specified queue index */
-xSemaphoreHandle bsemaphores_get_semaphore_handle( unsigned bsemaphore_id )
+SemaphoreHandle_t bsemaphores_get_semaphore_handle( unsigned bsemaphore_id )
 {
 	if (bsemaphore_id < NUM_BSEMAPHORES)
 	{
-		return bsemaphores_creation_parameters[bsemaphore_id].handle;
+		return bsemaphores[bsemaphore_id];
 	}
 
 	return NULL;
 }
 
-portBaseType take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay)
+portBASE_TYPE take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay)
 {
-	xSemaphoreHandle bsemaphore;
+	SemaphoreHandle_t bsemaphore;
 
 
 	bsemaphore = bsemaphores_get_semaphore_handle( bsemaphore_id );
@@ -120,9 +74,9 @@ portBaseType take_bsemaphores(unsigned bsemaphore_id, portTickType send_delay)
 	return xSemaphoreTake(bsemaphore, send_delay);
 }
 
-portBaseType give_bsemaphores(unsigned bsemaphore_id)
+portBASE_TYPE give_bsemaphores(unsigned bsemaphore_id)
 {
-	xSemaphoreHandle bsemaphore;
+	SemaphoreHandle_t bsemaphore;
 
 
 	bsemaphore = bsemaphores_get_semaphore_handle( bsemaphore_id );

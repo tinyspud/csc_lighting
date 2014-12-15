@@ -90,52 +90,16 @@ void main(void)
 	/* Init the RTOS */
 	init_hardware();
 
-	/* How MCS starts up (in a start RTOS function) */
-	//		portBaseType  xStatus;
-	//
-	//		/* Setup Board Hardware */
-	//		prvSetupHardware( );
-	//
-	//		/* Initialise Kernel Scheduler */
-	//		xStatus = xInitializeScheduler( );
-	//
-	//	    /* Everything OK?*/
-	//		if( xStatus == pdPASS )
-	//		{
-	//		    /* Create tasks */
-	//			xStatus = tasks_create_tasks( );
-	//		}
-	//
-	//		if ( xStatus == pdPASS )
-	//		{
-	//			/* Create queues */
-	//			xStatus = xCreateQueues( );
-	//		}
-	//
-	//		if ( xStatus == pdPASS )
-	//		{
-	//			/* Create queues */
-	//			xStatus = xCreateBinarySemaphores( );
-	//		}
-	//
-	//		/* Everything OK?*/
-	//		if( xStatus == pdPASS )
-	//		{
-	//			/* Yes, Try to Start Scheduler...*/
-	//			xStatus = xTaskStartScheduler( pdTRUE );
-	//		}
-	//
-	//		 /*The Scheduler should now be running the Demonstration tasks.
-	//		 * So this line should never be reached, if it is,
-	//		 * then the Scheduler initialisation has failed!*/
-	//		for( ;; );
 	/* Init the clock */
 	init_system_clock();
 
 	/* Init UART Mux */
 	uartmux_sci_init();
 
-    /* Create Task 1 */
+	/* Create queues */
+	xCreateBinarySemaphores( );
+
+	/* Create Task 1 */
     if (xTaskCreate(
     		display_task,	/* Task code */
     		"DisplayTask",	/* Name */

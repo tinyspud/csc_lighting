@@ -38,16 +38,11 @@ void display_task( void* p_params )
 	__display_is_initialized = false;
 	__display_load_state = EINK_UNINIT;
 
-//	menu_driver_init();
-
 	/* Init the display buffers (they're very large) */
 	init_display_buffers();
 	gc_is_display_busy = false;
 
-	l_is_emcy = false;
 	l_can_press = false;
-	static boolean showedemcy = false;
-	static portTickType x_disp_time = 0;
 
 	for (;;){
 		/* Look at who's calling so you know where to give the response */
@@ -85,15 +80,11 @@ void display_task( void* p_params )
 				write_attempts = 0;
 				l_can_press = true;
 				break;
-				//			case EINK_WAITING:
-				//				l_can_press = true;
-				//				break;
 			default:
 				l_can_press = false;
 				break;
 			}
 		}
-		//		( void ) xTaskDelayUntil( &xPollLast, xPollRate );
 	}//for
 }//func
 

@@ -31,8 +31,6 @@ boolean __display_is_initialized;
 
 static volatile boolean gc_is_display_busy;
 
-void set_emcy_msg(boolean, char*);
-
 
 #endif /* UITASK_H_ */
 
