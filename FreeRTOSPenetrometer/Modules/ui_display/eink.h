@@ -8,6 +8,7 @@
 #ifndef EINK_H_
 #define EINK_H_
 
+#include "FreeRTOS.h"
 #include "spi.h"
 
 
@@ -53,6 +54,41 @@
 #define EINK_REG_IDX_POWER_SAVING_MODE	0x0B
 #define EINK_REG_IDX_SELF_CHECK			0x0F
 
+/* OE commands (0x02) */
+#define EINK_OE_CMD_DISABLE	0x40
+
+/* Self check register */
+#define EINK_SELF_CHECK_BREAKAGE_MASK	0x80
+#define EINK_SELF_CHECK_DCDC_MASK		0x40
+
+/* Power saving mode */
+#define EINK_PWR_SAVING_MODE_ENABLE		0x02
+
+/* Power oscillator setting */
+#define EINK_PWR_OSC_HIGH_POWER			0xD1
+
+/* Power setting 2 */
+#define EINK_PWR_2_CMD					0x02
+
+/* Vcom level */
+#define EINK_VCOM_CMD					0xC2
+
+/* Power setting 1 */
+#define EINK_PWR_1_CMD					0x03
+
+/* Latch */
+#define EINK_DRIVER_LATCH_ON			0x01
+#define EINK_DRIVER_LATCH_OFF			0x00
+
+/* Charge pump control */
+#define EINK_CHARGE_PUMP_POS_V			0x01
+#define EINK_CHARGE_PUMP_NEG_V			0x03
+#define EINK_CHARGE_PUMP_VCOM_ON		0x0F
+
+
+
+#define MAX_TRIES_TO_USE_CHARGE_PUMP	4
+
 
 /*  */
 #define RSP_GOOD			0x9000U
@@ -91,6 +127,7 @@ typedef enum ScanLine{
 #define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
 #define BYTES_IN_RETURN_MAX	255
 #define EINK_DPI	111
+#define EINK_SCREEN_BANNER	EINK_2_0_INCH_COG_ID
 #else
 #ifdef USING_2_7_INCH_EPAPER
 #define BYTES_IN_1_LINE 33
@@ -98,6 +135,7 @@ typedef enum ScanLine{
 #define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
 #define BYTES_IN_RETURN_MAX	255
 #define EINK_DPI	117
+#define EINK_SCREEN_BANNER	EINK_2_7_INCH_COG_ID
 #endif
 #endif
 
@@ -122,9 +160,8 @@ typedef enum ScanLine{
 /* GPIO Ports Needed */
 #define EINK_SPIPORT 			spiREG1
 
-#define EINK_DISPLAY_EN_PORT 	spiPORT1
-#define EINK_BUSY_PORT 			spiPORT1
-#define EINK_CS_PORT			hetPORT1
+#define EINK_BUSY_PORT 			gioPORTA
+#define EINK_CS_PORT			spiPORT1
 #define EINK_RESET_PORT			gioPORTA
 #define EINK_PANEL_ON_PORT		gioPORTA
 #define EINK_DISCHARGE_PORT		gioPORTA
@@ -132,9 +169,8 @@ typedef enum ScanLine{
 
 
 /* GPIO pin number */
-#define EINK_DISPLAY_EN_PIN 	8U /* spi1 EN - set to port out */
-#define EINK_BUSY_PIN			3U /* spi1 CS3 - set to port in */
-#define EINK_CS_PIN				17U /* HET1 pin 17 - set to port out */
+#define EINK_BUSY_PIN			0U /* spi1 CS3 - set to port in */
+#define EINK_CS_PIN				0U /* HET1 pin 17 - set to port out */
 #define EINK_RESET_PIN			1U
 #define EINK_PANEL_ON_PIN		6U
 #define EINK_DISCHARGE_PIN		7U
@@ -142,7 +178,9 @@ typedef enum ScanLine{
 
 #define EINK_PWM_PIN			0U
 
-#define EINK_TICKS_IN_1_MS		(1000 / configTICK_RATE_HZ)
+#define EINK_BUSY_IS_BUSY		1U
+
+#define EINK_TICKS_IN_1_MS		(configTICK_RATE_HZ / 1000)
 
 /* information for epd header arrays */
 typedef struct epdArrayData
@@ -230,8 +268,18 @@ boolean is_scratch_on_screen(void);
 
 void epaper_power_on_sequence();
 
-void epaper_start_COG_driver();
+BaseType_t epaper_start_COG_driver();
 
 uint16_t read_epaper_version();
+
+void discharge_epaper();
+
+void write_epaper_register_one_byte(uint8_t, uint8_t);
+
+int read_epaper_register(uint8_t regidx, uint8_t * arguments);
+
+uint8_t read_epaper_register_single_byte(uint8_t regidx);
+
+void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len);
 
 #endif /* EINK_H_ */

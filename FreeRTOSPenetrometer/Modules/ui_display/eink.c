@@ -85,13 +85,16 @@ void init_display_buffers_and_pins(void) {
 	dataconfig1_t.CS_HOLD = FALSE;
 	dataconfig1_t.WDEL    = TRUE;
 	dataconfig1_t.DFSEL   = SPI_FMT_0;
-	dataconfig1_t.CSNR    = 0xFE;
+	dataconfig1_t.CSNR    = 0;
 
-	/* Set all pins high */
-	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
-	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
-	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1); // border pin ignored on 2" display
-	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 1);
+	/* Set all pins low */
+	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
+	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0); // border pin ignored on 2" display
+
+	/* Set discharge low */
+	gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 0);
 }
 
 
@@ -99,14 +102,25 @@ void init_display_buffers_and_pins(void) {
 void epaper_power_on_sequence(){
 	/* Power on sequence for G2 COG driver - taken from Pervasive Displays Doc
 	 * #4P015-00 */
+	/* Set discharge low */
+	gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 0);
+
+	/* Set all pins low */
+	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
+	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
+	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0); // border pin ignored on 2" display
+
+	waitDisplayDrver(10 * (EINK_TICKS_IN_1_MS));
 
 	/* Set CS, border, reset high */
+	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 1);
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
 	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1); // border pin ignored on 2" display
 
 	/* Wait 5 ms */
-	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(5	 * (EINK_TICKS_IN_1_MS));
 
 	/* After 5 ms delay, set reset low */
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
@@ -124,21 +138,101 @@ void epaper_power_on_sequence(){
 	return;
 }
 
+void discharge_epaper(){
+	/* Juset set power on to low wait and set discharge high */
+	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
+
+	waitDisplayDrver((300 * (EINK_TICKS_IN_1_MS)));
+
+	gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 1);
+}
+
 /* Start EPaper COG (chip-on-glass) driver */
-void epaper_start_COG_driver(){
-	uint8_t epaper_version = 0;
+BaseType_t epaper_start_COG_driver(){
+	uint8_t scratch_byte = 0;
+	uint8_t ver[EINK_REG_IDX_1_LEN] = { EINK_SCREEN_BANNER };
+	uint8_t num_tries = 0;
+
 	/* Start with power on sequence, then wait for busy pin to go high */
 	wait_to_not_busy();
 
 	/* Check the COG ID */
-	epaper_version = MAKE_UINT16_T_LSB_INTO_UINT8_T(read_epaper_version());
-//	epaper_version = (uint8_t)(read_epaper_version());
-//	read_epaper_version();
+	scratch_byte = MAKE_UINT16_T_LSB_INTO_UINT8_T(read_epaper_version());
+
 	/* Check the version against what this code is written for */
-	if(MASK_AND_CHECK_VALUE(epaper_version, EINK_VERSION_MASK) != EINK_VERSION)
-		return; /* version mismatch */
+	if(MASK_AND_CHECK_VALUE(scratch_byte, EINK_VERSION_MASK) != EINK_VERSION)
+		return pdFAIL; /* version mismatch */
 
+	/* epaper is correct version, go to next step - disable OE */
+	write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_DISABLE);
 
+	/* Read out the breakage */
+	scratch_byte = read_epaper_register_single_byte(EINK_REG_IDX_SELF_CHECK);
+
+	/* Check it for breakage */
+	if(MASK_AND_CHECK_VALUE(scratch_byte, EINK_SELF_CHECK_BREAKAGE_MASK) != EINK_SELF_CHECK_BREAKAGE_MASK)
+		return pdFAIL;
+
+	/* Send into power saving mode */
+	write_epaper_register_one_byte(EINK_REG_IDX_POWER_SAVING_MODE, EINK_PWR_SAVING_MODE_ENABLE);
+
+	/* Set channel select */
+	write_epaper_register(EINK_REG_IDX_SCREEN_SIZE, ver, EINK_REG_IDX_1_LEN);
+
+	/* Set high power mode */
+	write_epaper_register_one_byte(EINK_REG_IDX_PWR_OSC_SETTING, EINK_PWR_OSC_HIGH_POWER);
+
+	/* Set power setting */
+	write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_2, EINK_PWR_2_CMD);
+
+	/* Set vcom level */
+	write_epaper_register_one_byte(EINK_REG_IDX_VCOM_LEVEL, EINK_VCOM_CMD);
+
+	/* Set other power setting */
+	write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_1, EINK_PWR_1_CMD);
+
+	/* Driver latch on */
+	write_epaper_register_one_byte(EINK_REG_IDX_DRIVER_LATCH, EINK_DRIVER_LATCH_ON);
+
+	/* Driver latch off */
+	write_epaper_register_one_byte(EINK_REG_IDX_DRIVER_LATCH, EINK_DRIVER_LATCH_OFF);
+
+	/* Delay >= 5 ms */
+	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+
+	/* Start the charge pump */
+	for(num_tries = 0; num_tries < MAX_TRIES_TO_USE_CHARGE_PUMP; num_tries++){
+		/* Start the charge pump +V */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_POS_V);
+
+		/* Delay >= 240 ms */
+		waitDisplayDrver(240 * (EINK_TICKS_IN_1_MS));
+
+		/* Start the charge pump -V */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_NEG_V);
+
+		/* Delay >= 40 ms */
+		waitDisplayDrver(40 * (EINK_TICKS_IN_1_MS));
+
+		/* Start charge pump Vcom driver to ON */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_VCOM_ON);
+
+		/* Delay >= 40 ms */
+		waitDisplayDrver(40 * (EINK_TICKS_IN_1_MS));
+
+		/* Check DC/DC */
+		scratch_byte = read_epaper_register_single_byte(EINK_REG_IDX_SELF_CHECK);
+
+		/* Check it for breakage */
+		if(MASK_AND_CHECK_VALUE(scratch_byte, EINK_SELF_CHECK_DCDC_MASK) == EINK_SELF_CHECK_DCDC_MASK){
+			/* Output enable to disable */
+			write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_DISABLE);
+
+			return pdPASS;
+		}
+
+	}
+	return pdFAIL;
 }
 
 
@@ -154,11 +248,11 @@ int manage_eink(int state){
 	switch(state){
 	default:
 	case EINK_UNINIT:
-//		// init spi port configuration parameters
-//		dataconfig1_t.CS_HOLD = FALSE;
-//		dataconfig1_t.WDEL    = TRUE;
-//		dataconfig1_t.DFSEL   = SPI_FMT_0;
-//		dataconfig1_t.CSNR    = 0xFE;
+		//		// init spi port configuration parameters
+		//		dataconfig1_t.CS_HOLD = FALSE;
+		//		dataconfig1_t.WDEL    = TRUE;
+		//		dataconfig1_t.DFSEL   = SPI_FMT_0;
+		//		dataconfig1_t.CSNR    = 0xFE;
 
 		display_cs_on();
 		display_cs_off();
@@ -404,11 +498,11 @@ void display_cs_off(){
 }
 
 void display_en_on(){
-	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 0);
+	//	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 0);
 }
 
 void display_en_off(){
-	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 1);
+	//	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 1);
 }
 
 void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf) {
@@ -523,6 +617,14 @@ uint16 do_bit_flip_for_epd(uint8 bit_in){
 	return x;
 }
 
+/* Send a single byte */
+void write_epaper_register_one_byte(uint8_t regidx, uint8_t argument){
+	static uint16_t send_data[1] = { 0 };
+
+	send_data[0] = argument;
+
+	write_epaper_register(regidx, send_data, 1);
+}
 
 void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len){
 	/* This function assumes the user has formatted [arguments] properly
@@ -565,6 +667,18 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 	}
 }
 
+uint8_t read_epaper_register_single_byte(uint8_t regidx){
+	static uint16_t rxval[1] = { 0 };
+
+	rxval[0] = 0;
+
+	if((get_eink_reg_len(regidx) == 1) && (read_epaper_register(regidx, &rxval) == 1)){
+		return MAKE_UINT16_T_LSB_INTO_UINT8_T(rxval[0]);
+	}
+	return 0;
+}
+
+
 int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 	/* This function assumes the user has formatted [arguments] properly
 	 * and will use the reg idx length */
@@ -573,9 +687,9 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 	static uint16_t send_data[MAX_BYTES_COMMAND_PACKET] = { 0 },
 			receive_data[MAX_BYTES_COMMAND_PACKET] = { 0 };
 
-	for(i = 0; (i < MAX_BYTES_COMMAND_PACKET) || (i < MAX_BYTES_RECEIVED_PACKET); i++){
-		if(i < MAX_BYTES_COMMAND_PACKET){ send_data[i] = 0U; }
-		if(i < MAX_BYTES_RECEIVED_PACKET){ receive_data[i] = 0U; }
+	for(i = 0; i < MAX_BYTES_COMMAND_PACKET; i++){
+		send_data[i] = 0U;
+		receive_data[i] = 0U;
 	}
 
 	len = get_eink_reg_len(regidx);
@@ -593,9 +707,12 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 		display_cs_off();
 
 		/* Send data */
-		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_WRITE);
-		for(i = 0; i < len; i++)
+		send_data[0] = MAKE_UINT8_T_INTO_UINT16_T_LSB(EINK_REG_READ);
+		receive_data[0] = 0;
+		for(i = 0; i < len; i++){
 			send_data[i + 1] = 0U;
+			receive_data[i + 1] = 0U;
+		}
 
 		/* Send write to register */
 		display_cs_on();
@@ -603,6 +720,10 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
+
+		/* Copy from receive_data into arguments */
+		for(i = 0; i < len; i++)
+			arguments[i] = receive_data[i + 1];
 	}
 
 	return len;
@@ -691,7 +812,7 @@ static void waitDisplayDrver(TickType_t time)
 /* return true if port is busy, false if not busy
  * */
 boolean check_if_busy(){
-	return (gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN)) == 0;
+	return (gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN)) == EINK_BUSY_IS_BUSY;
 }
 
 /* returns false if busy and timed out, true if not busy
@@ -719,9 +840,9 @@ boolean timeout_to_not_busy(boolean inval){
 /* Stalls until the busy pin goes high (indicating not busy) */
 void wait_to_not_busy(){
 	while((gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN) &
-			gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN))!= 1) {
+			gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN)) == EINK_BUSY_IS_BUSY) {
 		//do nothing wait while busy
-		waitDisplayDrver(10);
+		waitDisplayDrver(1);
 		_nop();
 	}
 }

@@ -781,9 +781,9 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
         /* Program */
         0x00054201U,
         /* Control */
-        (0x00004007U | (uint32)((uint32)1U << 22U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)3U << 3U)),
+        (0x00004007U | (uint32)((uint32)0U << 22U) | (uint32)((uint32)0U << 8U) | (uint32)((uint32)3U << 3U)),
         /* Data */
-        1152U,
+        640U,
         /* Reserved */
         0x00000000U
     },
@@ -800,7 +800,7 @@ static const hetINSTRUCTION_t het1PROGRAM[58U] =
         /* Control */
         (0x00052007U),
         /* Data */
-        1920U,
+        896U,
         /* Reserved */
         0x00000000U
     },
@@ -1108,7 +1108,7 @@ void hetInit(void)
                   | (uint32)((uint32)0U << 3U)
                   | (uint32)((uint32)0U << 2U)
                   | (uint32)((uint32)0U << 1U)
-                  | (uint32)((uint32)1U << 0U);
+                  | (uint32)((uint32)0U << 0U);
 
     /** - Set HET pins direction */
     hetREG1->DIR = (uint32) 0x00000000U
@@ -1125,7 +1125,7 @@ void hetInit(void)
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
-                 | (uint32) 0x00000000U
+                 | (uint32) 0x00020000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
@@ -1227,6 +1227,7 @@ void hetInit(void)
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
+                 | (uint32) 0x00020000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
@@ -1243,8 +1244,7 @@ void hetInit(void)
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
                  | (uint32) 0x00000000U
-                 | (uint32) 0x00000000U
-                 | (uint32) 0x00000001U;
+                 | (uint32) 0x00000000U;
 
     /** - Set HET pins high resolution share */
     hetREG1->HRSH = (uint32) 0x00008000U
