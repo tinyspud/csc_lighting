@@ -154,6 +154,15 @@ typedef enum ScanLine{
 #define EINK_WAITING	6
 #define EINK_LOADED		7
 
+typedef enum einkstate{
+	EinkUninitialized,
+	EinkPoweringOn,
+	EinkInitializingCOGDriver,
+	EinkIdle,
+	EinkLoading,
+	EinkError
+}einkstate_t;
+
 #define EINK_WAIT_PERIOD 20
 #define MAX_LOAD_ATTEMPTS 10
 
@@ -236,7 +245,7 @@ void blackout_screen(void);
 
 void whiteout_screen(void);
 
-int manage_eink(int);
+einkstate_t manage_eink(einkstate_t);
 
 void clear_scratch_screen_line(int);
 

@@ -239,69 +239,39 @@ BaseType_t epaper_start_COG_driver(){
 /* Break code into blocks that can be executed on timer ticks by the RTOS -
  * advance the execution through blocks at states since the RM48 is so fast and the
  * chip takes a long time to respond to things */
-int manage_eink(int state){
+einkstate_t manage_eink(einkstate_t state){
 	int i;
 	uint16 temp = 0x0000;
 	boolean prev = false;
 
-	int rtnval = state;
+	einkstate_t rtnval = state;
 	switch(state){
 	default:
-	case EINK_UNINIT:
-		//		// init spi port configuration parameters
-		//		dataconfig1_t.CS_HOLD = FALSE;
-		//		dataconfig1_t.WDEL    = TRUE;
-		//		dataconfig1_t.DFSEL   = SPI_FMT_0;
-		//		dataconfig1_t.CSNR    = 0xFE;
+	case EinkUninitialized:
+		/* Uninitialized E Ink display, power it on */
+		init_display_buffers_and_pins();
 
-		display_cs_on();
-		display_cs_off();
-
-		display_en_on();
-		rtnval = EINK_GETDEV;
+		rtnval = EinkPoweringOn;
 		break;
-	case EINK_GETDEV:
+	case EinkPoweringOn:
 		// once display is activated must wait min 6.5ms before command will be accepted by the display
 		/* check to see if the device is busy - if it isn't busy then you can try to move on
 		 * otherwise wait for the timer to elapse */
-		if(!check_if_busy()){
-			temp =	getDevInfo(dataconfig1_t);
-			waiter = 1;
-			rtnval = (temp == RSP_GOOD) ? EINK_LOADHD : EINK_GETDEV;
-		}
+		epaper_power_on_sequence();
+
+		rtnval = EinkInitializingCOGDriver;
 		break;
-	case EINK_LOADHD:
-		// reset pointer
-		if(waiter > 0)
-			waiter--;
-
-		if(waiter < 1){
-			temp = 0;
-			prev = timeout_to_not_busy(true);
-			if(prev){
-				displayResetPointer(dataconfig1_t);
-			}
-
-			prev &= timeout_to_not_busy(prev);
-			if(prev){
-				temp = getCmdResponse(dataconfig1_t);
-			}
-
-			temp = 0;
-
-			prev &= timeout_to_not_busy(prev);
-			if(prev){
-				uploadEpdHeader(dataconfig1_t);
-
-
-				wait_to_not_busy();
-
-				temp = getCmdResponse(dataconfig1_t);
-			}
-			rtnval= temp == RSP_GOOD ? EINK_LOADLN : EINK_LOADHD;
+	case EinkInitializingCOGDriver:
+		if(epaper_start_COG_driver() == pdFAIL){
+			/* Discharge */
+			discharge_epaper();
+			rtnval = EinkError;
 		}
+		else
+			rtnval = EinkIdle;
+
 		break;
-	case EINK_LOADLN:
+	case EinkLoading:
 		/* Load scratch_screen rows into the epaper */
 #ifdef ROTATE_DISPLAY
 		for(i = (LINES_ON_SCREEN - 1); i >= 0; i--){
@@ -323,24 +293,13 @@ int manage_eink(int state){
 			temp = getCmdResponse(dataconfig1_t);
 		}
 #endif
-		rtnval = EINK_REFRESH;
+		rtnval = EinkIdle;
 		break;
-	case EINK_REFRESH:
-		wait_to_not_busy();
-		displayUpdate(dataconfig1_t);
-		waiter = EINK_WAIT_PERIOD;
-		rtnval = EINK_WAITING;
+	case EinkIdle:
+		/* Do nothing */
 		break;
-	case EINK_WAITING:
-
-
-		waiter--;
-		if(waiter < 1){
-			wait_to_not_busy();
-			temp = getCmdResponse(dataconfig1_t);
-			rtnval = temp == RSP_GOOD ? EINK_LOADED : EINK_LOADHD;
-			display_cs_off();
-		}
+	case EinkError:
+		/* Do nothing - broken display */
 		break;
 	}
 	return rtnval;
@@ -361,14 +320,6 @@ void clear_scratch_screen_line(int line_number){
 			scratch_screen[line_number][i] = 0x00;
 		}
 	}
-}
-
-void force_clear_scratch_screen(){
-	int i = 0;
-	int j = 0;
-	for(i = 0; i < LINES_ON_SCREEN; i++)
-		for(j = 0; j < BYTES_IN_1_LINE; j++)
-			scratch_screen[i][j] = 0x00;
 }
 
 /* Set entire screen black (scratch_screen) */
@@ -497,14 +448,6 @@ void display_cs_off(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
 }
 
-void display_en_on(){
-	//	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 0);
-}
-
-void display_en_off(){
-	//	gioSetBit(EINK_DISPLAY_EN_PORT, EINK_DISPLAY_EN_PIN, 1);
-}
-
 void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf) {
 
 	dummysenddata[0] = 0x20;
@@ -554,30 +497,6 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf) {
 /* This will also perform the bit flips */
 void uploadArray(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int num_bytes_in_array) {
 
-	/* Create a blank line that's the max message length + the 4 for the header information */
-	uint16 dummysenddata[MAX_BYTES_PER_PACKET + 4] = {0x20, 0x01, 0x00, 0x00};
-	uint16 i = 0;
-
-	/* put in length to expect */
-	dummysenddata[3] = num_bytes_in_array;
-
-	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
-		dummysenddata[i+4] = do_bit_flip_for_epd(displayBuf[i]);
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, num_bytes_in_array + 4, dummysenddata, returnValue);
-
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
-}
-
-void load_one_line(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int num_bytes_in_array) {
 	/* Create a blank line that's the max message length + the 4 for the header information */
 	uint16 dummysenddata[MAX_BYTES_PER_PACKET + 4] = {0x20, 0x01, 0x00, 0x00};
 	uint16 i = 0;
@@ -756,22 +675,6 @@ uint16_t read_epaper_version(){
 
 	return receive_data[1];
 }
-
-
-void uploadEpdHeader(spiDAT1_t dataconfig1_t) {
-	uint16 dummysenddata[30] = {0x20,0x01,0x00,16U,0x33, 0x01, 0x90, 0x01, 0x2C, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-	//	uint16 returnValue[30];
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 20U, dummysenddata, returnValue);
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-	l_current_row = 0;
-	waitDisplayDrver(300U);
-}
-
 
 /*
  * Note: Method has internal delay on it that hangs until the busy pin reads not busy

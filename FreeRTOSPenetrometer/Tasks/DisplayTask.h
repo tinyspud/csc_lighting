@@ -23,12 +23,6 @@ boolean can_write_to_display(void);
 
 boolean can_recieve_input(void);
 
-int __display_load_state;
-int __display_load_attempts;
-boolean __display_is_confirmed;
-boolean __display_is_initialized;
-
-
 static volatile boolean gc_is_display_busy;
 
 
