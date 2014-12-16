@@ -35,7 +35,7 @@ void ui_task( void* p_params )
 			clear_scratch_screen();
 
 			top = (LINES_ON_SCREEN / 2) + ((__char_bottom_97 - __char_top_97) / 2) - __char_bottom_97;
-			top = render_smart_string("Hi!\0", 4, top, 200, DRAW_SET_F | DRAW_ALIGN_CENTER,
+			top = render_smart_string("Hi!\0", 4, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
 					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
 
 			try_upload_screen();

@@ -406,7 +406,7 @@ void display_cs_off(){
 
 void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum) {
 
-	uint16 i = 0, j = 0;
+	int i = 0, j = 0;
 	uint8_t buff[BYTES_IN_1_LINE_TO_EPD] = { 0 };
 	/* Clear the buffer */
 	for(i = 1; i < BYTES_IN_1_LINE_TO_EPD; i++)
@@ -438,23 +438,22 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 	//	}
 
 	/* DUMMY - write black screen */
-	for(i = 0; i < NUM_DATA_BYTES_FIRST; i++, j++)
-		buff[j] = 0xFF;
+	for(i = (BYTES_IN_1_LINE - 1); (i >= 0); i--, j++)
+		buff[j] = ((((displayBuf[i] & (0x80)) >> 7) == 0x01) ? 0x03 : 0x02) |
+		(((((displayBuf[i] & (0x20)) >> 5) == 0x01) ? 0x03 : 0x02) << 2) |
+		(((((displayBuf[i] & (0x08)) >> 3) == 0x01) ? 0x03 : 0x02) << 4) |
+		(((((displayBuf[i] & (0x02)) >> 1) == 0x01) ? 0x03 : 0x02) << 6);
 
-	buff[i + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)] = (0X03 << (linenum % 4));
+	buff[BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)] = (0X03 << (linenum % 4));
 
 	j += NUM_SCAN_BYTES;
 
 	/* DUMMY - write black screen */
-	for(i = 0; i < NUM_DATA_BYTES_SECOND; i++, j++)
-		buff[j] = 0xFF;
-
-	//	/* Create the first half (move from right to left) */
-	//	for(i = 0; i < NUM_DATA_BYTES_FIRST; i++, j++)
-	//		dummysenddata[j] = ((i * 8) + 2);
-	//
-
-
+	for(i = 0; i < BYTES_IN_1_LINE; i++, j++)
+		buff[j] = ((((displayBuf[i] & (0x40)) >> 6) == 0x01) ? 0x03 : 0x02) |
+		(((((displayBuf[i] & (0x10)) >> 4) == 0x01) ? 0x03 : 0x02) << 2) |
+		(((((displayBuf[i] & (0x04)) >> 2) == 0x01) ? 0x03 : 0x02) << 4) |
+		(((((displayBuf[i] & (0x01)) >> 0) == 0x01) ? 0x03 : 0x02) << 6);
 
 	/* Upload the line to SPI */
 	write_epaper_register(EINK_REG_IDX_WRITE_LINE, buff, BYTES_IN_1_LINE_TO_EPD);
