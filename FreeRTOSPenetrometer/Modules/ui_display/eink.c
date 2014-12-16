@@ -67,7 +67,7 @@ void init_display_buffers_and_pins(void) {
 
 	int i = 0;
 	int j = 0;
-	for(i = 0; i < BYTES_IN_1_LINE_PACKET; i++)
+	for(i = 0; i < BYTES_IN_1_LINE_TO_EPD; i++)
 		dummysenddata[i] = 0;
 
 	for(i = 0; i < BYTES_IN_RETURN_MAX; i++)
@@ -111,7 +111,7 @@ void epaper_power_on_sequence(){
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
 	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0); // border pin ignored on 2" display
 
-	waitDisplayDrver(10 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
 
 	/* Set CS, border, reset high */
 	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 1);
@@ -120,19 +120,19 @@ void epaper_power_on_sequence(){
 	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1); // border pin ignored on 2" display
 
 	/* Wait 5 ms */
-	waitDisplayDrver(5	 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(5	 * (SYS_TICKS_IN_1_MS));
 
 	/* After 5 ms delay, set reset low */
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
 
 	/* Wait 5 ms */
-	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(5 * (SYS_TICKS_IN_1_MS));
 
 	/* After 5 ms delay, set reset back high */
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 1);
 
 	/* Wait 5 ms */
-	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(5 * (SYS_TICKS_IN_1_MS));
 
 	/* Now can use COG driver */
 	return;
@@ -142,7 +142,7 @@ void discharge_epaper(){
 	/* Juset set power on to low wait and set discharge high */
 	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
 
-	waitDisplayDrver((300 * (EINK_TICKS_IN_1_MS)));
+	waitDisplayDrver((300 * (SYS_TICKS_IN_1_MS)));
 
 	gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 1);
 }
@@ -198,7 +198,7 @@ BaseType_t epaper_start_COG_driver(){
 	write_epaper_register_one_byte(EINK_REG_IDX_DRIVER_LATCH, EINK_DRIVER_LATCH_OFF);
 
 	/* Delay >= 5 ms */
-	waitDisplayDrver(5 * (EINK_TICKS_IN_1_MS));
+	waitDisplayDrver(5 * (SYS_TICKS_IN_1_MS));
 
 	/* Start the charge pump */
 	for(num_tries = 0; num_tries < MAX_TRIES_TO_USE_CHARGE_PUMP; num_tries++){
@@ -206,19 +206,19 @@ BaseType_t epaper_start_COG_driver(){
 		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_POS_V);
 
 		/* Delay >= 240 ms */
-		waitDisplayDrver(240 * (EINK_TICKS_IN_1_MS));
+		waitDisplayDrver(240 * (SYS_TICKS_IN_1_MS));
 
 		/* Start the charge pump -V */
 		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_NEG_V);
 
 		/* Delay >= 40 ms */
-		waitDisplayDrver(40 * (EINK_TICKS_IN_1_MS));
+		waitDisplayDrver(40 * (SYS_TICKS_IN_1_MS));
 
 		/* Start charge pump Vcom driver to ON */
 		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_VCOM_ON);
 
 		/* Delay >= 40 ms */
-		waitDisplayDrver(40 * (EINK_TICKS_IN_1_MS));
+		waitDisplayDrver(40 * (SYS_TICKS_IN_1_MS));
 
 		/* Check DC/DC */
 		scratch_byte = read_epaper_register_single_byte(EINK_REG_IDX_SELF_CHECK);
@@ -283,10 +283,9 @@ einkstate_t manage_eink(einkstate_t state){
 			temp = getCmdResponse(dataconfig1_t);
 		}
 #else
-
 		for(i = 0; i < LINES_ON_SCREEN; i++){
 			wait_to_not_busy();
-			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i]);
+			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i);
 			/* Clear out the scratch_screen line */
 			clear_scratch_screen_line(i);
 			wait_to_not_busy();
@@ -397,49 +396,6 @@ uint8_t get_eink_reg_len(uint16_t RegIdx){
 	}
 }
 
-uint32 getDevInfo(spiDAT1_t dataconfig1_t) {
-	// max 250
-	dummysenddata[0] = 0x70;
-	dummysenddata[1] = 0x01;	// register index
-	dummysenddata[2] = 0x72;
-	dummysenddata[3] = 0x00;
-	uint16 dummysenddata2[30];
-	uint16 returnValue2[30] = {0U,0U};
-
-
-	uint8 i =0;
-
-	for(i=0; i << 30; i++){
-		returnValue2[i] = 0;
-		dummysenddata2[i] = 0;
-
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 4, dummysenddata, returnValue);
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-	waitDisplayDrver(7000);
-
-	wait_to_not_busy();
-
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 30, dummysenddata2, returnValue2);
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-
-	//0X9000 IS COMMAND WAS SUCCESSFUL
-	if(returnValue2[0] == 'M') {
-		return RSP_GOOD;
-	}
-
-	return 0x00FF;
-}
-
 void display_cs_on(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
 }
@@ -448,76 +404,62 @@ void display_cs_off(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
 }
 
-void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf) {
+void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum) {
 
-	dummysenddata[0] = 0x20;
-	dummysenddata[1] = 0x01;
-	dummysenddata[2] =  0x00;
-	dummysenddata[3] = BYTES_IN_1_LINE;
-	uint16 i = 0;
+	uint16 i = 0, j = 0;
+	uint8_t buff[BYTES_IN_1_LINE_TO_EPD] = { 0 };
+	/* Clear the buffer */
+	for(i = 1; i < BYTES_IN_1_LINE_TO_EPD; i++)
+		buff[i] = 0;
 
-#ifdef ROTATE_DISPLAY
-	uint8_t endianflipper;
-#endif
+	/* Trivial statement but here for consistancy */
+	buff[0] = EINK_BORDER_BYTE_VAL; /* Border byte */
+	j++;
+	//
+	//#ifdef ROTATE_DISPLAY
+	//	uint8_t endianflipper;
+	//#endif
+	//
+	//	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
+	//#ifdef ROTATE_DISPLAY
+	//		endianflipper = (((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x01U) << 7)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x02U) << 5)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x04U) << 3)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x08U) << 1)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x10U) >> 1)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x20U) >> 3)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x40U) >> 5)) |
+	//				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x80U) >> 7));
+	//
+	//		dummysenddata[i+4] = __display_black_on_white ? do_bit_flip_for_epd(endianflipper) : ~do_bit_flip_for_epd(endianflipper);
+	//#else
+	//		dummysenddata[i+4] = __display_black_on_white ? do_bit_flip_for_epd(displayBuf[i]) : ~do_bit_flip_for_epd(displayBuf[i]);
+	//#endif
+	//	}
 
-	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
-#ifdef ROTATE_DISPLAY
-		endianflipper = (((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x01U) << 7)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x02U) << 5)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x04U) << 3)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x08U) << 1)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x10U) >> 1)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x20U) >> 3)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x40U) >> 5)) |
-				(((displayBuf[BYTES_IN_1_LINE - i - 1] & 0x80U) >> 7));
+	/* DUMMY - write black screen */
+	for(i = 0; i < NUM_DATA_BYTES_FIRST; i++, j++)
+		buff[j] = 0xFF;
 
-		dummysenddata[i+4] = __display_black_on_white ? do_bit_flip_for_epd(endianflipper) : ~do_bit_flip_for_epd(endianflipper);
-#else
-		dummysenddata[i+4] = __display_black_on_white ? do_bit_flip_for_epd(displayBuf[i]) : ~do_bit_flip_for_epd(displayBuf[i]);
-#endif
-		/* TODO:make copy to scratch_screen[][] here */
-		scratch_screen[l_current_row][i] = displayBuf[i];
-	}
+	buff[i + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)] = (0X03 << (linenum % 4));
 
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, BYTES_IN_1_LINE_PACKET, dummysenddata, returnValue);
+	j += NUM_SCAN_BYTES;
 
-	/* Only can load that many lines */
-	if((l_current_row + 1) < LINES_ON_SCREEN)
-		l_current_row++;
+	/* DUMMY - write black screen */
+	for(i = 0; i < NUM_DATA_BYTES_SECOND; i++, j++)
+		buff[j] = 0xFF;
 
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
+	//	/* Create the first half (move from right to left) */
+	//	for(i = 0; i < NUM_DATA_BYTES_FIRST; i++, j++)
+	//		dummysenddata[j] = ((i * 8) + 2);
+	//
 
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
-}
-/* This will also perform the bit flips */
-void uploadArray(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int num_bytes_in_array) {
 
-	/* Create a blank line that's the max message length + the 4 for the header information */
-	uint16 dummysenddata[MAX_BYTES_PER_PACKET + 4] = {0x20, 0x01, 0x00, 0x00};
-	uint16 i = 0;
 
-	/* put in length to expect */
-	dummysenddata[3] = num_bytes_in_array;
+	/* Upload the line to SPI */
+	write_epaper_register(EINK_REG_IDX_WRITE_LINE, buff, BYTES_IN_1_LINE_TO_EPD);
 
-	for(i = 0; i < BYTES_IN_1_LINE ; i++) {
-		dummysenddata[i+4] = do_bit_flip_for_epd(displayBuf[i]);
-	}
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, num_bytes_in_array + 4, dummysenddata, returnValue);
-
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-	// about 8uS should be sufficient
-	waitDisplayDrver(300U);
+	write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_DRIVE);
 }
 
 uint16 do_bit_flip_for_epd(uint8 bit_in){
@@ -580,7 +522,7 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		spiTransmitAndReceiveData_checking_busy(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 	}

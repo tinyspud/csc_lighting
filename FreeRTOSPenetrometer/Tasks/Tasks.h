@@ -10,12 +10,14 @@
 #include "LogTask.h"
 #include "UARTMuxTask.h"
 #include "Semaphores.h"
+#include "UITask.h"
 
 /* Create handles */
 TaskHandle_t xDisplayTaskHandle;
 TaskHandle_t xGPSTaskHandle;
 TaskHandle_t xLogTaskHandle;
 TaskHandle_t xUARTMuxTaskHandle;
+TaskHandle_t xUITaskHandle;
 
 
 

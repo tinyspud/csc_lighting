@@ -79,6 +79,10 @@ extern char g_mcs_nickname[MAX_KEYVALUE_LENGTH];
 
 #define MASK_AND_CHECK_VALUE(val, mask)		((mask) & (val))
 
+#define SYS_TICKS_IN_1_MS		(configTICK_RATE_HZ / 1000)
+#define SYS_TICKS_IN_1_SEC		(SYS_TICKS_IN_1_MS * 1000)
+
+
 uint16_t pow10uint16(int);
 
 float pow10float(int);

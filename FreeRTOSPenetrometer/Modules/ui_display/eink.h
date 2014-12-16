@@ -35,7 +35,7 @@
 #define EINK_REG_IDX_7_LEN	1
 #define EINK_REG_IDX_8_LEN	1
 #define EINK_REG_IDX_9_LEN	1
-#define EINK_REG_IDX_A_LEN	110
+#define EINK_REG_IDX_A_LEN	111
 #define EINK_REG_IDX_B_LEN	1
 #define EINK_REG_IDX_F_LEN	1
 
@@ -56,6 +56,7 @@
 
 /* OE commands (0x02) */
 #define EINK_OE_CMD_DISABLE	0x40
+#define EINK_OE_CMD_DRIVE	0x07
 
 /* Self check register */
 #define EINK_SELF_CHECK_BREAKAGE_MASK	0x80
@@ -85,20 +86,14 @@
 #define EINK_CHARGE_PUMP_NEG_V			0x03
 #define EINK_CHARGE_PUMP_VCOM_ON		0x0F
 
+/* Border byte */
+#define EINK_BORDER_BYTE_VAL			0x00
 
 
 #define MAX_TRIES_TO_USE_CHARGE_PUMP	4
 
-
-/*  */
-#define RSP_GOOD			0x9000U
-#define RSP_BAD_LEN			0x6700U
-#define RSP_INVALID_LE		0x6C00
-#define RSP_BAD_P1_2		0x6A00
-#define RSP_NOT_SUPPORTED	0x6D00
-
 #define MAX_PACKETS 60
-#define MAX_BYTES_PER_REGIDX	110
+#define MAX_BYTES_PER_REGIDX	111
 #define MAX_BYTES_RECEIVED_PACKET	(2 + 1)
 #define MAX_BYTES_COMMAND_PACKET	2
 #define MAX_BYTES_PER_PACKET	(EINK_COMMAND_OVERHEAD + MAX_BYTES_PER_REGIDX)
@@ -122,23 +117,34 @@ typedef enum ScanLine{
 
 
 #ifdef USING_2_0_INCH_EPAPER
-#define BYTES_IN_1_LINE 25
-#define LINES_ON_SCREEN 96
-#define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
+#define DISPLAY_WIDTH_PIXELS	100
+#define DISPLAY_HEIGHT_PIXELS	96
 #define BYTES_IN_RETURN_MAX	255
-#define EINK_DPI	111
 #define EINK_SCREEN_BANNER	EINK_2_0_INCH_COG_ID
+#define EINK_DPI	111
+
 #else
 #ifdef USING_2_7_INCH_EPAPER
-#define BYTES_IN_1_LINE 33
-#define LINES_ON_SCREEN 176
-#define BYTES_IN_1_LINE_PACKET BYTES_IN_1_LINE + 4
+
+#define DISPLAY_WIDTH_PIXELS	264
+#define DISPLAY_HEIGHT_PIXELS	176
 #define BYTES_IN_RETURN_MAX	255
-#define EINK_DPI	117
 #define EINK_SCREEN_BANNER	EINK_2_7_INCH_COG_ID
+#define EINK_DPI	117
+
 #endif
 #endif
 
+#define NUM_BYTES_BORDER		1
+
+#define BYTES_IN_1_LINE 		(DISPLAY_WIDTH_PIXELS / 8)
+#define NUM_DATA_BYTES_FIRST	(DISPLAY_WIDTH_PIXELS / 8)
+#define NUM_DATA_BYTES_SECOND	NUM_DATA_BYTES_FIRST
+#define NUM_SCAN_BYTES			(LINES_ON_SCREEN / 4)
+#define BYTES_IN_1_LINE_TO_EPD	(NUM_BYTES_BORDER + NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES + NUM_DATA_BYTES_SECOND)
+
+/* Legacy support macro */
+#define LINES_ON_SCREEN			(DISPLAY_HEIGHT_PIXELS)
 
 /* Value to wait until the timeout */
 #define EINK_WAIT_TO_TIMEOUT 500
@@ -189,8 +195,6 @@ typedef enum einkstate{
 
 #define EINK_BUSY_IS_BUSY		1U
 
-#define EINK_TICKS_IN_1_MS		(configTICK_RATE_HZ / 1000)
-
 /* information for epd header arrays */
 typedef struct epdArrayData
 {
@@ -199,8 +203,8 @@ typedef struct epdArrayData
 }epdArrayData_t;
 
 static bool __display_black_on_white;
-static uint16 dummysenddata[BYTES_IN_1_LINE_PACKET];
-static uint16 returnValue[BYTES_IN_RETURN_MAX];
+static uint16 dummysenddata[BYTES_IN_1_LINE_TO_EPD];
+static uint16 returnValue[BYTES_IN_1_LINE_TO_EPD];
 static uint16 waiter;
 
 /* scratch_screen is memory copy of what's queued to be transmitted to the
@@ -215,7 +219,7 @@ void init_display_buffers_and_pins(void);
 
 void uploadImageLine_post_bitflip(spiDAT1_t, uint16 *);
 
-void uploadImageLine_pre_bitflip(spiDAT1_t, uint8 *);
+void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum);
 
 void wait_to_not_busy(void);
 

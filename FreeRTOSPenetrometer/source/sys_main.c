@@ -130,6 +130,20 @@ void main(void)
         while(1);
     }
 
+    /* Create UI Task */
+    if (xTaskCreate(
+    		ui_task,
+    		"UITask",
+    		256,
+    		NULL,
+    		1 | portPRIVILEGE_BIT,
+    		&xUITaskHandle
+    		) != pdTRUE)
+    {
+        /* Task could not be created */
+        while(1);
+    }
+
     /* Start Scheduler */
     vTaskStartScheduler();
 

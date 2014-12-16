@@ -13,9 +13,6 @@
 //#endif
 
 
-static char l_emcy_msg[EMCY_MSG_MAX_LENGTH];
-static int l_emcy_msg_len = 0;
-
 static einkstate_t displaystate = EinkUninitialized;
 
 static volatile boolean l_is_emcy = false;
@@ -63,9 +60,12 @@ void display_task( void* p_params )
 	}//for
 }//func
 
+/* Throw the scratch screen up on the display */
 void try_upload_screen(){
-	if(!gc_is_display_busy)
+	if(!gc_is_display_busy){
 		gc_is_display_busy = true;
+		displaystate = EinkLoading;
+	}
 }
 
 /* Return flag that says whether or not it is safe to write to scratch_screen

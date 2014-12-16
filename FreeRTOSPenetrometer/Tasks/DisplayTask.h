@@ -25,6 +25,7 @@ boolean can_recieve_input(void);
 
 static volatile boolean gc_is_display_busy;
 
+void try_upload_screen();
 
 #endif /* UITASK_H_ */
 
