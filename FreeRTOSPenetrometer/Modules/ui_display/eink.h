@@ -115,6 +115,16 @@ typedef enum ScanLine{
 	ScanInactiveLine = 0x00,	/* Not writing this line: 0b00 */
 }ScanLine_t;
 
+typedef enum ScreenUploading{
+	BlackScreenFlush,
+	WhiteScreenFlush,
+	InvertedImage,
+	Image,
+}ScreenUploading_t;
+
+#define EINK_CMD_BLACK_BYTE			0xFF
+#define EINK_CMD_WHITE_BYTE			0xAA
+#define EINK_CMD_NOTHING_BYTE		0x00
 
 #ifdef USING_2_0_INCH_EPAPER
 #define DISPLAY_WIDTH_PIXELS	100
@@ -227,10 +237,6 @@ void uploadImageFromHeader(spiDAT1_t, uint16 *);
 
 void uploadArray(spiDAT1_t, uint8 *, int);
 
-uint16 do_bit_flip_for_epd(uint8);
-
-uint8 undo_bit_flip_for_epd(uint16);
-
 void load_one_line(spiDAT1_t, uint8 *, int);
 
 void ui_display_set_black_on_white();
@@ -241,9 +247,6 @@ void display_cs_on(void);
 
 void display_cs_off(void);
 
-void display_en_on(void);
-
-void display_en_off(void);
 
 void blackout_screen(void);
 
@@ -294,5 +297,8 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments);
 uint8_t read_epaper_register_single_byte(uint8_t regidx);
 
 void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len);
+
+uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t, ScreenUploading_t screen, int linenum);
+
 
 #endif /* EINK_H_ */

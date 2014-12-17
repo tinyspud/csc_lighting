@@ -993,7 +993,6 @@ uint32 spiTransmitAndReceiveData_checking_busy(spiBASE_t *spi, spiDAT1_t *dataco
 
 
 
-
 /* USER CODE END */
 
 /** @fn spiDisableNotification(spiBASE_t *spi, uint32 flags)

@@ -132,6 +132,7 @@ typedef enum SpiTxRxDataStatus
 }SpiDataStatus_t;
 
 /* USER CODE BEGIN (0) */
+#include "eink.h"
 /* USER CODE END */
 
 typedef struct spi_config_reg

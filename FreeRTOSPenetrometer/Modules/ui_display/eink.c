@@ -283,6 +283,27 @@ einkstate_t manage_eink(einkstate_t state){
 			temp = getCmdResponse(dataconfig1_t);
 		}
 #else
+
+		/* Load inverted image */
+		for(i = 0; i < LINES_ON_SCREEN; i++){
+			wait_to_not_busy();
+			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i);
+			/* Clear out the scratch_screen line */
+			clear_scratch_screen_line(i);
+			wait_to_not_busy();
+			temp = getCmdResponse(dataconfig1_t);
+		}
+
+		/* Load black frame */
+
+		/* Load white frame */
+
+		/* Load black frame */
+
+		/* Load white frame */
+
+		/* Load image */
+
 		for(i = 0; i < LINES_ON_SCREEN; i++){
 			wait_to_not_busy();
 			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i);
@@ -444,37 +465,21 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 		(((((displayBuf[i] & (0x08)) >> 3) == 0x01) ? 0x03 : 0x02) << 4) |
 		(((((displayBuf[i] & (0x02)) >> 1) == 0x01) ? 0x03 : 0x02) << 6);
 
-	buff[BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)] = (0X03 << (linenum % 4));
+	buff[BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1] = (0X03 << ((linenum % 4) * 2));
 
 	j += NUM_SCAN_BYTES;
 
 	/* DUMMY - write black screen */
 	for(i = 0; i < BYTES_IN_1_LINE; i++, j++)
-		buff[j] = ((((displayBuf[i] & (0x40)) >> 6) == 0x01) ? 0x03 : 0x02) |
-		(((((displayBuf[i] & (0x10)) >> 4) == 0x01) ? 0x03 : 0x02) << 2) |
-		(((((displayBuf[i] & (0x04)) >> 2) == 0x01) ? 0x03 : 0x02) << 4) |
-		(((((displayBuf[i] & (0x01)) >> 0) == 0x01) ? 0x03 : 0x02) << 6);
+		buff[j] = (((((displayBuf[i] & (0x40)) >> 6) == 0x01) ? 0x03 : 0x02) << 6)|
+		(((((displayBuf[i] & (0x10)) >> 4) == 0x01) ? 0x03 : 0x02) << 4) |
+		(((((displayBuf[i] & (0x04)) >> 2) == 0x01) ? 0x03 : 0x02) << 2) |
+		(((((displayBuf[i] & (0x01)) >> 0) == 0x01) ? 0x03 : 0x02) << 0);
 
 	/* Upload the line to SPI */
 	write_epaper_register(EINK_REG_IDX_WRITE_LINE, buff, BYTES_IN_1_LINE_TO_EPD);
 
 	write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_DRIVE);
-}
-
-uint16 do_bit_flip_for_epd(uint8 bit_in){
-	uint16 x = 0;
-
-	/* do the bit flipping */
-	x |= (uint16)(bit_in & 0x01U);  /* Bit 0 */
-	x |= (uint16)((bit_in & 0x02U) >> 1 << 2);  /* Bit 1 */
-	x |= (uint16)((bit_in & 0x04U) >> 2 << 4);  /* Bit 2 */
-	x |= (uint16)((bit_in & 0x08U) >> 3 << 6);  /* Bit 3 */
-	x |= (uint16)((bit_in & 0x10U) >> 4 << 1);  /* Bit 4 */
-	x |= (uint16)((bit_in & 0x20U) >> 5 << 3);  /* Bit 5 */
-	x |= (uint16)((bit_in & 0x40U) >> 6 << 5);  /* Bit 6 */
-	x |= (uint16)((bit_in & 0x80U) >> 7 << 7);  /* Bit 7 */
-
-	return x;
 }
 
 /* Send a single byte */
@@ -702,6 +707,71 @@ void ui_display_set_white_on_black(){
 /* Check the char input to see if it's whitespace (line feed, new line, space or tab) */
 boolean is_whitespace(char char2check){
 	return (char2check == ' ') || (char2check == '\r') || (char2check == '\n') || (char2check == '\t');
+}
+
+/* Upload function specifically for the black/white screen draws */
+uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t, ScreenUploading_t screen, int linenum)
+{
+	int blocksize = 0;
+	uint16 Tx_Data, trashrx;
+	uint32 Chip_Select_Hold = (dataconfig_t->CS_HOLD) ? 0x10000000U : 0U;
+	uint32 WDelay = (dataconfig_t->WDEL) ? 0x04000000U : 0U;
+	SPIDATAFMT_t DataFormat = dataconfig_t->DFSEL;
+	uint8 ChipSelect = dataconfig_t->CSNR;
+
+	Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
+			((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+
+	while(blocksize < BYTES_IN_1_LINE_TO_EPD)
+	{
+		if((spi->FLG & 0x000000FFU) !=0U)
+		{
+			break;
+		}
+
+		if(blocksize == (BYTES_IN_1_LINE_TO_EPD - 1))
+		{
+			Chip_Select_Hold = 0U;
+		}
+		/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
+
+		if(blocksize < NUM_DATA_BYTES_FIRST){
+			Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
+					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+		}
+		else if(blocksize < (NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES)){
+			Tx_Data = ((NUM_DATA_BYTES_FIRST + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)) == (blocksize)) ?
+					(0X03 << ((linenum % 4) * 2)) : 0x00;
+		}
+		else{
+			Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
+					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+		}
+
+		spi->DAT1 =((uint32)DataFormat << 24U) |
+				((uint32)ChipSelect << 16U) |
+				(WDelay)           |
+				(Chip_Select_Hold) |
+				(uint32)Tx_Data;
+		/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Hardware status bit read check" */
+		while((spi->FLG & 0x00000100U) != 0x00000100U)
+		{
+		} /* Wait */
+		while((gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN) &
+				gioGetBit(EINK_BUSY_PORT, EINK_BUSY_PIN)) == EINK_BUSY_IS_BUSY) {
+			//do nothing wait while busy
+			_nop();
+		}
+
+		/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
+		trashrx = (uint16)spi->BUF;
+		/*SAFETYMCUSW 567 S MR:17.1,17.4 <APPROVED> "Pointer increment needed" */
+
+		blocksize++;
+	}
+
+
+	return (spi->FLG & 0xFFU);
 }
 
 
