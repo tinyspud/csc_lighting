@@ -88,6 +88,7 @@
 
 /* Border byte */
 #define EINK_BORDER_BYTE_VAL			0x00
+#define EINK_BORDER_LEN					1
 
 
 #define MAX_TRIES_TO_USE_CHARGE_PUMP	4

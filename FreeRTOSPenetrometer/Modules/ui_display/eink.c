@@ -739,6 +739,9 @@ void write_epaper_solid_flush(ScreenUploading_t screen){
 	}
 
 	for(i = 0; i < DISPLAY_HEIGHT_PIXELS; i++){
+		send_data[0] = EINK_REG_HEADER;
+		send_data[1] = EINK_REG_IDX_WRITE_LINE;
+
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
@@ -768,26 +771,32 @@ uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t
 
 	Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
 			((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
-
-	while(blocksize < BYTES_IN_1_LINE_TO_EPD)
+	int msglen = (BYTES_IN_1_LINE_TO_EPD + 1);
+	while(blocksize < msglen)
 	{
 		if((spi->FLG & 0x000000FFU) !=0U)
 		{
 			break;
 		}
 
-		if(blocksize == (BYTES_IN_1_LINE_TO_EPD - 1))
+		if(blocksize == (msglen - 1))
 		{
 			Chip_Select_Hold = 0U;
 		}
 		/*SAFETYMCUSW 45 D MR:21.1 <APPROVED> "Valid non NULL input parameters are only allowed in this driver" */
 
-		if(blocksize < NUM_DATA_BYTES_FIRST){
+		if(blocksize == 0){
+			Tx_Data = EINK_REG_WRITE;
+		}
+		else if(blocksize == 1){
+			Tx_Data = EINK_BORDER_BYTE_VAL;
+		}
+		else if(blocksize < (NUM_DATA_BYTES_FIRST + EINK_BORDER_LEN + EINK_COMMAND_OVERHEAD)){
 			Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
 					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
 		}
-		else if(blocksize < (NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES)){
-			Tx_Data = ((BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1) == (blocksize)) ?
+		else if(blocksize < (NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES + EINK_BORDER_LEN + EINK_COMMAND_OVERHEAD)){
+			Tx_Data = ((BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1) == (blocksize - (EINK_COMMAND_OVERHEAD))) ?
 					(0X03 << ((linenum % 4) * 2)) : 0x00;
 		}
 		else{
