@@ -268,7 +268,7 @@ einkstate_t manage_eink(einkstate_t state){
 			rtnval = EinkError;
 		}
 		else
-			rtnval = EinkIdle;
+			rtnval = EinkJustInitializedReadyForFirstFrame;
 
 		break;
 	case EinkLoading:
@@ -280,38 +280,59 @@ einkstate_t manage_eink(einkstate_t state){
 			/* Clear out the scratch_screen line */
 			clear_scratch_screen_line(i);
 			wait_to_not_busy();
-			temp = getCmdResponse(dataconfig1_t);
 		}
 #else
 
+		/* Set HET08 high */
+		gioSetBit(hetPORT1, 8, 1);
+
+		gioToggleBit(gioPORTA, 2);
 		/* Load inverted image */
-		for(i = 0; i < LINES_ON_SCREEN; i++){
-			wait_to_not_busy();
-			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i);
-			/* Clear out the scratch_screen line */
-			clear_scratch_screen_line(i);
-			wait_to_not_busy();
-			temp = getCmdResponse(dataconfig1_t);
+		for(temp = 0; temp < 2; temp++){
+			for(i = 0; i < LINES_ON_SCREEN; i++){
+				wait_to_not_busy();
+				uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i, NegativeImage);
+				wait_to_not_busy();
+			}
 		}
+		waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
 
+		gioToggleBit(gioPORTA, 2);
 		/* Load black frame */
+		write_epaper_solid_flush(BlackScreenFlush);
 
+		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+
+		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
+		write_epaper_solid_flush(WhiteScreenFlush);
+		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 
+		gioToggleBit(gioPORTA, 2);
 		/* Load black frame */
+		write_epaper_solid_flush(BlackScreenFlush);
+		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 
+		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
+		write_epaper_solid_flush(WhiteScreenFlush);
+		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 
+		gioToggleBit(gioPORTA, 2);
 		/* Load image */
 
-		for(i = 0; i < LINES_ON_SCREEN; i++){
-			wait_to_not_busy();
-			uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i);
-			/* Clear out the scratch_screen line */
-			clear_scratch_screen_line(i);
-			wait_to_not_busy();
-			temp = getCmdResponse(dataconfig1_t);
+		for(temp = 0; temp < 8; temp++){
+			for(i = 0; i < LINES_ON_SCREEN; i++){
+				wait_to_not_busy();
+				uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i, PositiveImage);
+				/* Clear out the scratch_screen line */
+				clear_scratch_screen_line(i);
+				wait_to_not_busy();
+			}
 		}
+		/* Set HET08 low */
+		gioSetBit(hetPORT1, 8, 0);
+
 #endif
 		rtnval = EinkIdle;
 		break;
@@ -366,28 +387,6 @@ void whiteout_screen(){
 	}
 }
 
-uint32 getCmdResponse(spiDAT1_t dataconfig1_t) {
-	uint32 value;
-	// max 250
-	uint16 dummysenddata[2] = {0U,0U};
-	uint16 returnValue[2] = {0U,0U};
-
-	//wait
-	display_cs_on();
-	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2, dummysenddata, returnValue);
-	waitDisplayDrver(EINK_CS_DELAY);
-	display_cs_off();
-
-	value = (uint32) returnValue[0];
-	value = value << 8;
-	value += (uint32) returnValue[1];
-
-	//0X9000 IS COMMAND WAS SUCCESSFUL
-
-	return value;
-}
-
 uint8_t get_eink_reg_len(uint16_t RegIdx){
 	switch(RegIdx){
 	case 0x01:
@@ -425,10 +424,12 @@ void display_cs_off(){
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 1);
 }
 
-void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum) {
+void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum, ScreenUploading_t screen){
 
 	int i = 0, j = 0;
 	uint8_t buff[BYTES_IN_1_LINE_TO_EPD] = { 0 };
+	uint8_t byte_write_black = 0x00, byte_write_white = 0x00;
+
 	/* Clear the buffer */
 	for(i = 1; i < BYTES_IN_1_LINE_TO_EPD; i++)
 		buff[i] = 0;
@@ -458,12 +459,29 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 	//#endif
 	//	}
 
+	switch(screen){
+	case PositiveImage:
+		byte_write_black = EINK_CMD_BLACK_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		byte_write_white = EINK_CMD_WHITE_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		break;
+	case NegativeImage:
+		byte_write_black = EINK_CMD_WHITE_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		byte_write_white = EINK_CMD_BLACK_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		break;
+	case BlackScreenFlush:
+	case WhiteScreenFlush:
+	default:
+		byte_write_black = EINK_CMD_NOTHING_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		byte_write_white = EINK_CMD_NOTHING_BYTE & EINK_CMD_COLOR_BITS_MASK;
+		break;
+	}
+
 	/* DUMMY - write black screen */
 	for(i = (BYTES_IN_1_LINE - 1); (i >= 0); i--, j++)
-		buff[j] = ((((displayBuf[i] & (0x80)) >> 7) == 0x01) ? 0x03 : 0x02) |
-		(((((displayBuf[i] & (0x20)) >> 5) == 0x01) ? 0x03 : 0x02) << 2) |
-		(((((displayBuf[i] & (0x08)) >> 3) == 0x01) ? 0x03 : 0x02) << 4) |
-		(((((displayBuf[i] & (0x02)) >> 1) == 0x01) ? 0x03 : 0x02) << 6);
+		buff[j] = ((((displayBuf[i] & (0x80)) >> 7) == 0x01) ? byte_write_black : byte_write_white) |
+		(((((displayBuf[i] & (0x20)) >> 5) == 0x01) ? byte_write_black : byte_write_white) << 2) |
+		(((((displayBuf[i] & (0x08)) >> 3) == 0x01) ? byte_write_black : byte_write_white) << 4) |
+		(((((displayBuf[i] & (0x02)) >> 1) == 0x01) ? byte_write_black : byte_write_white) << 6);
 
 	buff[BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1] = (0X03 << ((linenum % 4) * 2));
 
@@ -471,10 +489,10 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 
 	/* DUMMY - write black screen */
 	for(i = 0; i < BYTES_IN_1_LINE; i++, j++)
-		buff[j] = (((((displayBuf[i] & (0x40)) >> 6) == 0x01) ? 0x03 : 0x02) << 6)|
-		(((((displayBuf[i] & (0x10)) >> 4) == 0x01) ? 0x03 : 0x02) << 4) |
-		(((((displayBuf[i] & (0x04)) >> 2) == 0x01) ? 0x03 : 0x02) << 2) |
-		(((((displayBuf[i] & (0x01)) >> 0) == 0x01) ? 0x03 : 0x02) << 0);
+		buff[j] = (((((displayBuf[i] & (0x40)) >> 6) == 0x01) ? byte_write_black : byte_write_white) << 6)|
+		(((((displayBuf[i] & (0x10)) >> 4) == 0x01) ? byte_write_black : byte_write_white) << 4) |
+		(((((displayBuf[i] & (0x04)) >> 2) == 0x01) ? byte_write_black : byte_write_white) << 2) |
+		(((((displayBuf[i] & (0x01)) >> 0) == 0x01) ? byte_write_black : byte_write_white) << 0);
 
 	/* Upload the line to SPI */
 	write_epaper_register(EINK_REG_IDX_WRITE_LINE, buff, BYTES_IN_1_LINE_TO_EPD);
@@ -484,7 +502,7 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 
 /* Send a single byte */
 void write_epaper_register_one_byte(uint8_t regidx, uint8_t argument){
-	static uint16_t send_data[1] = { 0 };
+	static uint8_t send_data[1] = { 0 };
 
 	send_data[0] = argument;
 
@@ -496,7 +514,7 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 	 * and will use the reg idx length */
 
 	int len = 0, i = 0;
-	static uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
+	uint16_t send_data[MAX_BYTES_PER_PACKET] = { 0 },
 			receive_data[MAX_BYTES_PER_PACKET] = { 0 };
 
 	for(i = 0; (i < MAX_BYTES_PER_PACKET); i++){
@@ -514,7 +532,7 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+		spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 2U, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 
@@ -526,7 +544,7 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData_checking_busy(EINK_SPIPORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		spiTransmitAndReceiveData_checking_busy(EINK_SPI_PORT, &dataconfig1_t, arg_len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 	}
@@ -549,7 +567,7 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 	 * and will use the reg idx length */
 
 	int len = 0, i = 0;
-	static uint16_t send_data[MAX_BYTES_COMMAND_PACKET] = { 0 },
+	uint16_t send_data[MAX_BYTES_COMMAND_PACKET] = { 0 },
 			receive_data[MAX_BYTES_COMMAND_PACKET] = { 0 };
 
 	for(i = 0; i < MAX_BYTES_COMMAND_PACKET; i++){
@@ -567,7 +585,7 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+		spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 2U, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 
@@ -582,7 +600,7 @@ int read_epaper_register(uint8_t regidx, uint8_t * arguments){
 		/* Send write to register */
 		display_cs_on();
 		waitDisplayDrver(EINK_CS_DELAY);
-		spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
+		spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, len + EINK_COMMAND_OVERHEAD, send_data, receive_data);
 		waitDisplayDrver(EINK_CS_DELAY);
 		display_cs_off();
 
@@ -615,7 +633,7 @@ uint16_t read_epaper_version(){
 	/* Send write to register */
 	display_cs_on();
 	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 2U, send_data, receive_data);
+	spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 2U, send_data, receive_data);
 	waitDisplayDrver(EINK_CS_DELAY);
 	display_cs_off();
 
@@ -634,7 +652,7 @@ void displayUpdate(spiDAT1_t dataconfig1_t) {
 	display_cs_on();
 	waitDisplayDrver(EINK_CS_DELAY);
 
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 3U, _dummysenddata, _returnValue);
+	spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 3U, _dummysenddata, _returnValue);
 	waitDisplayDrver(EINK_CS_DELAY);
 	display_cs_off();
 }
@@ -645,7 +663,7 @@ void displayResetPointer(spiDAT1_t dataconfig1_t) {
 
 	display_cs_on();
 	waitDisplayDrver(EINK_CS_DELAY);
-	spiTransmitAndReceiveData(EINK_SPIPORT, &dataconfig1_t, 3U, _dummysenddata, _returnValue);
+	spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 3U, _dummysenddata, _returnValue);
 	waitDisplayDrver(EINK_CS_DELAY);
 	display_cs_off();
 }
@@ -707,6 +725,35 @@ void ui_display_set_white_on_black(){
 /* Check the char input to see if it's whitespace (line feed, new line, space or tab) */
 boolean is_whitespace(char char2check){
 	return (char2check == ' ') || (char2check == '\r') || (char2check == '\n') || (char2check == '\t');
+}
+
+
+void write_epaper_solid_flush(ScreenUploading_t screen){
+	int i = 0;
+	uint16_t send_data[MAX_BYTES_COMMAND_PACKET] = { 0 },
+			receive_data[MAX_BYTES_COMMAND_PACKET] = { 0 };
+
+	for(i = 0; i < MAX_BYTES_COMMAND_PACKET; i++){
+		send_data[i] = 0U;
+		receive_data[i] = 0U;
+	}
+
+	for(i = 0; i < DISPLAY_HEIGHT_PIXELS; i++){
+		/* Send write to register */
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmitAndReceiveData(EINK_SPI_PORT, &dataconfig1_t, 2U, send_data, receive_data);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+
+		display_cs_on();
+		waitDisplayDrver(EINK_CS_DELAY);
+		spiTransmit_solid_color_line_data(EINK_SPI_PORT, &dataconfig1_t, screen, i);
+		waitDisplayDrver(EINK_CS_DELAY);
+		display_cs_off();
+
+		write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_DRIVE);
+	}
 }
 
 /* Upload function specifically for the black/white screen draws */

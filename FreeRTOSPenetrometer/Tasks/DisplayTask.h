@@ -27,5 +27,7 @@ static volatile boolean gc_is_display_busy;
 
 void try_upload_screen();
 
+boolean ready_for_first_one();
+
 #endif /* UITASK_H_ */
 

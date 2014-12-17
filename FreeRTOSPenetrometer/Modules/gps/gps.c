@@ -820,11 +820,9 @@ uint32_t init_gps(void) {
 
 	/*Delay for one second after starting GPS */
 	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
-		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
+	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS )
+		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) { }
 
-		}
-	}
 	for (;;) {
 		if (g_gps_timer_expired_flag == TRUE_FLAG) {
 			break;

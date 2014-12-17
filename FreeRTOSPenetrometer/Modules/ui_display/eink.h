@@ -118,13 +118,16 @@ typedef enum ScanLine{
 typedef enum ScreenUploading{
 	BlackScreenFlush,
 	WhiteScreenFlush,
-	InvertedImage,
-	Image,
+	NegativeImage,
+	PositiveImage,
 }ScreenUploading_t;
 
+/* Single bit: 0x03 */
 #define EINK_CMD_BLACK_BYTE			0xFF
+/* Single bit: 0x02 */
 #define EINK_CMD_WHITE_BYTE			0xAA
 #define EINK_CMD_NOTHING_BYTE		0x00
+#define EINK_CMD_COLOR_BITS_MASK	0x03
 
 #ifdef USING_2_0_INCH_EPAPER
 #define DISPLAY_WIDTH_PIXELS	100
@@ -174,6 +177,7 @@ typedef enum einkstate{
 	EinkUninitialized,
 	EinkPoweringOn,
 	EinkInitializingCOGDriver,
+	EinkJustInitializedReadyForFirstFrame,
 	EinkIdle,
 	EinkLoading,
 	EinkError
@@ -183,7 +187,7 @@ typedef enum einkstate{
 #define MAX_LOAD_ATTEMPTS 10
 
 /* GPIO Ports Needed */
-#define EINK_SPIPORT 			spiREG1
+#define EINK_SPI_PORT 			spiREG1
 
 #define EINK_BUSY_PORT 			gioPORTA
 #define EINK_CS_PORT			spiPORT1
@@ -229,7 +233,7 @@ void init_display_buffers_and_pins(void);
 
 void uploadImageLine_post_bitflip(spiDAT1_t, uint16 *);
 
-void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum);
+void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int linenum, ScreenUploading_t screen);
 
 void wait_to_not_busy(void);
 
@@ -300,5 +304,6 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 
 uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t, ScreenUploading_t screen, int linenum);
 
+void write_epaper_solid_flush(ScreenUploading_t screen);
 
 #endif /* EINK_H_ */

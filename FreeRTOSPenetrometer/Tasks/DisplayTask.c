@@ -48,6 +48,7 @@ void display_task( void* p_params )
 			/* Stop conditions for the display timer */
 			switch(displaystate){
 			case EinkIdle:
+			case EinkJustInitializedReadyForFirstFrame:
 				gc_is_display_busy = false;
 				l_can_press = true;
 				break;
@@ -58,6 +59,10 @@ void display_task( void* p_params )
 		}
 	}//for
 }//func
+
+boolean ready_for_first_one(){
+	return displaystate == EinkJustInitializedReadyForFirstFrame;
+}
 
 /* Throw the scratch screen up on the display */
 void try_upload_screen(){
