@@ -125,8 +125,8 @@ typedef struct sci_config_reg
 #define SCILIN_SETINTLVL_CONFIGVALUE  ((uint32)((uint32)0U << 26U) \
                                       |(uint32)((uint32)0U << 25U) \
                                       |(uint32)((uint32)0U << 24U) \
-                                      |(uint32)((uint32)0U << 9U) \
-                                      |(uint32)((uint32)0U << 8U) \
+                                      |(uint32)((uint32)1U << 9U) \
+                                      |(uint32)((uint32)1U << 8U) \
                                       |(uint32)((uint32)0U << 1U) \
                                       |(uint32)((uint32)0U))
 
@@ -190,9 +190,11 @@ void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type
 void sciNotification(sciBASE_t *sci, uint32 flags);
 
 /* USER CODE BEGIN (1) */
+#define UART_putChar(reg, byte)	sciSendByte(reg, byte)
+
 uint32_t xSerialGetChar(char* ptr2char, int32_t timeout);
 uint32_t xSerialPutChar(char byte2send, int timeout);
-
+void send_byte_on_uart(uint8_t byte2send);
 /* USER CODE END */
 /**@}*/
 #ifdef __cplusplus

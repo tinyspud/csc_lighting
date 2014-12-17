@@ -1,6 +1,5 @@
 #include "DisplayTask.h"
 #include "LogTask.h"
-#include "uart_mux.h"
 #include "mcs_time.h"
 #include "UITask.h"
 #include "common.h"
@@ -33,9 +32,6 @@ void ui_task( void* p_params )
 //			curtick = xTaskGetTickCount();
 
 			clear_scratch_screen();
-
-//			render_rectangle(0,0,1,1,DRAW_SET_F);
-			render_rectangle(0, 0, 1, 1, DRAW_SET_F, scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
 
 			top = (LINES_ON_SCREEN / 2) + ((__char_bottom_97 - __char_top_97) / 2) - __char_bottom_97;
 			top = render_smart_string("Y | / \ :-) / \ | Y\0", 19, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,

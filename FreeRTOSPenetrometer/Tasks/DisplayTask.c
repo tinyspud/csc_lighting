@@ -1,6 +1,5 @@
 #include "DisplayTask.h"
 #include "LogTask.h"
-#include "uart_mux.h"
 #include "mcs_time.h"
 
 #include "gps.h"

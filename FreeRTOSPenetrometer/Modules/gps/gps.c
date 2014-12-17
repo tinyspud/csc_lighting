@@ -24,7 +24,6 @@
 #include "spi.h"
 #include "gps.h"
 #include "het.h"
-#include "uart_mux.h"
 #include "gio.h"
 
 
@@ -37,7 +36,7 @@
 static const uint8_t g_at_gpgll_string[5] = { 'G', 'P', 'G', 'L', 'L' };
 uint8_t at_PSRF100[25] = "$PSRF100,1,38400,8,1,0";
 static uint8_t g_rx_buffer_for_gps_msg[STRCNTMAX];
-TimerHandle_t xGPSTimer;
+static TimerHandle_t xGPSTimer;
 static uint32_t g_gps_timer_expired_flag = pdFALSE;
 static GPS_BAUD g_current_gps_baud = GPS_9600;
 
@@ -109,8 +108,8 @@ void print_gps_data_struct(GPSDATA_S* gps_rx_struct)
 
 /* send gps return type characters */
 void send_new_line_string_for_gps(void) {
-	send_byte_on_uart(UARTMUXOUT1, '\r');
-	send_byte_on_uart(UARTMUXOUT1, '\n');
+	send_byte_on_uart('\r');
+	send_byte_on_uart('\n');
 }
 
 /* send a string out over gps uart port */
@@ -118,7 +117,7 @@ void send_string_to_gps(uint8_t *strin, uint16_t len) {
 	uint16 i;
 
 	for (i = 0; i < len; i++) {
-		send_byte_on_uart(UARTMUXOUT1, strin[i]);
+		send_byte_on_uart(strin[i]);
 		//UART_putChar(UART, strin[i]);
 	}
 
@@ -737,20 +736,13 @@ void prvGPSTimerCallback(TimerHandle_t xExpiredTimer) {
 
 /*turn device on, get out of reset */
 void power_on_gps(void) {
-	/*GIOA4 = EN_3O3V */
-	gioSetBit(gioPORTA, 4, 1);
-	/* take GPS out of reset */
-	gioSetBit(gioPORTA, 6, 1);
-
-	/*GIOA5= GPS_EN */
-	//	gioSetBit(gioPORTA, 5, 1);
 	/*delay for one second and then raise GPS_EN */
 	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * configTICK_RATE_HZ), portMAX_DELAY) == pdPASS ) {
+	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 			for (;;) {
 				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-					gioSetBit(gioPORTA, 5, 1);
+					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
 					break;
 				}
 			}
@@ -761,7 +753,7 @@ void power_on_gps(void) {
 	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 		for (;;) {
 			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-				gioSetBit(gioPORTA, 5, 0);
+				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
 				break;
 			}
 		}
@@ -771,9 +763,8 @@ void power_on_gps(void) {
 }
 
 void reset_gps(void) {
-	gioSetBit(gioPORTA, 6, 0);
 	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * configTICK_RATE_HZ), portMAX_DELAY) == pdPASS ) {
+	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 
 		}
@@ -783,15 +774,13 @@ void reset_gps(void) {
 			break;
 		}
 	}
-	gioSetBit(gioPORTA, 6, 1);
-
 	/*delay for one second and then raise GPS_EN */
 	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * configTICK_RATE_HZ), portMAX_DELAY) == pdPASS ) {
+	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 			for (;;) {
 				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-					gioSetBit(gioPORTA, 5, 1);
+					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
 					break;
 				}
 			}
@@ -802,7 +791,7 @@ void reset_gps(void) {
 	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 		for (;;) {
 			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-				gioSetBit(gioPORTA, 5, 0);
+				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
 				break;
 			}
 		}
@@ -817,7 +806,7 @@ uint32_t init_gps(void) {
 	/* Create generic GPS timer */
 	xGPSTimer = xTimerCreate(
 			"GPS generic Timer", /* Unique name */
-				(3 * configTICK_RATE_HZ), /* Period (# ticks) */
+				(3 * SYS_TICKS_IN_1_SEC), /* Period (# ticks) */
 				pdFALSE, /* Auto reload timer? */
 				"GPSTimer", /* Unique ID (so callback can link to several timers) */
 				prvGPSTimerCallback /* Callback function (see above) */
@@ -831,7 +820,7 @@ uint32_t init_gps(void) {
 
 	/*Delay for one second after starting GPS */
 	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * configTICK_RATE_HZ), portMAX_DELAY) == pdPASS ) {
+	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
 		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
 
 		}
@@ -851,7 +840,7 @@ uint32_t init_gps(void) {
 	disable_gps_msg(VTG);
 
 	/* flush receive buffer after turning off messages */
-	flush_gps_responses((3 * configTICK_RATE_HZ));
+	flush_gps_responses((3 * SYS_TICKS_IN_1_SEC));
 
 	/* make sure uart is silent */
 	if (locate_string_in_gps_msg(&g_at_gpgll_string[0], 5, 5000) == pdPASS ) {

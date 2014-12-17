@@ -70,7 +70,7 @@ void init_display_buffers_and_pins(void) {
 	for(i = 0; i < BYTES_IN_1_LINE_TO_EPD; i++)
 		dummysenddata[i] = 0;
 
-	for(i = 0; i < BYTES_IN_RETURN_MAX; i++)
+	for(i = 0; i < BYTES_IN_1_LINE_TO_EPD; i++)
 		returnValue[i] = 0;
 
 	waiter = EINK_WAIT_PERIOD;
@@ -533,12 +533,12 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 }
 
 uint8_t read_epaper_register_single_byte(uint8_t regidx){
-	static uint16_t rxval[1] = { 0 };
+	static uint8_t rxval[1] = { 0 };
 
 	rxval[0] = 0;
 
 	if((get_eink_reg_len(regidx) == 1) && (read_epaper_register(regidx, &rxval) == 1)){
-		return MAKE_UINT16_T_LSB_INTO_UINT8_T(rxval[0]);
+		return *rxval;
 	}
 	return 0;
 }
@@ -740,7 +740,7 @@ uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t
 					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
 		}
 		else if(blocksize < (NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES)){
-			Tx_Data = ((NUM_DATA_BYTES_FIRST + ((DISPLAY_HEIGHT_PIXELS - linenum) >> 2)) == (blocksize)) ?
+			Tx_Data = ((BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1) == (blocksize)) ?
 					(0X03 << ((linenum % 4) * 2)) : 0x00;
 		}
 		else{

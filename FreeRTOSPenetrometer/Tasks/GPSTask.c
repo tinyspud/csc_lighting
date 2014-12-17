@@ -18,8 +18,6 @@
 
 //#ifdef GPS_MODULE
 #include "gps.h"
-#include "uart_mux.h"
-#include "sciRTOS.h"
 //#endif
 
 //static const uint8_t instr[69] ={'$','G','P','R','M','C',',',

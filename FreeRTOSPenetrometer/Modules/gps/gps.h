@@ -19,7 +19,6 @@
 #include <string.h>
 #include <limits.h>
 #include "sys_common.h"
-#include "uart_mux.h"
 #include "os_timer.h"
 //#include "Queues.h"
 //#include "Tasks.h"

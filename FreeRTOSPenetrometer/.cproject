@@ -81,7 +81,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Modules/gps/sciRTOS.c|Modules/alfat|Modules/ui_display/menu_display.c|Modules/bootloader" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Modules/gps/uart_mux.c|Modules/gps/sciRTOS.c|Modules/alfat|Modules/ui_display/menu_display.c|Modules/bootloader" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

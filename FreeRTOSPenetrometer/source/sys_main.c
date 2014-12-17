@@ -64,7 +64,6 @@
 #include "eink.h"
 #include "sys_vim.h"
 
-#include "uart_mux.h"
 #include "gps.h"
 #include "mcs_time.h"
 
@@ -97,7 +96,7 @@ void main(void)
 	init_system_clock();
 
 	/* Init UART Mux */
-	uartmux_sci_init();
+//	uartmux_sci_init();
 
 	/* Create queues */
 	xCreateBinarySemaphores( );
@@ -120,7 +119,7 @@ void main(void)
     if (xTaskCreate(
     		gps_task,
     		"GPSTask",
-    		256,
+    		512,
     		NULL,
     		1 | portPRIVILEGE_BIT,
     		&xGPSTaskHandle
