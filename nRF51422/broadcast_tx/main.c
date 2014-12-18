@@ -1,72 +1,56 @@
-/* Copyright (c) 2009 Nordic Semiconductor. All Rights Reserved.
-*
-* The information contained herein is property of Nordic Semiconductor ASA.
-* Terms and conditions of usage are described in detail in NORDIC
-* SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
-*
-* Licensees are granted free, non-transferable use of the information. NO
-* WARRANTY of ANY KIND is provided. This heading must NOT be removed from
-* the file.
-*
-*/
+/* Copyright (c) 2014 Nordic Semiconductor. All Rights Reserved.
+ *
+ * The information contained herein is property of Nordic Semiconductor ASA.
+ * Terms and conditions of usage are described in detail in NORDIC
+ * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
+ *
+ * Licensees are granted free, non-transferable use of the information. NO
+ * WARRANTY of ANY KIND is provided. This heading must NOT be removed from
+ * the file.
+ *
+ */
 
-/** @file
-*
-* @defgroup blinky_example_main main.c
-* @{
-* @ingroup blinky_example
-* @brief Blinky Example Application main file.
-*
-*/
+/**@file
+ * @defgroup nrf_ant_broadcast_tx_example ANT Broadcast TX Example
+ * @{
+ * @ingroup nrf_ant_broadcast
+ *
+ * @brief Example of basic ANT Broadcast TX.
+ */
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "nrf_delay.h"
-#include "nrf_gpio.h"
-#include "common.h"
 #include "app_error.h"
-#include "app_util_platform.h"
-#include "boards.h"
-
+#include "nrf.h"
 #include "ant_interface.h"
 #include "ant_parameters.h"
 #include "nrf_soc.h"
 #include "nrf_sdm.h"
+#include "app_timer.h"
+#include "nordic_common.h"
+#include "bsp.h"
 
-#include "spi_master.h"
-#include "slld_hal.h"
-#include "slld.h"
-#include "FlashApp.h"
-
-/**************************************************************************** /
+#define APP_TIMER_PRESCALER      0                     /**< Value of the RTC1 PRESCALER register. */
+#define APP_TIMER_MAX_TIMERS     BSP_APP_TIMERS_NUMBER /**< Maximum number of simultaneously created timers. */
+#define APP_TIMER_OP_QUEUE_SIZE  2                     /**< Size of timer operation queues. */
 
 // Channel configuration. 
-/* < ANT Channel 0. */
-#define CHANNEL_0                       0x00
-/* < Channel period 4 Hz. */
-#define CHANNEL_0_TX_CHANNEL_PERIOD     8192u
-/* < ANT Ext Assign. */
-#define CHANNEL_0_ANT_EXT_ASSIGN        0x00                 
+#define CHANNEL_0                       0x00                 /**< ANT Channel 0. */
+#define CHANNEL_0_ANT_EXT_ASSIGN        0x00                 /**< ANT Ext Assign. */
 
 // Channel ID configuration. 
-/* < Device type. */
-#define CHANNEL_0_CHAN_ID_DEV_TYPE      0x02u                
-/* < Device number. */
-#define CHANNEL_0_CHAN_ID_DEV_NUM       0x02u                
-/* < Transmission type. */
-#define CHANNEL_0_CHAN_ID_TRANS_TYPE    0x01u                
+#define CHANNEL_0_CHAN_ID_DEV_TYPE      0x02u                /**< Device type. */
+#define CHANNEL_0_CHAN_ID_DEV_NUM       0x02u                /**< Device number. */
+#define CHANNEL_0_CHAN_ID_TRANS_TYPE    0x01u                /**< Transmission type. */
 
 // Miscellaneous defines. 
-/* < ANT Channel Network. */
-#define ANT_CHANNEL_DEFAULT_NETWORK     0x00                 
-/* < Minimum size of ANT event message buffer. */
-#define ANT_EVENT_MSG_BUFFER_MIN_SIZE   32u                  
-/* < Size of the broadcast data buffer. */
-#define BROADCAST_DATA_BUFFER_SIZE      8u                   
+#define ANT_CHANNEL_DEFAULT_NETWORK     0x00                 /**< ANT Channel Network. */
+#define ANT_EVENT_MSG_BUFFER_MIN_SIZE   32u                  /**< Minimum size of ANT event message buffer. */
+#define BROADCAST_DATA_BUFFER_SIZE      8u                   /**< Size of the broadcast data buffer. */
 
 // Static variables and buffers. 
-static uint8_t m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE]; /* < Primary data transmit buffer. */
-static uint8_t m_counter = 1u;                               /* < Counter to increment the ANT broadcast data payload. */
+static uint8_t m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE]; /**< Primary data transmit buffer. */
+static uint8_t m_counter = 1u;                               /**< Counter to increment the ANT broadcast data payload. */
 
 
 /**@brief Function for setting up the ANT module to be ready for TX broadcast.
@@ -127,10 +111,8 @@ static void channel_event_handle(uint32_t event)
             // Increment the counter.
             m_counter++;
             
-            // Activate LED_0 for 20 ms. 
-            nrf_gpio_pin_set(LED_0);
-            nrf_delay_ms(20);
-            nrf_gpio_pin_clear(LED_0);
+            err_code = bsp_indication_set(BSP_INDICATE_SENT_OK);
+            APP_ERROR_CHECK(err_code);
             break;
             
         default:
@@ -176,54 +158,21 @@ void HardFault_Handler(void)
 }
 
 
-/*****************************************************************************/
-
-
-
-
-
-
-void init_LEDs(){
-	// Configure LED-pins as outputs.
-	nrf_gpio_cfg_output(LED_RED);
-	nrf_gpio_cfg_output(LED_GREEN);
-	nrf_gpio_cfg_output(LED_YELLOW);
-	nrf_gpio_cfg_output(LED_ORANGE);
-
-	LED_TURN_OFF(LED_RED);
-	LED_TURN_OFF(LED_GREEN);
-	LED_TURN_OFF(LED_YELLOW);
-	LED_TURN_OFF(LED_ORANGE);
-
-}
-
-
-
-/**
-* @brief Function for application main entry.
-*/
+/**@brief Function for application main entry. Does not return.
+ */ 
 int main(void)
-{
-	init_LEDs();
-	
-	spi_EEPROM_init();
-//	
-//	init_flash_app();
-
-	
+{    
     // ANT event message buffer. 
     static uint8_t event_message_buffer[ANT_EVENT_MSG_BUFFER_MIN_SIZE];
-    
-    // Configure pins LED_0 and LED_1 as outputs. 
-    nrf_gpio_range_cfg_output(LED_START, LED_STOP);
-
-    // Set LED_0 and LED_1 high to indicate that the application is running. 
-    nrf_gpio_pin_set(LED_0);
-    nrf_gpio_pin_set(LED_1);
     
     // Enable SoftDevice. 
     uint32_t err_code;
     err_code = sd_softdevice_enable(NRF_CLOCK_LFCLKSRC_XTAL_50_PPM, softdevice_assert_callback);
+    APP_ERROR_CHECK(err_code);
+
+    APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_MAX_TIMERS, APP_TIMER_OP_QUEUE_SIZE, false);
+
+    err_code = bsp_init(BSP_INIT_LED, APP_TIMER_TICKS(100, APP_TIMER_PRESCALER), NULL);
     APP_ERROR_CHECK(err_code);
 
     // Set application IRQ to lowest priority. 
@@ -246,26 +195,23 @@ int main(void)
     // then start waiting for an event on this broadcast message.
     err_code = sd_ant_broadcast_message_tx(CHANNEL_0, BROADCAST_DATA_BUFFER_SIZE, m_broadcast_data);
     APP_ERROR_CHECK(err_code);
-  
-    // Set LED_0 and LED_1 low to indicate that stack is enabled. 
-    nrf_gpio_pin_clear(LED_0);
-    nrf_gpio_pin_clear(LED_1);
-    
+
     uint8_t event;
     uint8_t ant_channel;
   
     // Main loop. 
     for (;;)
     {   
-        // Light up LED_1 to indicate that CPU is going to sleep. 
-        nrf_gpio_pin_set(LED_1);
+        // Use BSP_INDICATE_ALERT_0 to indicate sleep state
+        err_code =    bsp_indication_set(BSP_INDICATE_ALERT_0);
+        APP_ERROR_CHECK(err_code);
         
         // Put CPU in sleep if possible. 
         err_code = sd_app_evt_wait();
         APP_ERROR_CHECK(err_code);
         
-        // Turn off LED_1 to indicate that CPU is going out of sleep. 
-        nrf_gpio_pin_clear(LED_1);
+        err_code = bsp_indication_set(BSP_INDICATE_ALERT_OFF);
+        APP_ERROR_CHECK(err_code);
     
         // Extract and process all pending ANT events as long as there are any left. 
         do
@@ -289,4 +235,7 @@ int main(void)
         while (err_code == NRF_SUCCESS);
     }
 }
-/** @} */
+
+/**
+ *@}
+ **/

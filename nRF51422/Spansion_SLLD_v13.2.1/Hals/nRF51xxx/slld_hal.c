@@ -39,9 +39,9 @@
 #include "app_error.h"
 #include "app_util_platform.h"
 #include "nrf_gpio.h"
+#include "slld_targetspecific.h"
 #include "spi_master.h"
 #include "slld.h"
-#include "slld_targetspecific.h"
 #include "slld_hal.h"
 
 #define TX_RX_BUFF_LEN		256
