@@ -360,9 +360,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>NRF51 BOARD_ANT_IO</Define>
+              <Define>NRF51 BOARD_ANT_IO SPI_MASTER_0_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Include;..\..\Include\app_common;..\..\Include\s210;..\..\Include\sdk_soc;..\..\Include\sd_common;..\..\Include\serialization\common</IncludePath>
+              <IncludePath>..\..\Include;..\..\Include\app_common;..\..\Include\s210;..\..\Include\sdk_soc;..\..\Include\sd_common;..\..\Include\serialization\common;..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx;..\Spansion_SLLD_v13.2.1\src;..\..\Blinky</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -415,6 +415,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\Source\keil_arm_uv4.lnt</FilePath>
             </File>
+            <File>
+              <FileName>FlashApp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FlashApp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -436,6 +441,21 @@
           <GroupName>lib</GroupName>
           <Files>
             <File>
+              <FileName>spi_master.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Source\spi_master\spi_master.c</FilePath>
+            </File>
+            <File>
+              <FileName>slld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Spansion_SLLD_v13.2.1\src\slld.c</FilePath>
+            </File>
+            <File>
+              <FileName>slld_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx\slld_hal.c</FilePath>
+            </File>
+            <File>
               <FileName>nrf_delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Source\nrf_delay\nrf_delay.c</FilePath>
@@ -444,16 +464,6 @@
               <FileName>app_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Source\app_common\app_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Source\app_common\app_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>ser_conn_error_handling.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Source\serialization\connectivity\ser_conn_error_handling.c</FilePath>
             </File>
           </Files>
         </Group>

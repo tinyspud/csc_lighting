@@ -3,11 +3,11 @@
 ".\_build\flashapp.o"
 ".\_build\arm_startup_nrf51.o"
 ".\_build\system_nrf51.o"
+".\_build\spi_master.o"
 ".\_build\slld.o"
 ".\_build\slld_hal.o"
 ".\_build\nrf_delay.o"
 ".\_build\app_timer.o"
-".\_build\spi_master.o"
 --library_type=microlib
 --feedback ".\_build\blinky_arm.fed" --feedback_image=none
 --strict --scatter ".\_build\blinky_arm.sct"

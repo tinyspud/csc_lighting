@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\_build\blinky_arm.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\_build\blinky_arm.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Dec 17 23:36:06 2014
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Wed Dec 17 23:57:55 2014
 <BR><P>
 <H3>Maximum Stack Usage =        184 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -284,16 +284,16 @@ Global Symbols
 <P><STRONG><a name="[67]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
 
 <P><STRONG><a name="[4c]"></a>app_error_handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, slld_hal.o(i.app_error_handler))
-<BR><BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_signal_evt
+<BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_evt_handler_reg
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_signal_evt
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_initial_bytes
 <LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init_hw_instance
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_buffer_release
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_buffer_init
 <LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timeout_handler_exec
-<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
-<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_evt_handler_reg
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init
 </UL>
 
@@ -384,8 +384,8 @@ Global Symbols
 <P><STRONG><a name="[4e]"></a>spi_master_evt_handler_reg</STRONG> (Thumb, 52 bytes, Stack size 24 bytes, spi_master.o(i.spi_master_evt_handler_reg))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = spi_master_evt_handler_reg
 </UL>
-<BR>[Calls]<UL><LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_get_instance
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_get_instance
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init
 </UL>
@@ -393,11 +393,11 @@ Global Symbols
 <P><STRONG><a name="[50]"></a>spi_master_open</STRONG> (Thumb, 350 bytes, Stack size 24 bytes, spi_master.o(i.spi_master_open))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = spi_master_open &rArr; spi_master_init_hw_instance
 </UL>
-<BR>[Calls]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init_hw_instance
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init_hw_instance
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_get_instance
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_cfg_output
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_init
 </UL>
@@ -405,11 +405,11 @@ Global Symbols
 <P><STRONG><a name="[2a]"></a>spi_master_send_recv</STRONG> (Thumb, 308 bytes, Stack size 48 bytes, spi_master.o(i.spi_master_send_recv))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = spi_master_send_recv &rArr; spi_master_buffer_init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_initial_bytes
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_initial_bytes
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_get_instance
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_buffer_init
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_clear
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WRITE
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_READ
@@ -434,6 +434,77 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
 </UL>
 
+<P><STRONG><a name="[53]"></a>nrf_gpio_cfg_output</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_cfg_output))
+<BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
+</UL>
+
+<P><STRONG><a name="[55]"></a>nrf_gpio_pin_clear</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_pin_clear))
+<BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
+</UL>
+
+<P><STRONG><a name="[52]"></a>nrf_gpio_pin_set</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_pin_set))
+<BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
+<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
+</UL>
+
+<P><STRONG><a name="[4b]"></a>spi_master_buffer_init</STRONG> (Thumb, 136 bytes, Stack size 40 bytes, spi_master.o(i.spi_master_buffer_init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_buffer_init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
+</UL>
+
+<P><STRONG><a name="[4d]"></a>spi_master_buffer_release</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_buffer_release))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = spi_master_buffer_release
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
+</UL>
+
+<P><STRONG><a name="[2e]"></a>spi_master_get_instance</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, spi_master.o(i.spi_master_get_instance))
+<BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
+<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_evt_handler_reg
+<LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_TWI0_IRQHandler
+</UL>
+
+<P><STRONG><a name="[51]"></a>spi_master_init_hw_instance</STRONG> (Thumb, 90 bytes, Stack size 40 bytes, spi_master.o(i.spi_master_init_hw_instance))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_init_hw_instance
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
+</UL>
+
+<P><STRONG><a name="[54]"></a>spi_master_send_initial_bytes</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_send_initial_bytes))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = spi_master_send_initial_bytes
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
+</UL>
+
+<P><STRONG><a name="[2f]"></a>spi_master_send_recv_irq</STRONG> (Thumb, 206 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_send_recv_irq))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_send_recv_irq &rArr; spi_master_signal_evt
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_signal_evt
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_buffer_release
+<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
+</UL>
+<BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_TWI0_IRQHandler
+</UL>
+
+<P><STRONG><a name="[56]"></a>spi_master_signal_evt</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, spi_master.o(i.spi_master_signal_evt))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = spi_master_signal_evt
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
+</UL>
+
 <P><STRONG><a name="[49]"></a>nrf_gpio_cfg_output</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, slld_hal.o(i.nrf_gpio_cfg_output))
 <BR><BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_EEPROM_init
 </UL>
@@ -452,10 +523,10 @@ Local Symbols
 <P><STRONG><a name="[4a]"></a>spi_master_init</STRONG> (Thumb, 106 bytes, Stack size 48 bytes, slld_hal.o(i.spi_master_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = spi_master_init &rArr; spi_master_open &rArr; spi_master_init_hw_instance
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
 <LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_evt_handler_reg
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
+<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_EEPROM_init
 </UL>
@@ -601,77 +672,6 @@ Local Symbols
 <BR>[Calls]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SetPendingIRQ
 </UL>
 <BR>[Called By]<UL><LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;compare_reg_update
-</UL>
-
-<P><STRONG><a name="[53]"></a>nrf_gpio_cfg_output</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_cfg_output))
-<BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
-</UL>
-
-<P><STRONG><a name="[55]"></a>nrf_gpio_pin_clear</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_pin_clear))
-<BR><BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
-</UL>
-
-<P><STRONG><a name="[52]"></a>nrf_gpio_pin_set</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, spi_master.o(i.nrf_gpio_pin_set))
-<BR><BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
-</UL>
-
-<P><STRONG><a name="[4b]"></a>spi_master_buffer_init</STRONG> (Thumb, 136 bytes, Stack size 40 bytes, spi_master.o(i.spi_master_buffer_init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_buffer_init
-</UL>
-<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
-</UL>
-
-<P><STRONG><a name="[4d]"></a>spi_master_buffer_release</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_buffer_release))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = spi_master_buffer_release
-</UL>
-<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
-</UL>
-
-<P><STRONG><a name="[2e]"></a>spi_master_get_instance</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, spi_master.o(i.spi_master_get_instance))
-<BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_TWI0_IRQHandler
-<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
-<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_evt_handler_reg
-</UL>
-
-<P><STRONG><a name="[51]"></a>spi_master_init_hw_instance</STRONG> (Thumb, 90 bytes, Stack size 40 bytes, spi_master.o(i.spi_master_init_hw_instance))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_init_hw_instance
-</UL>
-<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_open
-</UL>
-
-<P><STRONG><a name="[54]"></a>spi_master_send_initial_bytes</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_send_initial_bytes))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = spi_master_send_initial_bytes
-</UL>
-<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv
-</UL>
-
-<P><STRONG><a name="[2f]"></a>spi_master_send_recv_irq</STRONG> (Thumb, 206 bytes, Stack size 16 bytes, spi_master.o(i.spi_master_send_recv_irq))
-<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = spi_master_send_recv_irq &rArr; spi_master_signal_evt
-</UL>
-<BR>[Calls]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_signal_evt
-<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_buffer_release
-<LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;nrf_gpio_pin_set
-<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI0_TWI0_IRQHandler
-</UL>
-
-<P><STRONG><a name="[56]"></a>spi_master_signal_evt</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, spi_master.o(i.spi_master_signal_evt))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = spi_master_signal_evt
-</UL>
-<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;app_error_handler
-</UL>
-<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_master_send_recv_irq
 </UL>
 <P>
 <H3>

@@ -24,6 +24,33 @@ Section Cross References
     system_nrf51.o(i.SystemCoreClockUpdate) refers to system_nrf51.o(.data) for SystemCoreClock
     system_nrf51.o(i.SystemInit) refers to system_nrf51.o(i.is_manual_peripheral_setup_needed) for is_manual_peripheral_setup_needed
     system_nrf51.o(i.SystemInit) refers to system_nrf51.o(i.is_disabled_in_debug_needed) for is_disabled_in_debug_needed
+    spi_master.o(i.SPI0_TWI0_IRQHandler) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
+    spi_master.o(i.SPI0_TWI0_IRQHandler) refers to spi_master.o(i.spi_master_send_recv_irq) for spi_master_send_recv_irq
+    spi_master.o(i.spi_master_buffer_init) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_buffer_release) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_close) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
+    spi_master.o(i.spi_master_close) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_close) refers to spi_master.o(i.nrf_gpio_pin_clear) for nrf_gpio_pin_clear
+    spi_master.o(i.spi_master_close) refers to spi_master.o(i.spi_master_init_hw_instance) for spi_master_init_hw_instance
+    spi_master.o(i.spi_master_get_instance) refers to spi_master.o(.bss) for m_spi_master_instances
+    spi_master.o(i.spi_master_init_hw_instance) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_open) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
+    spi_master.o(i.spi_master_open) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_open) refers to spi_master.o(i.spi_master_init_hw_instance) for spi_master_init_hw_instance
+    spi_master.o(i.spi_master_open) refers to spi_master.o(i.nrf_gpio_pin_set) for nrf_gpio_pin_set
+    spi_master.o(i.spi_master_open) refers to spi_master.o(i.nrf_gpio_cfg_output) for nrf_gpio_cfg_output
+    spi_master.o(i.spi_master_send_initial_bytes) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
+    spi_master.o(i.spi_master_send_recv) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_buffer_init) for spi_master_buffer_init
+    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.nrf_gpio_pin_clear) for nrf_gpio_pin_clear
+    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_send_initial_bytes) for spi_master_send_initial_bytes
+    spi_master.o(i.spi_master_send_recv_irq) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.spi_master_signal_evt) for spi_master_signal_evt
+    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.nrf_gpio_pin_set) for nrf_gpio_pin_set
+    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.spi_master_buffer_release) for spi_master_buffer_release
+    spi_master.o(i.spi_master_signal_evt) refers to slld_hal.o(i.app_error_handler) for app_error_handler
+    spi_master.o(i.spi_master_signal_evt) refers to spi_master.o(.constdata) for .constdata
     slld.o(i.slld_ABRDCmd) refers to slld_hal.o(i.FLASH_READ) for FLASH_READ
     slld.o(i.slld_ABWRCmd) refers to slld_hal.o(i.FLASH_WRITE) for FLASH_WRITE
     slld.o(i.slld_ABWROp) refers to slld.o(i.slld_WRENCmd) for slld_WRENCmd
@@ -294,33 +321,6 @@ Section Cross References
     app_timer.o(i.timer_timeouts_check) refers to app_timer.o(.data) for m_timer_id_head
     app_timer.o(i.timer_timeouts_check_sched) refers to app_timer.o(i.NVIC_SetPendingIRQ) for NVIC_SetPendingIRQ
     app_timer.o(i.user_id_get) refers to app_timer.o(i.current_int_priority_get) for current_int_priority_get
-    spi_master.o(i.SPI0_TWI0_IRQHandler) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
-    spi_master.o(i.SPI0_TWI0_IRQHandler) refers to spi_master.o(i.spi_master_send_recv_irq) for spi_master_send_recv_irq
-    spi_master.o(i.spi_master_buffer_init) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_buffer_release) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_close) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
-    spi_master.o(i.spi_master_close) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_close) refers to spi_master.o(i.nrf_gpio_pin_clear) for nrf_gpio_pin_clear
-    spi_master.o(i.spi_master_close) refers to spi_master.o(i.spi_master_init_hw_instance) for spi_master_init_hw_instance
-    spi_master.o(i.spi_master_get_instance) refers to spi_master.o(.bss) for m_spi_master_instances
-    spi_master.o(i.spi_master_init_hw_instance) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_open) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
-    spi_master.o(i.spi_master_open) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_open) refers to spi_master.o(i.spi_master_init_hw_instance) for spi_master_init_hw_instance
-    spi_master.o(i.spi_master_open) refers to spi_master.o(i.nrf_gpio_pin_set) for nrf_gpio_pin_set
-    spi_master.o(i.spi_master_open) refers to spi_master.o(i.nrf_gpio_cfg_output) for nrf_gpio_cfg_output
-    spi_master.o(i.spi_master_send_initial_bytes) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_get_instance) for spi_master_get_instance
-    spi_master.o(i.spi_master_send_recv) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_buffer_init) for spi_master_buffer_init
-    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.nrf_gpio_pin_clear) for nrf_gpio_pin_clear
-    spi_master.o(i.spi_master_send_recv) refers to spi_master.o(i.spi_master_send_initial_bytes) for spi_master_send_initial_bytes
-    spi_master.o(i.spi_master_send_recv_irq) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.spi_master_signal_evt) for spi_master_signal_evt
-    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.nrf_gpio_pin_set) for nrf_gpio_pin_set
-    spi_master.o(i.spi_master_send_recv_irq) refers to spi_master.o(i.spi_master_buffer_release) for spi_master_buffer_release
-    spi_master.o(i.spi_master_signal_evt) refers to slld_hal.o(i.app_error_handler) for app_error_handler
-    spi_master.o(i.spi_master_signal_evt) refers to spi_master.o(.constdata) for .constdata
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry10a.o(.ARM.Collect$$$$0000000D) for __rt_final_cpp
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry11a.o(.ARM.Collect$$$$0000000F) for __rt_final_exit
     entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry7b.o(.ARM.Collect$$$$00000008) for _main_clock
@@ -606,6 +606,9 @@ Removing Unused input sections from the image.
     Removing system_nrf51.o(.rev16_text), (4 bytes).
     Removing system_nrf51.o(.revsh_text), (4 bytes).
     Removing system_nrf51.o(i.SystemCoreClockUpdate), (16 bytes).
+    Removing spi_master.o(.rev16_text), (4 bytes).
+    Removing spi_master.o(.revsh_text), (4 bytes).
+    Removing spi_master.o(i.spi_master_close), (212 bytes).
     Removing slld.o(.rev16_text), (4 bytes).
     Removing slld.o(.revsh_text), (4 bytes).
     Removing slld.o(i.slld_ABRDCmd), (24 bytes).
@@ -727,9 +730,6 @@ Removing Unused input sections from the image.
     Removing app_timer.o(i.user_id_get), (34 bytes).
     Removing app_timer.o(i.user_op_alloc), (44 bytes).
     Removing app_timer.o(i.user_op_enque), (4 bytes).
-    Removing spi_master.o(.rev16_text), (4 bytes).
-    Removing spi_master.o(.revsh_text), (4 bytes).
-    Removing spi_master.o(i.spi_master_close), (212 bytes).
     Removing dadd.o(.text), (356 bytes).
     Removing dmul.o(.text), (208 bytes).
     Removing ddiv.o(.text), (240 bytes).
@@ -751,39 +751,39 @@ Image Symbol Table
 
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf8.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf4.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf1.o ABSOLUTE
-    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfb.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf5.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf3.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf2.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf8.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf7.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf0.o ABSOLUTE
+    ../clib/microlib/printf/printf.c         0x00000000   Number         0  printf6.o ABSOLUTE
     ../clib/microlib/printf/stubs.s          0x00000000   Number         0  stubs.o ABSOLUTE
     ../clib/microlib/stdio/fputc.c           0x00000000   Number         0  fputc.o ABSOLUTE
     ../clib/microlib/stdio/semi.s            0x00000000   Number         0  semi.o ABSOLUTE
     ../clib/microlib/stdio/streams.c         0x00000000   Number         0  stdout.o ABSOLUTE
-    ../clib/microlib/string/memcpy.c         0x00000000   Number         0  memcpyb.o ABSOLUTE
     ../clib/microlib/string/memcpy.c         0x00000000   Number         0  memcpya.o ABSOLUTE
+    ../clib/microlib/string/memcpy.c         0x00000000   Number         0  memcpyb.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  iusesemip.o ABSOLUTE
     ../fplib/microlib/fpadd.c                0x00000000   Number         0  dadd.o ABSOLUTE
@@ -864,20 +864,20 @@ Image Symbol Table
     i.nrf_delay_ms                           0x0000d928   Section        0  nrf_delay.o(i.nrf_delay_ms)
     i.nrf_gpio_cfg_output                    0x0000d944   Section        0  main.o(i.nrf_gpio_cfg_output)
     nrf_gpio_cfg_output                      0x0000d945   Thumb Code    18  main.o(i.nrf_gpio_cfg_output)
-    i.nrf_gpio_cfg_output                    0x0000d956   Section        0  slld_hal.o(i.nrf_gpio_cfg_output)
-    nrf_gpio_cfg_output                      0x0000d957   Thumb Code    18  slld_hal.o(i.nrf_gpio_cfg_output)
-    i.nrf_gpio_cfg_output                    0x0000d968   Section        0  spi_master.o(i.nrf_gpio_cfg_output)
-    nrf_gpio_cfg_output                      0x0000d969   Thumb Code    18  spi_master.o(i.nrf_gpio_cfg_output)
-    i.nrf_gpio_pin_clear                     0x0000d97c   Section        0  slld_hal.o(i.nrf_gpio_pin_clear)
-    nrf_gpio_pin_clear                       0x0000d97d   Thumb Code    10  slld_hal.o(i.nrf_gpio_pin_clear)
-    i.nrf_gpio_pin_clear                     0x0000d98c   Section        0  spi_master.o(i.nrf_gpio_pin_clear)
-    nrf_gpio_pin_clear                       0x0000d98d   Thumb Code    10  spi_master.o(i.nrf_gpio_pin_clear)
+    i.nrf_gpio_cfg_output                    0x0000d956   Section        0  spi_master.o(i.nrf_gpio_cfg_output)
+    nrf_gpio_cfg_output                      0x0000d957   Thumb Code    18  spi_master.o(i.nrf_gpio_cfg_output)
+    i.nrf_gpio_cfg_output                    0x0000d968   Section        0  slld_hal.o(i.nrf_gpio_cfg_output)
+    nrf_gpio_cfg_output                      0x0000d969   Thumb Code    18  slld_hal.o(i.nrf_gpio_cfg_output)
+    i.nrf_gpio_pin_clear                     0x0000d97c   Section        0  spi_master.o(i.nrf_gpio_pin_clear)
+    nrf_gpio_pin_clear                       0x0000d97d   Thumb Code    10  spi_master.o(i.nrf_gpio_pin_clear)
+    i.nrf_gpio_pin_clear                     0x0000d98c   Section        0  slld_hal.o(i.nrf_gpio_pin_clear)
+    nrf_gpio_pin_clear                       0x0000d98d   Thumb Code    10  slld_hal.o(i.nrf_gpio_pin_clear)
     i.nrf_gpio_pin_set                       0x0000d99c   Section        0  main.o(i.nrf_gpio_pin_set)
     nrf_gpio_pin_set                         0x0000d99d   Thumb Code    10  main.o(i.nrf_gpio_pin_set)
-    i.nrf_gpio_pin_set                       0x0000d9ac   Section        0  slld_hal.o(i.nrf_gpio_pin_set)
-    nrf_gpio_pin_set                         0x0000d9ad   Thumb Code    10  slld_hal.o(i.nrf_gpio_pin_set)
-    i.nrf_gpio_pin_set                       0x0000d9bc   Section        0  spi_master.o(i.nrf_gpio_pin_set)
-    nrf_gpio_pin_set                         0x0000d9bd   Thumb Code    10  spi_master.o(i.nrf_gpio_pin_set)
+    i.nrf_gpio_pin_set                       0x0000d9ac   Section        0  spi_master.o(i.nrf_gpio_pin_set)
+    nrf_gpio_pin_set                         0x0000d9ad   Thumb Code    10  spi_master.o(i.nrf_gpio_pin_set)
+    i.nrf_gpio_pin_set                       0x0000d9bc   Section        0  slld_hal.o(i.nrf_gpio_pin_set)
+    nrf_gpio_pin_set                         0x0000d9bd   Thumb Code    10  slld_hal.o(i.nrf_gpio_pin_set)
     i.rtc1_counter_get                       0x0000d9cc   Section        0  app_timer.o(i.rtc1_counter_get)
     rtc1_counter_get                         0x0000d9cd   Thumb Code     6  app_timer.o(i.rtc1_counter_get)
     i.rtc1_start                             0x0000d9d8   Section        0  app_timer.o(i.rtc1_start)
@@ -925,8 +925,8 @@ Image Symbol Table
     timer_timeouts_check                     0x0000e55d   Thumb Code   128  app_timer.o(i.timer_timeouts_check)
     i.timer_timeouts_check_sched             0x0000e5f4   Section        0  app_timer.o(i.timer_timeouts_check_sched)
     timer_timeouts_check_sched               0x0000e5f5   Thumb Code    10  app_timer.o(i.timer_timeouts_check_sched)
-    .constdata                               0x0000e600   Section       28  slld_hal.o(.constdata)
-    .constdata                               0x0000e61c   Section        4  spi_master.o(.constdata)
+    .constdata                               0x0000e600   Section        4  spi_master.o(.constdata)
+    .constdata                               0x0000e604   Section       28  slld_hal.o(.constdata)
     .data                                    0x20000900   Section        1  flashapp.o(.data)
     .data                                    0x20000904   Section        4  system_nrf51.o(.data)
     __tagsym$$used                           0x20000904   Number         0  system_nrf51.o(.data)
@@ -942,9 +942,9 @@ Image Symbol Table
     m_ticks_elapsed_q_write_ind              0x20000925   Data           1  app_timer.o(.data)
     m_evt_schedule_func                      0x20000928   Data           4  app_timer.o(.data)
     m_rtc1_running                           0x2000092c   Data           1  app_timer.o(.data)
-    .bss                                     0x20000930   Section      512  slld_hal.o(.bss)
-    .bss                                     0x20000b30   Section       40  spi_master.o(.bss)
-    m_spi_master_instances                   0x20000b30   Data          40  spi_master.o(.bss)
+    .bss                                     0x20000930   Section       40  spi_master.o(.bss)
+    m_spi_master_instances                   0x20000930   Data          40  spi_master.o(.bss)
+    .bss                                     0x20000958   Section      512  slld_hal.o(.bss)
     STACK                                    0x20000b58   Section     2048  arm_startup_nrf51.o(STACK)
 
     Global Symbols
@@ -1073,8 +1073,8 @@ Image Symbol Table
     Region$$Table$$Limit                     0x0000e640   Number         0  anon$$obj.o(Region$$Table)
     _status_register                         0x20000900   Data           1  flashapp.o(.data)
     SystemCoreClock                          0x20000904   Data           4  system_nrf51.o(.data)
-    tx_buffer                                0x20000930   Data         256  slld_hal.o(.bss)
-    rx_buffer                                0x20000a30   Data         256  slld_hal.o(.bss)
+    tx_buffer                                0x20000958   Data         256  slld_hal.o(.bss)
+    rx_buffer                                0x20000a58   Data         256  slld_hal.o(.bss)
     __initial_sp                             0x20001358   Data           0  arm_startup_nrf51.o(STACK)
 
 
@@ -1101,81 +1101,81 @@ Memory Map of the image
     0x0000d0d0   0x00000000   Code   RO         1563    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
     0x0000d0d0   0x00000000   Code   RO         1565    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
     0x0000d0d0   0x00000004   Code   RO         1554    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
-    0x0000d0d4   0x0000001e   Code   RO          916    .emb_text           nrf_delay.o
+    0x0000d0d4   0x0000001e   Code   RO         1031    .emb_text           nrf_delay.o
     0x0000d0f2   0x00000002   PAD
-    0x0000d0f4   0x0000001e   Code   RO          943    .emb_text           app_timer.o
+    0x0000d0f4   0x0000001e   Code   RO         1058    .emb_text           app_timer.o
     0x0000d112   0x00000002   PAD
     0x0000d114   0x00000038   Code   RO          154    .text               arm_startup_nrf51.o
     0x0000d14c   0x00000024   Code   RO         1288    .text               mc_p.l(memcpya.o)
     0x0000d170   0x00000024   Code   RO         1585    .text               mc_p.l(init.o)
-    0x0000d194   0x0000017c   Code   RO          830    i.FLASH_READ        slld_hal.o
-    0x0000d310   0x000000a4   Code   RO          831    i.FLASH_WRITE       slld_hal.o
-    0x0000d3b4   0x00000014   Code   RO          944    i.NVIC_ClearPendingIRQ  app_timer.o
-    0x0000d3c8   0x00000014   Code   RO          945    i.NVIC_EnableIRQ    app_timer.o
-    0x0000d3dc   0x00000014   Code   RO          946    i.NVIC_SetPendingIRQ  app_timer.o
-    0x0000d3f0   0x00000028   Code   RO          948    i.RTC1_IRQHandler   app_timer.o
-    0x0000d418   0x00000034   Code   RO         1181    i.SPI0_TWI0_IRQHandler  spi_master.o
-    0x0000d44c   0x00000008   Code   RO          949    i.SWI0_IRQHandler   app_timer.o
+    0x0000d194   0x0000017c   Code   RO          945    i.FLASH_READ        slld_hal.o
+    0x0000d310   0x000000a4   Code   RO          946    i.FLASH_WRITE       slld_hal.o
+    0x0000d3b4   0x00000014   Code   RO         1059    i.NVIC_ClearPendingIRQ  app_timer.o
+    0x0000d3c8   0x00000014   Code   RO         1060    i.NVIC_EnableIRQ    app_timer.o
+    0x0000d3dc   0x00000014   Code   RO         1061    i.NVIC_SetPendingIRQ  app_timer.o
+    0x0000d3f0   0x00000028   Code   RO         1063    i.RTC1_IRQHandler   app_timer.o
+    0x0000d418   0x00000034   Code   RO          208    i.SPI0_TWI0_IRQHandler  spi_master.o
+    0x0000d44c   0x00000008   Code   RO         1064    i.SWI0_IRQHandler   app_timer.o
     0x0000d454   0x00000038   Code   RO          161    i.SystemInit        system_nrf51.o
     0x0000d48c   0x0000000e   Code   RO         1601    i.__scatterload_copy  mc_p.l(handlers.o)
     0x0000d49a   0x00000002   Code   RO         1602    i.__scatterload_null  mc_p.l(handlers.o)
     0x0000d49c   0x0000000e   Code   RO         1603    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x0000d4aa   0x00000004   Code   RO          832    i.app_error_handler  slld_hal.o
+    0x0000d4aa   0x00000004   Code   RO          947    i.app_error_handler  slld_hal.o
     0x0000d4ae   0x00000002   PAD
-    0x0000d4b0   0x00000090   Code   RO          957    i.compare_reg_update  app_timer.o
-    0x0000d540   0x00000064   Code   RO          959    i.elapsed_ticks_acquire  app_timer.o
-    0x0000d5a4   0x0000006c   Code   RO          960    i.expired_timers_handler  app_timer.o
+    0x0000d4b0   0x00000090   Code   RO         1072    i.compare_reg_update  app_timer.o
+    0x0000d540   0x00000064   Code   RO         1074    i.elapsed_ticks_acquire  app_timer.o
+    0x0000d5a4   0x0000006c   Code   RO         1075    i.expired_timers_handler  app_timer.o
     0x0000d610   0x00000034   Code   RO            4    i.init_LEDs         main.o
     0x0000d644   0x00000050   Code   RO          124    i.init_flash_app    flashapp.o
     0x0000d694   0x00000034   Code   RO          162    i.is_disabled_in_debug_needed  system_nrf51.o
     0x0000d6c8   0x00000064   Code   RO          163    i.is_manual_peripheral_setup_needed  system_nrf51.o
-    0x0000d72c   0x000000c0   Code   RO          961    i.list_deletions_handler  app_timer.o
-    0x0000d7ec   0x0000011c   Code   RO          962    i.list_insertions_handler  app_timer.o
+    0x0000d72c   0x000000c0   Code   RO         1076    i.list_deletions_handler  app_timer.o
+    0x0000d7ec   0x0000011c   Code   RO         1077    i.list_insertions_handler  app_timer.o
     0x0000d908   0x00000020   Code   RO            5    i.main              main.o
-    0x0000d928   0x0000001c   Code   RO          917    i.nrf_delay_ms      nrf_delay.o
+    0x0000d928   0x0000001c   Code   RO         1032    i.nrf_delay_ms      nrf_delay.o
     0x0000d944   0x00000012   Code   RO            6    i.nrf_gpio_cfg_output  main.o
-    0x0000d956   0x00000012   Code   RO          834    i.nrf_gpio_cfg_output  slld_hal.o
-    0x0000d968   0x00000012   Code   RO         1182    i.nrf_gpio_cfg_output  spi_master.o
+    0x0000d956   0x00000012   Code   RO          209    i.nrf_gpio_cfg_output  spi_master.o
+    0x0000d968   0x00000012   Code   RO          949    i.nrf_gpio_cfg_output  slld_hal.o
     0x0000d97a   0x00000002   PAD
-    0x0000d97c   0x00000010   Code   RO          835    i.nrf_gpio_pin_clear  slld_hal.o
-    0x0000d98c   0x00000010   Code   RO         1183    i.nrf_gpio_pin_clear  spi_master.o
+    0x0000d97c   0x00000010   Code   RO          210    i.nrf_gpio_pin_clear  spi_master.o
+    0x0000d98c   0x00000010   Code   RO          950    i.nrf_gpio_pin_clear  slld_hal.o
     0x0000d99c   0x00000010   Code   RO            7    i.nrf_gpio_pin_set  main.o
-    0x0000d9ac   0x00000010   Code   RO          836    i.nrf_gpio_pin_set  slld_hal.o
-    0x0000d9bc   0x00000010   Code   RO         1184    i.nrf_gpio_pin_set  spi_master.o
-    0x0000d9cc   0x0000000c   Code   RO          963    i.rtc1_counter_get  app_timer.o
-    0x0000d9d8   0x0000003c   Code   RO          965    i.rtc1_start        app_timer.o
-    0x0000da14   0x00000058   Code   RO          966    i.rtc1_stop         app_timer.o
-    0x0000da6c   0x00000016   Code   RO          220    i.slld_ClearStatusRegisterCmd  slld.o
-    0x0000da82   0x0000001a   Code   RO          274    i.slld_RDIDCmd      slld.o
-    0x0000da9c   0x00000018   Code   RO          276    i.slld_RDSRCmd      slld.o
-    0x0000dab4   0x0000004e   Code   RO          292    i.slld_StatusGet    slld.o
+    0x0000d9ac   0x00000010   Code   RO          211    i.nrf_gpio_pin_set  spi_master.o
+    0x0000d9bc   0x00000010   Code   RO          951    i.nrf_gpio_pin_set  slld_hal.o
+    0x0000d9cc   0x0000000c   Code   RO         1078    i.rtc1_counter_get  app_timer.o
+    0x0000d9d8   0x0000003c   Code   RO         1080    i.rtc1_start        app_timer.o
+    0x0000da14   0x00000058   Code   RO         1081    i.rtc1_stop         app_timer.o
+    0x0000da6c   0x00000016   Code   RO          338    i.slld_ClearStatusRegisterCmd  slld.o
+    0x0000da82   0x0000001a   Code   RO          392    i.slld_RDIDCmd      slld.o
+    0x0000da9c   0x00000018   Code   RO          394    i.slld_RDSRCmd      slld.o
+    0x0000dab4   0x0000004e   Code   RO          410    i.slld_StatusGet    slld.o
     0x0000db02   0x00000002   PAD
-    0x0000db04   0x00000038   Code   RO          837    i.spi_EEPROM_init   slld_hal.o
-    0x0000db3c   0x00000014   Code   RO          838    i.spi_master_0_event_handler  slld_hal.o
-    0x0000db50   0x000000b0   Code   RO         1185    i.spi_master_buffer_init  spi_master.o
-    0x0000dc00   0x00000078   Code   RO         1186    i.spi_master_buffer_release  spi_master.o
-    0x0000dc78   0x0000005c   Code   RO         1273    i.spi_master_evt_handler_reg  spi_master.o
-    0x0000dcd4   0x00000018   Code   RO         1188    i.spi_master_get_instance  spi_master.o
-    0x0000dcec   0x000000a4   Code   RO          839    i.spi_master_init   slld_hal.o
-    0x0000dd90   0x00000084   Code   RO         1189    i.spi_master_init_hw_instance  spi_master.o
-    0x0000de14   0x0000018c   Code   RO         1190    i.spi_master_open   spi_master.o
-    0x0000dfa0   0x000000a8   Code   RO         1191    i.spi_master_send_initial_bytes  spi_master.o
-    0x0000e048   0x0000015c   Code   RO         1192    i.spi_master_send_recv  spi_master.o
-    0x0000e1a4   0x000000f8   Code   RO         1193    i.spi_master_send_recv_irq  spi_master.o
-    0x0000e29c   0x00000070   Code   RO         1194    i.spi_master_signal_evt  spi_master.o
-    0x0000e30c   0x0000000a   Code   RO          967    i.ticks_diff_get    app_timer.o
+    0x0000db04   0x00000038   Code   RO          952    i.spi_EEPROM_init   slld_hal.o
+    0x0000db3c   0x00000014   Code   RO          953    i.spi_master_0_event_handler  slld_hal.o
+    0x0000db50   0x000000b0   Code   RO          212    i.spi_master_buffer_init  spi_master.o
+    0x0000dc00   0x00000078   Code   RO          213    i.spi_master_buffer_release  spi_master.o
+    0x0000dc78   0x0000005c   Code   RO          300    i.spi_master_evt_handler_reg  spi_master.o
+    0x0000dcd4   0x00000018   Code   RO          215    i.spi_master_get_instance  spi_master.o
+    0x0000dcec   0x000000a4   Code   RO          954    i.spi_master_init   slld_hal.o
+    0x0000dd90   0x00000084   Code   RO          216    i.spi_master_init_hw_instance  spi_master.o
+    0x0000de14   0x0000018c   Code   RO          217    i.spi_master_open   spi_master.o
+    0x0000dfa0   0x000000a8   Code   RO          218    i.spi_master_send_initial_bytes  spi_master.o
+    0x0000e048   0x0000015c   Code   RO          219    i.spi_master_send_recv  spi_master.o
+    0x0000e1a4   0x000000f8   Code   RO          220    i.spi_master_send_recv_irq  spi_master.o
+    0x0000e29c   0x00000070   Code   RO          221    i.spi_master_signal_evt  spi_master.o
+    0x0000e30c   0x0000000a   Code   RO         1082    i.ticks_diff_get    app_timer.o
     0x0000e316   0x00000002   PAD
-    0x0000e318   0x00000064   Code   RO          968    i.timeout_handler_exec  app_timer.o
-    0x0000e37c   0x00000050   Code   RO          969    i.timer_list_handler  app_timer.o
-    0x0000e3cc   0x0000000a   Code   RO          970    i.timer_list_handler_sched  app_timer.o
+    0x0000e318   0x00000064   Code   RO         1083    i.timeout_handler_exec  app_timer.o
+    0x0000e37c   0x00000050   Code   RO         1084    i.timer_list_handler  app_timer.o
+    0x0000e3cc   0x0000000a   Code   RO         1085    i.timer_list_handler_sched  app_timer.o
     0x0000e3d6   0x00000002   PAD
-    0x0000e3d8   0x000000d8   Code   RO          971    i.timer_list_insert  app_timer.o
-    0x0000e4b0   0x000000ac   Code   RO          972    i.timer_list_remove  app_timer.o
-    0x0000e55c   0x00000098   Code   RO          976    i.timer_timeouts_check  app_timer.o
-    0x0000e5f4   0x0000000a   Code   RO          977    i.timer_timeouts_check_sched  app_timer.o
+    0x0000e3d8   0x000000d8   Code   RO         1086    i.timer_list_insert  app_timer.o
+    0x0000e4b0   0x000000ac   Code   RO         1087    i.timer_list_remove  app_timer.o
+    0x0000e55c   0x00000098   Code   RO         1091    i.timer_timeouts_check  app_timer.o
+    0x0000e5f4   0x0000000a   Code   RO         1092    i.timer_timeouts_check_sched  app_timer.o
     0x0000e5fe   0x00000002   PAD
-    0x0000e600   0x0000001c   Data   RO          841    .constdata          slld_hal.o
-    0x0000e61c   0x00000004   Data   RO         1196    .constdata          spi_master.o
+    0x0000e600   0x00000004   Data   RO          223    .constdata          spi_master.o
+    0x0000e604   0x0000001c   Data   RO          956    .constdata          slld_hal.o
     0x0000e620   0x00000020   Data   RO         1599    Region$$Table       anon$$obj.o
 
 
@@ -1186,10 +1186,10 @@ Memory Map of the image
     0x20000900   0x00000001   Data   RW          125    .data               flashapp.o
     0x20000901   0x00000003   PAD
     0x20000904   0x00000004   Data   RW          164    .data               system_nrf51.o
-    0x20000908   0x00000025   Data   RW          981    .data               app_timer.o
+    0x20000908   0x00000025   Data   RW         1096    .data               app_timer.o
     0x2000092d   0x00000003   PAD
-    0x20000930   0x00000200   Zero   RW          840    .bss                slld_hal.o
-    0x20000b30   0x00000028   Zero   RW         1195    .bss                spi_master.o
+    0x20000930   0x00000028   Zero   RW          222    .bss                spi_master.o
+    0x20000958   0x00000200   Zero   RW          955    .bss                slld_hal.o
     0x20000b58   0x00000800   Zero   RW          151    STACK               arm_startup_nrf51.o
 
 
@@ -1205,9 +1205,9 @@ Image component sizes
         80          8          0          1          0       2804   flashapp.o
        118         10          0          0          0      13402   main.o
         58          4          0          0          0       1215   nrf_delay.o
-       150          0          0          0          0       9537   slld.o
+       150          0          0          0          0       8189   slld.o
        838         92         28          0        512      14111   slld_hal.o
-      1918        404          4          0         40      12645   spi_master.o
+      1918        404          4          0         40      13993   spi_master.o
        208         28          0          4          0      17431   system_nrf51.o
 
     ----------------------------------------------------------------------
