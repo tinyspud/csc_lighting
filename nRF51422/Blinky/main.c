@@ -23,60 +23,47 @@
 #include <stdint.h>
 #include "nrf_delay.h"
 #include "nrf_gpio.h"
+#include "common.h"
+#include "app_error.h"
+#include "app_util_platform.h"
 #include "boards.h"
+
+#include "spi_master.h"
+#include "slld_hal.h"
+
+
+
+
+void init_LEDs(){
+		// Configure LED-pins as outputs.
+	nrf_gpio_cfg_output(LED_RED);
+	nrf_gpio_cfg_output(LED_GREEN);
+	nrf_gpio_cfg_output(LED_YELLOW);
+	nrf_gpio_cfg_output(LED_ORANGE);
+
+		LED_TURN_OFF(LED_RED);
+	LED_TURN_OFF(LED_GREEN);
+	LED_TURN_OFF(LED_YELLOW);
+	LED_TURN_OFF(LED_ORANGE);
+
+}
+
+
 
 /**
 * @brief Function for application main entry.
 */
 int main(void)
 {
-	// Configure LED-pins as outputs.
-	nrf_gpio_cfg_output(LED_0);
-	nrf_gpio_cfg_output(LED_1);
-	nrf_gpio_cfg_output(LED_2);
-	nrf_gpio_cfg_output(LED_3);
+	init_LEDs();
+	
+	spi_EEPROM_init();
 
-	nrf_gpio_pin_clear(LED_0);
-	nrf_gpio_pin_clear(LED_1);
-	nrf_gpio_pin_clear(LED_2);
-	nrf_gpio_pin_clear(LED_3);
-
-		nrf_gpio_pin_set(LED_0);
-		nrf_gpio_pin_set(LED_1);
-		nrf_gpio_pin_set(LED_2);
-		nrf_gpio_pin_set(LED_3);
-
-
+	LED_TURN_ON(LED_GREEN);
 	// LED 0 and LED 1 blink alternately.
 	while (true)
 	{
-		nrf_gpio_pin_set(LED_0);
-		nrf_gpio_pin_clear(LED_1);
-		nrf_gpio_pin_clear(LED_2);
-		nrf_gpio_pin_clear(LED_3);
 
-		nrf_delay_ms(500);
-
-		nrf_gpio_pin_clear(LED_0);
-		nrf_gpio_pin_set(LED_1);
-		nrf_gpio_pin_clear(LED_2);
-		nrf_gpio_pin_clear(LED_3);
-
-		nrf_delay_ms(500);
-
-		nrf_gpio_pin_clear(LED_0);
-		nrf_gpio_pin_clear(LED_1);
-		nrf_gpio_pin_set(LED_2);
-		nrf_gpio_pin_clear(LED_3);
-
-		nrf_delay_ms(500);
-
-		nrf_gpio_pin_clear(LED_0);
-		nrf_gpio_pin_clear(LED_1);
-		nrf_gpio_pin_clear(LED_2);
-		nrf_gpio_pin_set(LED_3);
-
-		nrf_delay_ms(500);
 	}
 }
 /** @} */

@@ -16,6 +16,14 @@
 #define LED_START      LED_0
 #define LED_STOP       LED_1
 
+#define LED_RED				LED_0
+#define LED_GREEN			LED_1
+#define LED_YELLOW		LED_2
+#define LED_ORANGE		LED_3
+
+#define LED_TURN_ON(x)	nrf_gpio_pin_clear(x)
+#define LED_TURN_OFF(x)	nrf_gpio_pin_set(x)
+
 #define BUTTON_0       23
 #define BUTTON_1       2
 #define BUTTON_2       12
@@ -35,10 +43,18 @@
 #define SPIS_MOSI_PIN  22    // SPI MOSI signal. 
 #define SPIS_SCK_PIN   23    // SPI SCK signal. 
 
-#define SPIM0_SCK_PIN       23u     /**< SPI clock GPIO pin number. */
-#define SPIM0_MOSI_PIN      20u     /**< SPI Master Out Slave In GPIO pin number. */
-#define SPIM0_MISO_PIN      22u     /**< SPI Master In Slave Out GPIO pin number. */
-#define SPIM0_SS_PIN        21u     /**< SPI Slave Select GPIO pin number. */
+#define SPIM0_SCK_PIN       11u     /**< SPI clock GPIO pin number. */
+#define SPIM0_MOSI_PIN      24u     /**< SPI Master Out Slave In GPIO pin number. */
+#define SPIM0_MISO_PIN      23u     /**< SPI Master In Slave Out GPIO pin number. */
+#define SPIM0_SS_PIN        5u     /**< SPI Slave Select GPIO pin number. */
+
+#define EEPROM_CS_PIN			SPIM0_SS_PIN
+#define EEPROM_CLK_PIN		SPIM0_SCK_PIN
+#define EEPROM_MOSI_PIN		SPIM0_MOSI_PIN
+#define EEPROM_MISO_PIN		SPIM0_MISO_PIN
+#define EEPROM_WP_PIN			9U
+#define EEPROM_RST_PIN		6U
+
 
 #define SPIM1_SCK_PIN       16u     /**< SPI clock GPIO pin number. */
 #define SPIM1_MOSI_PIN      18u     /**< SPI Master Out Slave In GPIO pin number. */
