@@ -6,6 +6,6 @@
 
 
 
-void init_flash_app();
+void init_flash_app(void);
 
 #endif

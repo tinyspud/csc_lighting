@@ -206,14 +206,10 @@ int main(void)
 {
 	init_LEDs();
 	
-	spi_EEPROM_init();
-	
-	init_flash_app();
+//	spi_EEPROM_init();
+//	
+//	init_flash_app();
 
-	LED_TURN_ON(LED_GREEN);
-	// LED 0 and LED 1 blink alternately.
-	
-	
 	
     // ANT event message buffer. 
     static uint8_t event_message_buffer[ANT_EVENT_MSG_BUFFER_MIN_SIZE];
