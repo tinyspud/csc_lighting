@@ -18,7 +18,21 @@ DEVSTATUS _status_register;
 
 void init_flash_app(){
 	_status_register = dev_status_unknown;
+	int i = 0;
 	
+	LED_TURN_ON(LED_YELLOW);
+	/* Get the status */
+	slld_StatusGet(&_status_register);
+	
+	slld_ClearStatusRegisterCmd();
+	
+	uint8_t target[5] = {0, 0, 0, 0, 0};
+	slld_RDIDCmd(&target[0], 5);
+
+	slld_StatusGet(&_status_register);
+	
+	LED_TURN_OFF(LED_YELLOW);
+
 	// wait
 	nrf_delay_ms(1000);
 	
@@ -28,7 +42,9 @@ void init_flash_app(){
 	
 	slld_ClearStatusRegisterCmd();
 	
-	uint8_t target[5] = {0, 0, 0, 0, 0};
+	for(i = 0; i < 5; i++)
+		target[i] = 0;
+	
 	slld_RDIDCmd(&target[0], 5);
 
 	slld_StatusGet(&_status_register);
