@@ -30,18 +30,19 @@
 
 #include "spi_master.h"
 #include "slld_hal.h"
-
+#include "slld.h"
+#include "FlashApp.h"
 
 
 
 void init_LEDs(){
-		// Configure LED-pins as outputs.
+	// Configure LED-pins as outputs.
 	nrf_gpio_cfg_output(LED_RED);
 	nrf_gpio_cfg_output(LED_GREEN);
 	nrf_gpio_cfg_output(LED_YELLOW);
 	nrf_gpio_cfg_output(LED_ORANGE);
 
-		LED_TURN_OFF(LED_RED);
+	LED_TURN_OFF(LED_RED);
 	LED_TURN_OFF(LED_GREEN);
 	LED_TURN_OFF(LED_YELLOW);
 	LED_TURN_OFF(LED_ORANGE);
@@ -58,6 +59,8 @@ int main(void)
 	init_LEDs();
 	
 	spi_EEPROM_init();
+	
+	init_flash_app();
 
 	LED_TURN_ON(LED_GREEN);
 	// LED 0 and LED 1 blink alternately.

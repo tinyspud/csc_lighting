@@ -73,6 +73,7 @@ int			Number_Of_Read_Bytes						/* number of bytes to be read */
 	int j = 0;
 	// Select the device
 	nrf_gpio_pin_clear(EEPROM_CS_PIN);
+	LED_TURN_ON(LED_RED);
 
 	uint8_t * spi_tx_data_ptr = &tx_buffer[0];
 	for(i = 0; i < TX_RX_BUFF_LEN; i++){
@@ -222,6 +223,7 @@ int			Number_Of_Read_Bytes						/* number of bytes to be read */
 
 	// Deselect the device
 	nrf_gpio_pin_set(EEPROM_CS_PIN);
+	LED_TURN_OFF(LED_RED);
 
 	return(status);
 }
@@ -258,7 +260,8 @@ int			Number_Of_Written_Bytes				 /* number of bytes to be written */
 
 	// Select the device
 	nrf_gpio_pin_clear(EEPROM_CS_PIN);
-	
+	LED_TURN_ON(LED_RED);
+
 	// Write the command
 	// TODO - add SPI data write
 	//		SPIDATA = command;
@@ -315,7 +318,8 @@ int			Number_Of_Written_Bytes				 /* number of bytes to be written */
 
 	// Deselect the device
 	nrf_gpio_pin_set(EEPROM_CS_PIN);
-	
+	LED_TURN_OFF(LED_RED);
+
 	return(status);
 }
 
@@ -445,18 +449,20 @@ void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p
 
 void spi_EEPROM_init(){
 	
-	// configure pins for SPI (master)
-	spi_master_init(SPI_MASTER_0, spi_master_0_event_handler, false);
-	// set up the hold to output
+	/* set up the /CS to output */
+	nrf_gpio_cfg_output(EEPROM_CS_PIN);
+	/* set up the hold to output */
 	nrf_gpio_cfg_output(EEPROM_RST_PIN);
-	// set the write protect to output
+	/* set the write protect to output */
 	nrf_gpio_cfg_output(EEPROM_WP_PIN);
+	/* configure pins for SPI (master) */
+	spi_master_init(SPI_MASTER_0, spi_master_0_event_handler, false);
 
-	// set CS high
+	/* set CS high */
 	nrf_gpio_pin_set(EEPROM_CS_PIN);
-	// set hold high
+	/* set hold high */
 	nrf_gpio_pin_set(EEPROM_RST_PIN);
-	// set WP high
+	/* set WP high */
 	nrf_gpio_pin_set(EEPROM_WP_PIN);
 	
 }
