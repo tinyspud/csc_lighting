@@ -207,8 +207,8 @@ int main(void)
 	init_LEDs();
 	
 	spi_EEPROM_init();
-//	
-//	init_flash_app();
+	
+	init_flash_app();
 
 	
     // ANT event message buffer. 

@@ -460,7 +460,7 @@ void spi_EEPROM_init(){
 	/* set the write protect to output */
 	nrf_gpio_cfg_output(EEPROM_WP_PIN);
 	/* configure pins for SPI (master) */
-	spi_master_init();
+//	spi_master_init();
 
 	/* set CS high */
 	nrf_gpio_pin_set(EEPROM_CS_PIN);

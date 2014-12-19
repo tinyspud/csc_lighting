@@ -354,8 +354,9 @@ void spi_master_close(const spi_master_hw_instance_t spi_master_hw_instance)
 
     p_spi_instance->p_nrf_spi->ENABLE = (SPI_ENABLE_ENABLE_Disabled << SPI_ENABLE_ENABLE_Pos);
 
-    /* Disconnect pin slave select */
-    nrf_gpio_pin_clear(p_spi_instance->pin_slave_select);
+    /* Set Slave Select pin as input with pull-up. */
+    nrf_gpio_pin_set(p_spi_instance->pin_slave_select);
+    nrf_gpio_cfg_input(p_spi_instance->pin_slave_select, NRF_GPIO_PIN_PULLUP);
     p_spi_instance->pin_slave_select = (uint8_t)0xFF;
 
     /* Disconnect pins from SPI hardware */
