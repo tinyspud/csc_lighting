@@ -54,7 +54,7 @@
 //#define SPIS_CSN_PIN   21    // SPI CSN signal. 
 //#define SPIS_MOSI_PIN  22    // SPI MOSI signal. 
 //#define SPIS_SCK_PIN   23    // SPI SCK signal. 
-#define SPI_MASTER_0_ENABLE
+//#define SPI_MASTER_0_ENABLE
 #define SPIM0_SCK_PIN       11u     /**< SPI clock GPIO pin number. */
 #define SPIM0_MOSI_PIN      24u     /**< SPI Master Out Slave In GPIO pin number. */
 #define SPIM0_MISO_PIN      23u     /**< SPI Master In Slave Out GPIO pin number. */
