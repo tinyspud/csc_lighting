@@ -43,10 +43,14 @@
 #include "spi_master.h"
 #include "slld.h"
 #include "slld_hal.h"
+#include "LEDs.h"
 
-#define TX_RX_BUFF_LEN		256
-uint8_t tx_buffer[TX_RX_BUFF_LEN];
-uint8_t rx_buffer[TX_RX_BUFF_LEN];
+
+
+
+#define TX_RX_BUFF_LEN		4096
+uint8_t tx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20002000)));
+uint8_t rx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20003000)));
 
 // ***************************************************************************
 //	FLASH_READ - HAL read function
@@ -326,66 +330,6 @@ int			Number_Of_Written_Bytes				 /* number of bytes to be written */
 
 /*****************************************************************************/
 
-
-
-/**@brief Function for initializing a SPI master driver.
-*
-* @param[in] spi_master_instance			 An instance of SPI master module.
-* @param[in] spi_master_event_handler	An event handler for SPI master events.
-* @param[in] lsb											 Bits order LSB if true, MSB if false.
-*/
-
-
-//static void spi_master_init(spi_master_hw_instance_t spi_master_instance, 
-//spi_master_event_handler_t spi_master_event_handler,
-//const bool lsb)
-//{
-//	uint32_t err_code = NRF_SUCCESS;
-
-//	//Configure SPI master.
-//	spi_master_config_t spi_config = SPI_MASTER_INIT_DEFAULT;
-//	
-//	switch (spi_master_instance)
-//	{
-//		#ifdef SPI_MASTER_0_ENABLE
-//	case SPI_MASTER_0:
-//		{
-//			/* Set the SPI to mode 0 (polarity = 0, phase = 0) */
-//			spi_config.SPI_Pin_SCK = SPIM0_SCK_PIN;
-//			spi_config.SPI_Pin_MISO = SPIM0_MISO_PIN;
-//			spi_config.SPI_Pin_MOSI = SPIM0_MOSI_PIN;
-//			spi_config.SPI_Pin_SS = SPIM0_SS_PIN;
-//			spi_config.SPI_CONFIG_CPHA = SPI_CONFIG_CPHA_Leading;
-//			spi_config.SPI_CONFIG_CPOL = SPI_CONFIG_CPOL_ActiveHigh;
-//		}
-//		break; 
-//		#endif /* SPI_MASTER_0_ENABLE */
-
-//		#ifdef SPI_MASTER_1_ENABLE
-//	case SPI_MASTER_1:
-//		{
-//			spi_config.SPI_Pin_SCK = SPIM1_SCK_PIN;
-//			spi_config.SPI_Pin_MISO = SPIM1_MISO_PIN;
-//			spi_config.SPI_Pin_MOSI = SPIM1_MOSI_PIN;
-//			spi_config.SPI_Pin_SS = SPIM1_SS_PIN;
-//		}
-//		break;
-//		#endif /* SPI_MASTER_1_ENABLE */
-//		
-//	default:
-//		break;
-//	}
-//	
-//	spi_config.SPI_CONFIG_ORDER = (lsb ? SPI_CONFIG_ORDER_LsbFirst : SPI_CONFIG_ORDER_MsbFirst);
-//	
-//	err_code = spi_master_open(spi_master_instance, &spi_config);
-//	APP_ERROR_CHECK(err_code);
-//	
-//	//Register event handler for SPI master.
-//	spi_master_evt_handler_reg(spi_master_instance, spi_master_event_handler);
-//}
-
-
 /**@brief Handler for SPI0 master events.
 *
 * @param[in] spi_master_evt		SPI master event.
@@ -406,48 +350,56 @@ void spi_master_event_handler(spi_master_evt_t spi_master_evt)
 
 
 
-void spi_master_init(void)
+/**@brief Function for initializing a SPI master driver.
+ *
+ * @param[in] spi_master_instance       An instance of SPI master module.
+ * @param[in] spi_master_event_handler  An event handler for SPI master events.
+ * @param[in] lsb                       Bits order LSB if true, MSB if false.
+ */
+void spi_master_init(spi_master_hw_instance_t   spi_master_instance,
+                            spi_master_event_handler_t spi_master_event_handler_arg,
+                            const bool                 lsb)
 {
-	//Structure for SPI master configuration, initialized by default values.
-	//    spi_config = SPI_MASTER_INIT_DEFAULT;
-	spi_master_config_t spi_config = SPI_MASTER_INIT_DEFAULT;
-	
-	//Configure SPI master.
-	spi_config.SPI_Freq = SPI_FREQUENCY_FREQUENCY_M8;
-	spi_config.SPI_Pin_SCK = SPIM0_SCK_PIN;
-	spi_config.SPI_Pin_MISO = SPIM0_MISO_PIN;
-	spi_config.SPI_Pin_MOSI = SPIM0_MOSI_PIN;
-	spi_config.SPI_Pin_SS = SPIM0_SS_PIN;
-	spi_config.SPI_CONFIG_CPHA = SPI_CONFIG_CPHA_Leading;
-	spi_config.SPI_CONFIG_CPOL = SPI_CONFIG_CPOL_ActiveHigh;
-	spi_config.SPI_CONFIG_ORDER = SPI_CONFIG_ORDER_MsbFirst;
+    uint32_t err_code = NRF_SUCCESS;
 
+    // Configure SPI master.
+    spi_master_config_t spi_config = SPI_MASTER_INIT_DEFAULT;
 
-	//Initialize SPI master.
-	uint32_t err_code = spi_master_open(SPI_MASTER_0, &spi_config);
-	
-	if (err_code != NRF_SUCCESS)
-	{
-		//Module initialization failed. Take recovery action.
-	}
+    switch (spi_master_instance)
+    {
+        #ifdef SPI_MASTER_0_ENABLE
+        case SPI_MASTER_0:
+        {
+            spi_config.SPI_Pin_SCK  = SPIM0_SCK_PIN;
+            spi_config.SPI_Pin_MISO = SPIM0_MISO_PIN;
+            spi_config.SPI_Pin_MOSI = SPIM0_MOSI_PIN;
+            spi_config.SPI_Pin_SS   = SPIM0_SS_PIN;
+        }
+        break;
+        #endif /* SPI_MASTER_0_ENABLE */
 
-	//Register SPI master event handler.
-	//    spi_master_evt_handler_reg(SPI_MASTER_0, spi_master_event_handler);
-}
+        #ifdef SPI_MASTER_1_ENABLE
+        case SPI_MASTER_1:
+        {
+            spi_config.SPI_Pin_SCK  = SPIM1_SCK_PIN;
+            spi_config.SPI_Pin_MISO = SPIM1_MISO_PIN;
+            spi_config.SPI_Pin_MOSI = SPIM1_MOSI_PIN;
+            spi_config.SPI_Pin_SS   = SPIM1_SS_PIN;
+        }
+        break;
+        #endif /* SPI_MASTER_1_ENABLE */
 
+        default:
+            break;
+    }
 
-/**@brief Function for error handling, which is called when an error has occurred.
-*
-* @param[in] error_code	Error code supplied to the handler.
-* @param[in] line_num		Line number where the handler is called.
-* @param[in] p_file_name Pointer to the file name.
-*/
-void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p_file_name)
-{
-	for (;;)
-	{
-		//No implementation needed.
-	}
+    spi_config.SPI_CONFIG_ORDER = (lsb ? SPI_CONFIG_ORDER_LsbFirst : SPI_CONFIG_ORDER_MsbFirst);
+
+    err_code = spi_master_open(spi_master_instance, &spi_config);
+    APP_ERROR_CHECK(err_code);
+
+    // Register event handler for SPI master.
+    spi_master_evt_handler_reg(spi_master_instance, spi_master_event_handler_arg);
 }
 
 
@@ -460,14 +412,16 @@ void spi_EEPROM_init(){
 	/* set the write protect to output */
 	nrf_gpio_cfg_output(EEPROM_WP_PIN);
 	/* configure pins for SPI (master) */
-//	spi_master_init();
-
+	
 	/* set CS high */
 	nrf_gpio_pin_set(EEPROM_CS_PIN);
 	/* set hold high */
 	nrf_gpio_pin_set(EEPROM_RST_PIN);
 	/* set WP high */
 	nrf_gpio_pin_set(EEPROM_WP_PIN);
+
+	spi_master_init(SPI_MASTER_0, &spi_master_event_handler, false);
+
 
 }
 

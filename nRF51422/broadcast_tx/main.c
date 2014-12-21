@@ -27,8 +27,12 @@
 #include "nrf_soc.h"
 #include "nrf_sdm.h"
 #include "app_timer.h"
+#include "nrf_delay.h"
 #include "nordic_common.h"
 #include "bsp.h"
+
+#include "LEDs.h"
+#include "slld_hal.h"
 
 #define APP_TIMER_PRESCALER      0                     /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_MAX_TIMERS     BSP_APP_TIMERS_NUMBER /**< Maximum number of simultaneously created timers. */
@@ -132,6 +136,23 @@ void SD_EVT_IRQHandler(void)
 }
 
 
+
+/**@brief Function for error handling, which is called when an error has occurred.
+*
+* @param[in] error_code	Error code supplied to the handler.
+* @param[in] line_num		Line number where the handler is called.
+* @param[in] p_file_name Pointer to the file name.
+*/
+void app_error_handler(uint32_t error_code, uint32_t line_num, const uint8_t * p_file_name)
+{
+	for(;;){
+	LED_TURN_ON(LED_RED);
+	nrf_delay_ms(250);
+	LED_TURN_OFF(LED_RED);
+	nrf_delay_ms(250);
+	}
+}
+
 /**@brief Function for handling SoftDevice asserts. 
  *
  * @param[in] pc          Value of the program counter.
@@ -165,6 +186,8 @@ int main(void)
     // ANT event message buffer. 
     static uint8_t event_message_buffer[ANT_EVENT_MSG_BUFFER_MIN_SIZE];
     
+	init_LEDs();
+	
     // Enable SoftDevice. 
     uint32_t err_code;
     err_code = sd_softdevice_enable(NRF_CLOCK_LFCLKSRC_XTAL_50_PPM, softdevice_assert_callback);
@@ -198,7 +221,11 @@ int main(void)
 
     uint8_t event;
     uint8_t ant_channel;
-  
+
+		spi_EEPROM_init();
+	
+	init_flash_app();
+
     // Main loop. 
     for (;;)
     {   

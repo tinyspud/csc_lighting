@@ -12,7 +12,7 @@
 #include "slld.h"
 #include "FlashApp.h"
 
-
+#include "LEDs.h"
 
 DEVSTATUS _status_register;
 
@@ -20,7 +20,6 @@ void init_flash_app(){
 	_status_register = dev_status_unknown;
 	int i = 0;
 
-return;	
 	LED_TURN_ON(LED_YELLOW);
 	/* Get the status */
 	slld_StatusGet(&_status_register);

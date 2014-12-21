@@ -33,9 +33,9 @@
 #define LED_RGB_YELLOW		LED_YELLOW
 #define LED_RGB_ORANGE		LED_ORANGE
 
-#define LED_RGB_RED_MASK    (1<<LED_RED)
-#define LED_RGB_GREEN_MASK  (1<<LED_GREEN)
-#define LED_RGB_ORANGE_MASK   (1<<LED_ORANGE)
+#define LED_RGB_RED_MASK    	(1<<LED_RED)
+#define LED_RGB_GREEN_MASK  	(1<<LED_GREEN)
+#define LED_RGB_ORANGE_MASK  	(1<<LED_ORANGE)
 
 #define LEDS_LIST { LED_RED, LED_GREEN, LED_YELLOW, LED_ORANGE}
 // defining RGB led as 3 single LEDs
@@ -64,5 +64,22 @@
 #define CTS_PIN_NUMBER 10
 #define RTS_PIN_NUMBER 8
 #define HWFC           true
+
+
+
+
+#define SPIM0_SCK_PIN       11u     /**< SPI clock GPIO pin number. */
+#define SPIM0_MOSI_PIN      24u     /**< SPI Master Out Slave In GPIO pin number. */
+#define SPIM0_MISO_PIN      23u     /**< SPI Master In Slave Out GPIO pin number. */
+#define SPIM0_SS_PIN        5u     /**< SPI Slave Select GPIO pin number. */
+
+#define EEPROM_CS_PIN			SPIM0_SS_PIN
+#define EEPROM_CLK_PIN		SPIM0_SCK_PIN
+#define EEPROM_MOSI_PIN		SPIM0_MOSI_PIN
+#define EEPROM_MISO_PIN		SPIM0_MISO_PIN
+#define EEPROM_WP_PIN			9U
+#define EEPROM_RST_PIN		6U
+
+
 
 #endif
