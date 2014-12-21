@@ -72,6 +72,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -141,7 +143,6 @@
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>0</RestoreTracepoints>
             <RestoreSysVw>1</RestoreSysVw>
-            <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>6</TargetSelection>
@@ -362,7 +363,7 @@
               <MiscControls>--c99</MiscControls>
               <Define>NRF51 BOARD_ANT_IO SPI_MASTER_0_ENABLE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Include;..\..\Include\app_common;..\..\Include\sdk_soc;..\..\Include\sd_common;..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx;..\Spansion_SLLD_v13.2.1\src;..\..\Blinky</IncludePath>
+              <IncludePath>..\..\Include;..\..\Include\app_common;..\..\Include\s210;..\..\Include\sd_common;..\..\Include\serialization\common;..\..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx;..\..\Spansion_SLLD_v13.2.1\src;..\..\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -406,6 +407,11 @@
           <GroupName>app</GroupName>
           <Files>
             <File>
+              <FileName>FlashApp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FlashApp.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\main.c</FilePath>
@@ -414,11 +420,6 @@
               <FileName>keil_arm_uv4.lnt</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\Source\keil_arm_uv4.lnt</FilePath>
-            </File>
-            <File>
-              <FileName>FlashApp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FlashApp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -441,21 +442,6 @@
           <GroupName>lib</GroupName>
           <Files>
             <File>
-              <FileName>spi_master.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Source\spi_master\spi_master.c</FilePath>
-            </File>
-            <File>
-              <FileName>slld.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Spansion_SLLD_v13.2.1\src\slld.c</FilePath>
-            </File>
-            <File>
-              <FileName>slld_hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx\slld_hal.c</FilePath>
-            </File>
-            <File>
               <FileName>nrf_delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Source\nrf_delay\nrf_delay.c</FilePath>
@@ -466,9 +452,19 @@
               <FilePath>..\..\Source\app_common\app_timer.c</FilePath>
             </File>
             <File>
-              <FileName>nrf_soc.c</FileName>
+              <FileName>slld_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Source\sdk_soc\nrf_soc.c</FilePath>
+              <FilePath>..\..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx\slld_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>slld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Spansion_SLLD_v13.2.1\src\slld.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_master.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Source\spi_master\spi_master.c</FilePath>
             </File>
           </Files>
         </Group>
