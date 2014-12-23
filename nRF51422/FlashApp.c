@@ -31,8 +31,9 @@ void init_flash_app(){
 
 	slld_StatusGet(&_status_register);
 	
-	LED_TURN_OFF(LED_YELLOW);
+	// blink_out_value(_status_register);
 	
+	LED_TURN_OFF(LED_YELLOW);
 	
 	/* Look at the status */
 	
