@@ -46,6 +46,23 @@ void ui_task( void* p_params )
 			top = render_smart_string(string_to_disp, LEN_STR_2_DISP, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
 					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
 
+			/* Set note in top left about GPS */
+			switch(GetCurrentGPSLockState()){
+			case GPSLockLocked:
+				top = render_smart_string("Locked\0", 13, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
+						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+				break;
+			case GPSLockSearching:
+				top = render_smart_string("Searching...\0", 13, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
+						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+				break;
+			case GPSLockUnknown:
+			default:
+				top = render_smart_string("GPS Error\0", 13, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
+						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+				break;
+			}
+
 			try_upload_screen();
 
 			/* Log the time */

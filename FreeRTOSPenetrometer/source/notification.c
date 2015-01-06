@@ -57,6 +57,7 @@
 #include "het.h"
 
 /* USER CODE BEGIN (0) */
+#include "gps.h"
 /* USER CODE END */
 #pragma WEAK(esmGroup1Notification)
 void esmGroup1Notification(uint32 channel)
@@ -176,6 +177,18 @@ void edgeNotification(hetBASE_t * hetREG,uint32 edge)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (37) */
+	switch(edge){
+	case 0:
+		/* Pin 14 - 1 PPS edge (rising) */
+		break;
+	case 1:
+		/* Pin 16 - Lock Ind pin (rising edge) */
+		tick_lock_indicator();
+		break;
+	default:
+		/* Unknown edge */
+		break;
+	}
 	/* USER CODE END */
 }
 

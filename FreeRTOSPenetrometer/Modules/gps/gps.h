@@ -128,6 +128,13 @@ typedef enum {
 	GPS_57600
 } GPS_BAUD;
 
+typedef enum LockIndicatorState{
+	GPSLockLocked,
+	GPSLockSearching,
+	GPSLockUnknown
+}LockIndicatorState_t;
+
+
 /* Define the invalid values for GPSDATA_S */
 #define GPS_INVALID_COURSE	0
 #define GPS_INVALID_MODE	'N' /* Heading */
@@ -214,5 +221,11 @@ void get_month_string(DATE, char*);
 void print_gps_data_struct(GPSDATA_S* gps_rx_struct);
 
 void prvGPSTimerCallback(TimerHandle_t);
+
+void tick_lock_indicator(void);
+
+void clean_up_lock(void);
+
+LockIndicatorState_t GetCurrentGPSLockState(void);
 
 #endif /* GPS_H_ */

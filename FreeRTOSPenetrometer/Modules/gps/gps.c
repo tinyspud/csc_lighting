@@ -83,7 +83,8 @@ typedef enum {
 	CHECK_MCS_9600, SET_GPS_38400, SET_MCS_38400, CHECK_MCS_38400, PROCESS
 } GPSBAUD_STATES;
 
-
+volatile TickType_t _lock_ind_last_seen;
+volatile LockIndicatorState_t _curr_lock;
 
 void print_gps_data_struct(GPSDATA_S* gps_rx_struct)
 {
@@ -808,6 +809,9 @@ void reset_gps(void) {
 uint32_t init_gps(void) {
 	//GPSBAUD_STATES gps_baud_state= CHECK_MCS_9600;
 
+	_lock_ind_last_seen = 0;
+	_curr_lock = GPSLockUnknown;
+
 	/* Create generic GPS timer */
 	xGPSTimer = xTimerCreate(
 			"GPS generic Timer", /* Unique name */
@@ -1187,7 +1191,25 @@ void get_month_string(DATE dt, char* strptr){
 	}
 }
 
+LockIndicatorState_t GetCurrentGPSLockState(void){
+	return _curr_lock;
+}
 
+void clean_up_lock(void){
+	/* Clean up the lock position (set to lost if it's stale data) */
+	TickType_t x = xTaskGetTickCount();
+	/* Give 0.4 second fudge factor - should see something */
+	if((x - _lock_ind_last_seen) > (1.4 * SYS_TICKS_IN_1_SEC))
+		_curr_lock = GPSLockUnknown;
+}
 
+void tick_lock_indicator(){
+	TickType_t x = xTaskGetTickCountFromISR();
 
+	/* Compare */
+	_curr_lock = ((x - _lock_ind_last_seen) > (SYS_TICKS_IN_500_MSEC)) ? GPSLockLocked : GPSLockSearching;
+
+	/* Store */
+	_lock_ind_last_seen = x;
+}
 

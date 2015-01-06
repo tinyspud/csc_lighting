@@ -9,6 +9,7 @@
 #include "GPSTask.h"
 #include "LogTask.h"
 #include "mcs_time.h"
+#include "common.h"
 
 //#include <stdint.h>
 //#include <string.h>
@@ -34,9 +35,9 @@
 //							};
 
 
-/* how often to poll GPS for coords in msec */
-#define GPS_POLL_TIME_MSEC 				(30000)
-
+/* how often to poll GPS for coords in sec */
+#define GPS_POLL_TIME_SEC 				(30)
+#define GPS_RX_TIMEOUT_SEC				(5)
 
 
 
@@ -58,142 +59,21 @@ void gps_task( void* p_params )
 	/* TODO Start looking for a position */
 	/* Query GPS for data */
 	send_nmea_query_msg(RMC);
-	receive_gps_response(&rmc_msg, 5000, 0);
+	receive_gps_response(&rmc_msg, (GPS_RX_TIMEOUT_SEC * SYS_TICKS_IN_1_SEC), 0);
 
+	TickType_t _gps_now = xTaskGetTickCount();
+	TickType_t _gps_delay_amount_sec = GPS_POLL_TIME_SEC;	// seconds
 
 	for (;;){
-//		/* Send task check-in message */
-//		system_integrity_check_in(TASKS_APP_GPS);
-//
-//		/* Wait for message response from other tasks */
-//		if (pdPASS == queues_receive_command_message(QUEUES_APP_GPS_INPUT, &gps_input_msg, 10)){
-//			/* Number of log messages received increase by one */
-//			++gps_msg_received;
-//
-//			/* Process command from system first */
-//			if (gps_input_msg.task_id == TASKS_APP_SYSTEM)
-//			{
-//				/* Process by command */
-//				switch (gps_input_msg.command)
-//				{
-//				/* Send response */
-//				case SYSTEM_COMMAND_START:
-//#ifdef GPS_MODULE
-//					/* get the semaphore first */
-//					if (take_bsemaphores(UARTMUX_BSEMAPHORE_ID, DEFAULT_BSEMAPHORE_DELAY) == pdPASS){
-//
-//						reconfigure_uart(GPS_UART_MUX_PORT, TRUE_FLAG);
-//						if(init_gps() == pdPASS){
-//							set_gps_state(TASK_IDLE);
-//							process_log_message(TRUE_FLAG, "GPSTask.c/gps_task/SYSTEM_COMMAND_START\0", "EVENT: GPS Initialized\0", NULL_VAL);
-//						}
-//						else{
-//							set_gps_state(TASK_UNINIT);
-//							process_log_message(TRUE_FLAG, "GPSTask.c/gps_task\0", "ERROR: GPS Init Failed\0", NULL_VAL);
-//						}
-//						if(give_bsemaphores(UARTMUX_BSEMAPHORE_ID)!= pdPASS){
-//							process_log_message(TRUE_FLAG, "GPSTask.c/gps_task/SYSTEM_COMMAND_START\0", "ERROR: Give Semaphore\0", NULL_VAL);
-//							set_gps_state(TASK_UNINIT);
-//						}
-//					}
-//					else{
-//						process_log_message(TRUE_FLAG, "GPSTask.c/gps_task/SYSTEM_COMMAND_START\0", "ERROR: Take Semaphore\0", NULL_VAL);
-//						set_gps_state(TASK_UNINIT);
-//					}
-//#endif
-//					system_send_response(SYSTEM_COMMAND_CMD_ACK, TASKS_APP_GPS);
-//					break;
-//
-//				case SYSTEM_COMMAND_POWER_UP:
-//					system_send_response(SYSTEM_COMMAND_CMD_ACK, TASKS_APP_GPS);
-//					break;
-//
-//				case SYSTEM_COMMAND_INIT_HARDWARE:
-//					set_gps_state(TASK_IDLE);
-//					system_send_response(SYSTEM_COMMAND_CMD_ACK, TASKS_APP_GPS);
-//					break;
-//
-//				case SYSTEM_COMMAND_IDLE:
-//				case SYSTEM_COMMAND_TEST_START:
-//				case SYSTEM_COMMAND_TEST_END:
-//				case SYSTEM_COMMAND_TEST_ERROR:
-//				case SYSTEM_COMMAND_ERROR:
-//				case SYSTEM_COMMAND_SHUTDOWN:
-//				case SYSTEM_COMMAND_OFF:
-//					system_send_response(SYSTEM_COMMAND_CMD_ACK, TASKS_APP_GPS);
-//					break;
-//				default:
-//					break;
-//				}
-//			}
-//			else{
-//				/* Process UI message */
-//				switch (gps_input_msg.command){
-//
-//				case QUEUES_APP_SYSTEM_INTEGRITY_INPUT:
-//					/* System integrity checked in - system's still running, that's about all we care about */
-//					break;
-//
-//				case QUEUE_CMD_GPS_GET_COORDINATE:
-//					/* Look at who's calling so you know where to give the response */
-////					switch(gps_input_msg.task_id){
-////
-////					case TASKS_APP_UI:
-//#ifdef GPS_MODULE
-//						if( get_gps_state() == TASK_IDLE ){
-//							set_gps_state(TASK_BUSY);
-//
-//							//printf_ui_uart("GPS Query: \r\n");
-//							/* get the semaphore first */
-//							if (take_bsemaphores(UARTMUX_BSEMAPHORE_ID, DEFAULT_BSEMAPHORE_DELAY) == pdPASS){
-//
-//								reconfigure_uart(GPS_UART_MUX_PORT, FALSE_FLAG);
-//
-//								/* Query GPS for data */
-//								send_nmea_query_msg(RMC);
-//								receive_gps_response(&rmc_msg, 5000, 0);
-//
-//								/* put pointer to response in Queue */
-//								gps_output_msg.data_ptr= (uint32_t*)&rmc_msg;
-//								/* TODO fix Harvey's task (I broke it by commenting out line below) */
-////								queues_send_message(QUEUES_APP_GPS_OUTPUT, &gps_output_msg, 10);
-//
-//								/* give back semaphore */
-//								if(give_bsemaphores(UARTMUX_BSEMAPHORE_ID)!= pdPASS){
-//									process_log_message(TRUE_FLAG, "GPSTask.c/gps_task/QUEUE_CMD_GPS_GET_COORDINATE\0", "ERROR: Give Semaphore\0", NULL_VAL);
-//								}
-//
-//								gps_inter_proc_msg.command = QUEUE_CMD_WILDCARD_RX_GPS;
-//								gps_inter_proc_msg.data_ptr = gps_output_msg.data_ptr;
-//
-//								/* Do the reverse look up of the calling task and put the pointer
-//								 * in its in queue */
-//								queues_send_command_message(task_id_to_input_queue_id(gps_input_msg.task_id), &gps_inter_proc_msg, 0);
-//							}
-//							else{
-//								process_log_message(TRUE_FLAG, "GPSTask.c/gps_task/QUEUE_CMD_GET_COORDINATE\0", "ERROR: Take Semaphore\0", NULL_VAL);
-//							}
-//
-//							set_gps_state(TASK_IDLE);
-//						}
-//#endif
-////						break;
-////
-////					default:
-////						/* Unhandled case */
-////						break;
-////					}
-//					break;
-//
-//					default:
-//						/* Unrecognized command */
-//						break;
-//				}//switch
-//			}//else
-//		}//if
-//
-//		/* sleep */
-//		( void ) xTaskDelayUntil( &xPollLast, xPollRate );
+		/* Every GPS_POLL_TIME_SEC, poll the GPS then update the UI */
+		send_nmea_query_msg(RMC);
+		receive_gps_response(&rmc_msg, (GPS_RX_TIMEOUT_SEC * SYS_TICKS_IN_1_SEC), 0);
+
+		clean_up_lock();
+
+		_gps_now = xTaskGetTickCount();
+		vTaskDelayUntil(&_gps_now, (_gps_delay_amount_sec * SYS_TICKS_IN_1_SEC));
+
 
 	}//for
 }//func
