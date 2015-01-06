@@ -41,20 +41,15 @@
 
 
 
+static GPSDATA_S rmc_msg = {0};
 
 
 void gps_task( void* p_params )
 {
-//	static uint32_t gps_msg_received = 0;
-	static GPSDATA_S rmc_msg = {0};
-//	GPSDATA_S rmc_msg = {0};
-//
-//	portTickType  xPollLast;
-//	portTickType  xPollRate;
-//
-
 	/* Init GPS */
 	init_gps();
+
+	invalidate_GPSDATA_S_data(&rmc_msg);
 
 	/* TODO Start looking for a position */
 	/* Query GPS for data */
@@ -78,5 +73,14 @@ void gps_task( void* p_params )
 	}//for
 }//func
 
+
+
+
+
+
+void GetCurrGPS(GPSDATA_S* target){
+	copy_GPSDATA_S_data(target, &rmc_msg);
+
+}
 
 

@@ -674,8 +674,9 @@ uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout,
 				break;
 			}
 			g_rx_buffer_for_gps_msg[i] = cByteRxed;
-
 		}
+		else
+			break;
 	}
 
 	/* See if the error_flag indicates a failure, in which case invalidate the data */
