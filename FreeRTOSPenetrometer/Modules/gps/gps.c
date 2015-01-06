@@ -630,8 +630,7 @@ static uint32_t flush_gps_responses(const uint32_t timeout) {
 }
 
 /* parse incoming GPS UART stream query response */
-uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout,
-		uint32_t enableprint) {
+uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout){
 	uint16_t i;
 	portCHAR cByteRxed;
 	uint32_t error_flag = pdPASS;
@@ -655,22 +654,10 @@ uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout,
 
 		//wait detect error or ok response
 		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) (2 * configTICK_RATE_HZ)))) {
-
-			//print out characters
-			if (enableprint == 1) {
-				UART_putChar(UART, cByteRxed);
-			}
-
 			//break if return character found
 			if ((cByteRxed == '\r') || (cByteRxed == '\n')) {
 				/* if message is valid */
 				error_flag = parse_rmc_msg(rmcmsg, &g_rx_buffer_for_gps_msg[0]);
-
-				if (enableprint == 1) {
-					UART_putChar(UART, '\r');
-					UART_putChar(UART, '\n');
-				}
-
 				break;
 			}
 			g_rx_buffer_for_gps_msg[i] = cByteRxed;
@@ -684,7 +671,6 @@ uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout,
 		invalidate_GPSDATA_S_data(rmcmsg);
 
 	return error_flag;
-
 }
 
 /* search for specified string on incoming GPS UART stream, break if found */
@@ -737,29 +723,6 @@ void prvGPSTimerCallback(TimerHandle_t xExpiredTimer) {
 
 /*turn device on, get out of reset */
 void power_on_gps(void) {
-	/*delay for one second and then raise GPS_EN */
-	//	g_gps_timer_expired_flag = FALSE_FLAG;
-	//	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
-	//		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
-	//			for (;;) {
-	//				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-	//					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
-	//					break;
-	//				}
-	//			}
-	//		}
-	//	}
-	//
-	//	/*delay for 200 ms and then lower GPS_EN */
-	//	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
-	//		for (;;) {
-	//			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-	//				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
-	//				break;
-	//			}
-	//		}
-	//
-	//	}
 	gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
 	/* Delay for 1 second */
 	portTickType x = xTaskGetTickCount();
@@ -1102,7 +1065,7 @@ int generate_gps_string_DATE(GPSDATA_S gpsdat, char* strptr, int strptr_len){
 
 	get_month_string(gpsdat.Date, &dat[2]);
 
-	uint16_t yr = ((uint16_t)gpsdat.Date.year) + 2000;
+	uint16_t yr = (uint16_t)gpsdat.Date.year;
 	/* Fill in dat[] */
 	figs = 4;
 	for(k = 0; k < figs; k++){

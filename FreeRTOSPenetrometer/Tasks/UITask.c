@@ -32,16 +32,28 @@ void ui_task( void* p_params )
 	GPSDATA_S _ui_gps_dat = {0};
 	invalidate_GPSDATA_S_data(&_ui_gps_dat);
 
+	while(!ready_for_first_one()){ };
+
+	/* Flush 20 times */
+	clear_scratch_screen();
+
+	blackout_screen();
+	render_disable_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS,
+			scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+	for(i = 0; i < 20; i++){
+		/* Write thatched screen */
+		render_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, DRAW_SET_TOGGLE,
+				scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+
+		try_upload_screen();
+		vTaskDelay(5 * SYS_TICKS_IN_1_SEC);
+	}
+
 	for (;;){
 		/* For now just put the tick up on the screen */
 		curtick = xTaskGetTickCount();
-		if(((curtick > (last_tick_refreshed + (waittime * SYS_TICKS_IN_1_SEC))) && (can_write_to_display())) ||
-				(ready_for_first_one())){
+		if((curtick > (last_tick_refreshed + (waittime * SYS_TICKS_IN_1_SEC))) && (can_write_to_display())){
 			clear_scratch_screen();
-
-			blackout_screen();
-			render_disable_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS,
-					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
 
 			/* Clear out string to display */
 			for(i = 0; i < LEN_STR_2_DISP; i++)
@@ -78,9 +90,10 @@ void ui_task( void* p_params )
 				string_to_disp[i] = 0x00;
 
 			generate_gps_string_UTC(_ui_gps_dat, &string_to_disp[0], LEN_STR_2_DISP);
-			generate_gps_string_DATE(_ui_gps_dat, &string_to_disp[5], (LEN_STR_2_DISP - 5));
-			render_smart_string(string_to_disp, LEN_STR_2_DISP, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
-								scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+			string_to_disp[5] = ' ';
+			generate_gps_string_DATE(_ui_gps_dat, &string_to_disp[6], (LEN_STR_2_DISP - 6));
+			render_smart_string(string_to_disp, 14, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
+					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
 
 			try_upload_screen();
 

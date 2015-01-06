@@ -388,6 +388,7 @@ BaseType_t epaper_start_COG_driver(){
 	return pdFAIL;
 }
 
+#define NUM_WASH_CYCLES	10
 
 /* Break code into blocks that can be executed on timer ticks by the RTOS -
  * advance the execution through blocks at states since the RM48 is so fast and the
@@ -417,7 +418,6 @@ einkstate_t manage_eink(einkstate_t state){
 	case EinkInitializingCOGDriver:
 		if(epaper_start_COG_driver() == pdFAIL){
 			/* Discharge */
-//			discharge_epaper();
 			epaper_power_off_sequence();
 			rtnval = EinkError;
 		}
@@ -436,7 +436,6 @@ einkstate_t manage_eink(einkstate_t state){
 			wait_to_not_busy();
 		}
 #else
-
 		/* Set HET08 high */
 		gioSetBit(hetPORT1, 8, 1);
 
@@ -452,7 +451,7 @@ einkstate_t manage_eink(einkstate_t state){
 		waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
 
 		gioToggleBit(gioPORTA, 2);
-		for(temp = 0; temp < 3; temp++){
+		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			/* Load black frame */
 			write_epaper_solid_flush(BlackScreenFlush);
 
@@ -460,26 +459,26 @@ einkstate_t manage_eink(einkstate_t state){
 		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
-		for(temp = 0; temp < 3; temp++){
+		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(WhiteScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load black frame */
-		for(temp = 0; temp < 3; temp++){
+		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(BlackScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
-		for(temp = 0; temp < 3; temp++){
+		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(WhiteScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load image */
 
-		for(temp = 0; temp < 8; temp++){
+		for(temp = 0; temp < 3 * (NUM_WASH_CYCLES); temp++){
 			for(i = 0; i < LINES_ON_SCREEN; i++){
 				wait_to_not_busy();
 				uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i, PositiveImage);
@@ -490,7 +489,6 @@ einkstate_t manage_eink(einkstate_t state){
 		}
 		/* Set HET08 low */
 		gioSetBit(hetPORT1, 8, 0);
-
 #endif
 		rtnval = EinkIdleAndOn;
 		break;

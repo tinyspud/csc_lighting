@@ -11,7 +11,7 @@
 /* Set the image add mode */
 #define DRAW_SET_B	0x01
 #define DRAW_SET_F	0x02
-#define DRAW_TOGGLE	0x03
+#define DRAW_SET_TOGGLE	0x03
 #define DRAW_MODE_MASK	0x03
 
 /* Text alignment */

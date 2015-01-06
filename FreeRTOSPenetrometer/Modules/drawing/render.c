@@ -88,7 +88,7 @@ uint8 render_put_byte(int x, int y, uint8 value, uint8 draw_type, uint8 target[]
 			render_set_foreground_byte(x, y, value, target, bottommost, rightmost);
 			break;
 		default:
-		case DRAW_TOGGLE:
+		case DRAW_SET_TOGGLE:
 			render_XOR_byte(x, y, value, target, bottommost, rightmost);
 			break;
 		}
@@ -174,7 +174,7 @@ void render_rectangle(int x_pixel, int y_pixel, int x_p_width, int y_p_height,
 			case DRAW_SET_F:
 				render_set_foreground_byte(i, j, (i == (x_pixel/8) ? leftmask : 0xFF) & 0xFF & (i == (rtpixel - 1) ? rightmask : 0xFF), target, bottommost, rightmost);
 				break;
-			case DRAW_TOGGLE:
+			case DRAW_SET_TOGGLE:
 				render_XOR_byte(i, j, (i == (x_pixel/8) ? leftmask : 0xFF) & 0xFF & (i == (rtpixel - 1) ? rightmask : 0xFF), target, bottommost, rightmost);
 				break;
 			default:
@@ -332,7 +332,7 @@ void render_char_w_ptr_adv(uint8* ptr2char, int x_pixel, int y_pixel, uint8 draw
 								}
 								break;
 							default:
-							case DRAW_TOGGLE:
+							case DRAW_SET_TOGGLE:
 								resolved_byte = (byte2go >> shift_p_set) & (use_even ? even_mask : 0xFF);
 								render_XOR_byte(resolved_x_pixel, y_pixel + _p_j,
 										(resolved_x_pixel == (x_pixel/8) ? leftmask : 0xFF) & resolved_byte &

@@ -197,7 +197,7 @@ uint16_t send_nmea_query_msg(NMEAType);
 
 uint32_t init_gps(void);
 
-uint16_t receive_gps_response(GPSDATA_S *gllmsg, const uint32_t timeout, uint32_t enableprint);
+uint16_t receive_gps_response(GPSDATA_S *gllmsg, const uint32_t timeout);
 
 //portBaseType gps_receive_data_message(queues_gps_output_t*, portTickType);
 
