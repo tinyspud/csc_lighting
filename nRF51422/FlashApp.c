@@ -23,20 +23,20 @@ void init_flash_app(){
 	LED_TURN_ON(LED_YELLOW);
 	/* Get the status */
 	slld_StatusGet(&_status_register);
-	
+
 	slld_ClearStatusRegisterCmd();
-	
-	uint8_t target[5] = {0, 0, 0, 0, 0};
+
+	uint8_t target[5] = { 0, 0, 0, 0, 0 };
 	slld_RDIDCmd(&target[0], 5);
 
 	slld_StatusGet(&_status_register);
-	
+
 	// blink_out_value(_status_register);
-	
+
 	LED_TURN_OFF(LED_YELLOW);
-	
+
 	/* Look at the status */
-	
+
 }
 
 

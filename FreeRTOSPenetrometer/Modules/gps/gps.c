@@ -87,40 +87,39 @@ typedef enum {
 
 void print_gps_data_struct(GPSDATA_S* gps_rx_struct)
 {
-//	if(gps_rx_struct->Status == 'A'){
-//		printf_ui_uart("Latitude: %d\r\n", gps_rx_struct->Latt.Degrees);
-//		printf_ui_uart("Longitude: %d\r\n", gps_rx_struct->Long.Degrees);
-//		printf_ui_uart("Hours: %d\r\n", gps_rx_struct->Time.hour);
-//		printf_ui_uart("Minutes: %d\r\n", gps_rx_struct->Time.min);
-//		printf_ui_uart("Day: %d\r\n", gps_rx_struct->Date.day);
-//		printf_ui_uart("Month: %d\r\n", gps_rx_struct->Date.month);
-//		printf_ui_uart("Year: %d\r\n", gps_rx_struct->Date.year);
-//
-//	}
-//	else{
-//		printf_ui_uart("Not enough satellites \r\n");
-//	}
+	//	if(gps_rx_struct->Status == 'A'){
+	//		printf_ui_uart("Latitude: %d\r\n", gps_rx_struct->Latt.Degrees);
+	//		printf_ui_uart("Longitude: %d\r\n", gps_rx_struct->Long.Degrees);
+	//		printf_ui_uart("Hours: %d\r\n", gps_rx_struct->Time.hour);
+	//		printf_ui_uart("Minutes: %d\r\n", gps_rx_struct->Time.min);
+	//		printf_ui_uart("Day: %d\r\n", gps_rx_struct->Date.day);
+	//		printf_ui_uart("Month: %d\r\n", gps_rx_struct->Date.month);
+	//		printf_ui_uart("Year: %d\r\n", gps_rx_struct->Date.year);
+	//
+	//	}
+	//	else{
+	//		printf_ui_uart("Not enough satellites \r\n");
+	//	}
 }
 
 
 
-
-
+#define RNLENGTH	2
+const uint8 rn_const_str[RNLENGTH] = {'\r', '\n'};
 /* send gps return type characters */
 void send_new_line_string_for_gps(void) {
-	send_byte_on_uart('\r');
-	send_byte_on_uart('\n');
+	//	send_byte_on_uart('\r');
+	//	send_byte_on_uart('\n');
+
+	/* Use the sciSend function - block until it's ready to transmit */
+	WAIT_FOR_SCI_SEND_TO_BE_READY;
+	sciSend(UART, RNLENGTH, (uint8*)(&rn_const_str[0]));
 }
 
 /* send a string out over gps uart port */
-void send_string_to_gps(uint8_t *strin, uint16_t len) {
-	uint16 i;
-
-	for (i = 0; i < len; i++) {
-		send_byte_on_uart(strin[i]);
-		//UART_putChar(UART, strin[i]);
-	}
-
+void send_string_to_gps(uint8_t *strin, uint32 len) {
+	WAIT_FOR_SCI_SEND_TO_BE_READY;
+	sciSend(UART, len, strin);
 }
 
 /* append hex as an ascii */
@@ -621,7 +620,7 @@ static uint32_t flush_gps_responses(const uint32_t timeout) {
 		}
 
 		//wait detect error or ok response
-		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) 0x07d0))) {
+		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) (2 * configTICK_RATE_HZ)))) {
 			UART_putChar(UART, cByteRxed);
 		}
 	}
@@ -654,7 +653,7 @@ uint16_t receive_gps_response(GPSDATA_S *rmcmsg, const uint32_t timeout,
 		}
 
 		//wait detect error or ok response
-		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) 0x07d0))) {
+		if (pdTRUE == xSerialGetChar(&cByteRxed, ((portTickType) (2 * configTICK_RATE_HZ)))) {
 
 			//print out characters
 			if (enableprint == 1) {
@@ -737,29 +736,35 @@ void prvGPSTimerCallback(TimerHandle_t xExpiredTimer) {
 /*turn device on, get out of reset */
 void power_on_gps(void) {
 	/*delay for one second and then raise GPS_EN */
-	g_gps_timer_expired_flag = FALSE_FLAG;
-	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
-		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
-			for (;;) {
-				if (g_gps_timer_expired_flag == TRUE_FLAG) {
-					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
-					break;
-				}
-			}
-		}
-	}
+	//	g_gps_timer_expired_flag = FALSE_FLAG;
+	//	if (xTimerChangePeriod(xGPSTimer, (1 * SYS_TICKS_IN_1_SEC), portMAX_DELAY) == pdPASS ) {
+	//		if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
+	//			for (;;) {
+	//				if (g_gps_timer_expired_flag == TRUE_FLAG) {
+	//					gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
+	//					break;
+	//				}
+	//			}
+	//		}
+	//	}
+	//
+	//	/*delay for 200 ms and then lower GPS_EN */
+	//	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
+	//		for (;;) {
+	//			if (g_gps_timer_expired_flag == TRUE_FLAG) {
+	//				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
+	//				break;
+	//			}
+	//		}
+	//
+	//	}
+	gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 1);
+	/* Delay for 1 second */
+	portTickType x = xTaskGetTickCount();
 
-	/*delay for 200 ms and then lower GPS_EN */
-	if (xTimerStart(xGPSTimer, portMAX_DELAY) == pdPASS ) {
-		for (;;) {
-			if (g_gps_timer_expired_flag == TRUE_FLAG) {
-				gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
-				break;
-			}
-		}
+	vTaskDelayUntil(&x, SYS_TICKS_IN_1_SEC);
 
-	}
-
+	gioSetBit(GPS_ON_OFF_PORT, GPS_ON_OFF_PIN, 0);
 }
 
 void reset_gps(void) {
@@ -806,11 +811,11 @@ uint32_t init_gps(void) {
 	/* Create generic GPS timer */
 	xGPSTimer = xTimerCreate(
 			"GPS generic Timer", /* Unique name */
-				(3 * SYS_TICKS_IN_1_SEC), /* Period (# ticks) */
-				pdFALSE, /* Auto reload timer? */
-				"GPSTimer", /* Unique ID (so callback can link to several timers) */
-				prvGPSTimerCallback /* Callback function (see above) */
-		);
+			(3 * SYS_TICKS_IN_1_SEC), /* Period (# ticks) */
+			pdFALSE, /* Auto reload timer? */
+			"GPSTimer", /* Unique ID (so callback can link to several timers) */
+			prvGPSTimerCallback /* Callback function (see above) */
+	);
 	if (xGPSTimer == ((TimerHandle_t)NULL_PTR) ) {
 		return pdFAIL ;
 	}

@@ -63,7 +63,7 @@ void esmGroup1Notification(uint32 channel)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (1) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (2) */
@@ -73,7 +73,7 @@ void esmGroup2Notification(uint32 channel)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (3) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (4) */
@@ -83,7 +83,7 @@ void memoryPort0TestFailNotification(uint32 groupSelect, uint32 dataSelect, uint
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (5) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (6) */
@@ -93,7 +93,7 @@ void memoryPort1TestFailNotification(uint32 groupSelect, uint32 dataSelect, uint
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (7) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (8) */
@@ -103,7 +103,7 @@ void adcNotification(adcBASE_t *adc, uint32 group)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (11) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (12) */
@@ -113,7 +113,7 @@ void gioNotification(gioPORT_t *port, uint32 bit)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (19) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (20) */
@@ -124,7 +124,18 @@ void sciNotification(sciBASE_t *sci, uint32 flags)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (29) */
-/* USER CODE END */
+	/* Determine the type of interrupt */
+	switch(flags){
+	case SCI_RX_INT:
+		SCI_has_stuff = pdTRUE;
+		break;
+	case SCI_TX_INT:
+		SCI_done_txing = pdTRUE;
+		break;
+	default:
+		break;
+	}
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (30) */
@@ -134,7 +145,7 @@ void spiNotification(spiBASE_t *spi, uint32 flags)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (31) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (32) */
@@ -144,7 +155,7 @@ void spiEndNotification(spiBASE_t *spi)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (33) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (34) */
@@ -155,7 +166,7 @@ void pwmNotification(hetBASE_t * hetREG,uint32 pwm, uint32 notification)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (35) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (36) */
@@ -165,7 +176,7 @@ void edgeNotification(hetBASE_t * hetREG,uint32 edge)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (37) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (38) */
@@ -175,7 +186,7 @@ void hetNotification(hetBASE_t *het, uint32 offset)
 {
 /*  enter user code between the USER CODE BEGIN and USER CODE END. */
 /* USER CODE BEGIN (39) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /* USER CODE BEGIN (40) */

@@ -55,8 +55,9 @@
 #define EINK_REG_IDX_SELF_CHECK			0x0F
 
 /* OE commands (0x02) */
-#define EINK_OE_CMD_DISABLE	0x40
-#define EINK_OE_CMD_DRIVE	0x07
+#define EINK_OE_CMD_DISABLE		0x40
+#define EINK_OE_CMD_DRIVE		0x07
+#define EINK_OE_CMD_TURN_OFF	0x05
 
 /* Self check register */
 #define EINK_SELF_CHECK_BREAKAGE_MASK	0x80
@@ -67,6 +68,7 @@
 
 /* Power oscillator setting */
 #define EINK_PWR_OSC_HIGH_POWER			0xD1
+#define EINK_PWR_OSC_OFF				0x0D
 
 /* Power setting 2 */
 #define EINK_PWR_2_CMD					0x02
@@ -76,6 +78,8 @@
 
 /* Power setting 1 */
 #define EINK_PWR_1_CMD					0x03
+#define EINK_PWR_1_DISCHARGE_INTERNAL	0x83
+#define EINK_PWR_1_DISCHARGE_INT_OFF	0x00
 
 /* Latch */
 #define EINK_DRIVER_LATCH_ON			0x01
@@ -83,8 +87,11 @@
 
 /* Charge pump control */
 #define EINK_CHARGE_PUMP_POS_V			0x01
+#define EINK_CHARGE_PUMP_POS_V_OFF		0x0E
 #define EINK_CHARGE_PUMP_NEG_V			0x03
 #define EINK_CHARGE_PUMP_VCOM_ON		0x0F
+#define EINK_CHARGE_PUMP_VCOM_OFF		0x02
+#define EINK_CHARGE_PUMP_ALL_OFF		0x00
 
 /* Border byte */
 #define EINK_BORDER_BYTE_VAL			0x00
@@ -92,6 +99,7 @@
 
 
 #define MAX_TRIES_TO_USE_CHARGE_PUMP	4
+#define NUM_TRIES_TO_DO_EXT_DISCHARGE	11
 
 #define MAX_PACKETS 60
 #define MAX_BYTES_PER_REGIDX	111
@@ -179,8 +187,10 @@ typedef enum einkstate{
 	EinkPoweringOn,
 	EinkInitializingCOGDriver,
 	EinkJustInitializedReadyForFirstFrame,
-	EinkIdle,
+	EinkIdleAndOn,
 	EinkLoading,
+	EinkPoweringOff,
+	EinkIdleAndOff,
 	EinkError
 }einkstate_t;
 
@@ -189,6 +199,7 @@ typedef enum einkstate{
 
 /* GPIO Ports Needed */
 #define EINK_SPI_PORT 			spiREG1
+#define EINK_SPI_GIO_PORT		spiPORT1
 
 #define EINK_BUSY_PORT 			gioPORTA
 #define EINK_CS_PORT			spiPORT1
@@ -288,6 +299,8 @@ boolean timeout_to_not_busy(boolean);
 boolean is_scratch_on_screen(void);
 
 void epaper_power_on_sequence();
+
+void epaper_power_off_sequence();
 
 BaseType_t epaper_start_COG_driver();
 

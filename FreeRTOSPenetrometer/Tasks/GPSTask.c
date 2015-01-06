@@ -45,7 +45,7 @@
 void gps_task( void* p_params )
 {
 //	static uint32_t gps_msg_received = 0;
-	//static GPSDATA_S rmc_msg = {0};
+	static GPSDATA_S rmc_msg = {0};
 //	GPSDATA_S rmc_msg = {0};
 //
 //	portTickType  xPollLast;
@@ -56,6 +56,9 @@ void gps_task( void* p_params )
 	init_gps();
 
 	/* TODO Start looking for a position */
+	/* Query GPS for data */
+	send_nmea_query_msg(RMC);
+	receive_gps_response(&rmc_msg, 5000, 0);
 
 
 	for (;;){

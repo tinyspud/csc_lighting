@@ -59,6 +59,8 @@ int main(void)
 	/* Init the temperature */
 	int32_t volatile temp = 1;
 	nrf_temp_init();
+	
+	system_ADC_LL_init();
 
 	NRF_TEMP->TASKS_START = 1; /** Start the temperature measurement. */
 
@@ -88,7 +90,7 @@ int main(void)
 		// Extract and process all pending ANT events as long as there are any left. 
 		do
 		{
-		LED_TURN_ON(LED_ORANGE);
+			LED_TURN_ON(LED_ORANGE);
 			// Fetch the event. 
 			err_code = handle_ANT_events();
 		} while (err_code == NRF_SUCCESS);

@@ -6,5 +6,6 @@
 
 
 
+void system_ADC_LL_init(void);
 
 #endif

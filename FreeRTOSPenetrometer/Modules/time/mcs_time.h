@@ -8,6 +8,11 @@
 #ifndef MCS_TIME_H_
 #define MCS_TIME_H_
 
+/* FreeRTOS includes */
+#include "FreeRTOS.h"
+#include "hal_stdtypes.h"
+#include <stdint.h>
+
 /*
  * .NET uses a 64-bit time value encoded with a 64-bit unsigned integer representing
  * ticks since midnight, janurary 1, 0001 and ends at  23:59:59.9999999, December 31, 9999

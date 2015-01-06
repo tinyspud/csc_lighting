@@ -11,6 +11,7 @@
 #include "nrf_temp.h"
 #include "nordic_common.h"
 #include "bsp.h"
+#include "nrf_temp.h"
 
 #include "LEDs.h"
 #include "slld_hal.h"
@@ -28,7 +29,7 @@
 #define CHANNEL_0                       0x00                 /**< ANT Channel 0. */
 #define CHANNEL_0_ANT_EXT_ASSIGN        0x00                 /**< ANT Ext Assign. */
 
-#define CHANNEL_0_PERIOD				10					/* Channel period (n/32768 s period) */	
+#define CHANNEL_0_PERIOD				16384				/* Channel period (n/32768 s period) */	
 
 // Channel ID configuration. 
 #define CHANNEL_0_CHAN_ID_DEV_TYPE      0x02u                /**< Device type. */
@@ -53,16 +54,35 @@ static uint8_t event_message_buffer[ANT_EVENT_MSG_BUFFER_MIN_SIZE];
 static void channel_event_handle(uint32_t event)
 {
 	uint32_t err_code;
+	int32_t temp = 0xFFFFFFFF;
 
 	switch (event)
 	{
 		// ANT broadcast success.
 		// Send a new broadcast and increment the counter.
 	case EVENT_TX:
+		
+	/* Busy wait while temperature measurement is not finished, you can skip waiting if you enable interrupt for DATARDY event and read the result in the interrupt. */
+	/*lint -e{845} // A zero has been given as right argument to operator '|'" */
+//	while (NRF_TEMP->EVENTS_DATARDY == 0)
+//	{
+//		// Do nothing.
+//	}
+	if(NRF_TEMP->EVENTS_DATARDY == 1){
+		NRF_TEMP->EVENTS_DATARDY = 0;
+
+		/**@note Workaround for PAN_028 rev2.0A anomaly 29 - TEMP: Stop task clears the TEMP register. */
+		temp = (nrf_temp_read() / 4);
+
+		/**@note Workaround for PAN_028 rev2.0A anomaly 30 - TEMP: Temp module analog front end does not power down when DATARDY event occurs. */
+		NRF_TEMP->TASKS_STOP = 1; /** Stop the temperature measurement. */
+	}
+	NRF_TEMP->TASKS_START = 1; /** Start the temperature measurement. */
 
 		// Assign a new value to the broadcast data. 
 		m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
-
+		m_broadcast_data[0] = (uint8_t)temp;
+	
 		// Broadcast the data. 
 		err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
 			BROADCAST_DATA_BUFFER_SIZE,
@@ -147,6 +167,23 @@ uint32_t handle_ANT_events(){
 	return err_code;
 }
 
+static uint8_t capabilities_buff[8];
+void get_chip_capabilities(){
+	uint32_t capabilities_rtn = 0;
+	
+	
+	capabilities_rtn = sd_ant_capabilities_get(&capabilities_buff[0]);
+
+	/* https://devzone.nordicsemi.com/documentation/nrf51/4.2.0/html/group__ant__interface.html#gaa8c0f97d3a06806ecbb5259d34803ec8 */
+	/* 08 08 00 B2 36 00 F5 01 */
+	
+	/* Look at the capabilities buffer */
+	if(capabilities_rtn == NRF_SUCCESS){
+		if((CAPABILITIES_ADVANCED_BURST_ENABLED & capabilities_buff[3]) == CAPABILITIES_ADVANCED_BURST_ENABLED){
+			/*  */
+		}
+	}
+}
 
 void init_S210_LL(){
 	// Enable SoftDevice. 
@@ -173,7 +210,7 @@ void init_S210_LL(){
 	// Write counter value to last byte of the broadcast data.
 	// The last byte is chosen to get the data more visible in the end of an printout
 	// on the recieving end. 
-	m_broadcast_data[0] = 0x01;
+	m_broadcast_data[0] = 0x00;
 	m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
 
 	// Initiate the broadcast loop by sending a packet on air, 
@@ -181,6 +218,7 @@ void init_S210_LL(){
 	err_code = sd_ant_broadcast_message_tx(CHANNEL_0, BROADCAST_DATA_BUFFER_SIZE, m_broadcast_data);
 	APP_ERROR_CHECK(err_code);
 
+	get_chip_capabilities();
 
 }
 

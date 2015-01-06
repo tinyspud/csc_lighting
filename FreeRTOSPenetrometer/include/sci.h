@@ -190,10 +190,21 @@ void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type
 void sciNotification(sciBASE_t *sci, uint32 flags);
 
 /* USER CODE BEGIN (1) */
+#include "FreeRTOS.h"
+
+extern BaseType_t SCI_has_stuff;
+extern BaseType_t SCI_done_txing;
 #define UART_putChar(reg, byte)	sciSendByte(reg, byte)
 
+/* Define a macro for waiting for the sciSend function to be ready */
+#define WAIT_FOR_SCI_SEND_TO_BE_READY		while(SCI_done_txing == pdFALSE){};
+
+/* Create a character buffer for the SCI HAL to throw things into */
+#define SCI_RX_BUFF_LEN	150
+static uint8 sci_rx_buff[SCI_RX_BUFF_LEN];
+
 uint32_t xSerialGetChar(char* ptr2char, int32_t timeout);
-uint32_t xSerialPutChar(char byte2send, int timeout);
+//uint32_t xSerialPutChar(char byte2send, int timeout);
 void send_byte_on_uart(uint8_t byte2send);
 /* USER CODE END */
 /**@}*/

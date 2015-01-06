@@ -37,8 +37,8 @@
  *
  */
 
-#include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
+#include "FreeRTOSConfig.h"
 #include "os_mpu_wrappers.h"
 #include "sys_common.h"
 #include "system.h"
@@ -111,6 +111,9 @@ void epaper_power_on_sequence(){
 	gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
 	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0); // border pin ignored on 2" display
 
+	/* Set SPI pins SCK and SI to SPI functionality */
+	spiSetFunctional(EINK_SPI_PORT, EINK_SPI_PORT->PC0 | ((1U << SPI_PIN_SIMO) | (1U << SPI_PIN_CLK)));
+
 	waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
 
 	/* Set CS, border, reset high */
@@ -136,6 +139,156 @@ void epaper_power_on_sequence(){
 
 	/* Now can use COG driver */
 	return;
+}
+
+void epaper_power_off_sequence(){
+	/* Power off sequence for G2 COG driver - taken from Pervasive Displays Doc
+	 * #4P015-00 */
+	uint8_t scratch_byte = 0;
+	uint8_t num_tries = 0;
+
+#ifdef USING_2_7_INCH_EPAPER
+	/* This is called >= 25 ms after the data has been input */
+	waitDisplayDrver(25 * (SYS_TICKS_IN_1_MS));
+
+	/* Set border to 0 */
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0);
+
+	/* Wait 200-300 ms - take 300ms to be safe */
+	waitDisplayDrver(300 * (SYS_TICKS_IN_1_MS));
+
+	/* Set border to 1 */
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1);
+
+	/* Check DC/DC */
+	scratch_byte = read_epaper_register_single_byte(EINK_REG_IDX_SELF_CHECK);
+
+	/* Check it for breakage */
+	if(MASK_AND_CHECK_VALUE(scratch_byte, EINK_SELF_CHECK_DCDC_MASK) != 0){
+		/* Turn on latch reset */
+		write_epaper_register_one_byte(EINK_REG_IDX_DRIVER_LATCH, EINK_DRIVER_LATCH_ON);
+
+		/* Turn off OE */
+		write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_TURN_OFF);
+
+		/* Power off pos. charge pump */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_POS_V_OFF);
+
+		/* Power off charge pump Vcom */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_VCOM_OFF);
+
+		/* Turn off all charge pumps */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_ALL_OFF);
+
+		/* Turn off OSC */
+		write_epaper_register_one_byte(EINK_REG_IDX_PWR_OSC_SETTING, EINK_PWR_OSC_OFF);
+
+		/* Discharge internal */
+		write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_1, EINK_PWR_1_DISCHARGE_INTERNAL);
+
+		/* Delay >= 120 ms */
+		waitDisplayDrver(120 * (SYS_TICKS_IN_1_MS));
+
+		/* Turn off discharge internal */
+		write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_1, EINK_PWR_1_DISCHARGE_INT_OFF);
+
+		/* Set powers and signals = 0 (VCC, VDD, /RESET, /CS, SI, SCLK) */
+		gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
+		gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
+		gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+		/* Need to configure SPI pins SI and SCLK to GIO, then turn low */
+		spiSetFunctional(EINK_SPI_PORT, EINK_SPI_PORT->PC0 & ~((0U << SPI_PIN_SIMO) | (0U << SPI_PIN_CLK)));
+		gioSetBit(EINK_SPI_GIO_PORT, SPI_PIN_SIMO, 0);
+		gioSetBit(EINK_SPI_GIO_PORT, SPI_PIN_CLK, 0);
+
+		for(num_tries = 0; num_tries < NUM_TRIES_TO_DO_EXT_DISCHARGE; num_tries++){
+			/* Delay >= 10 ms */
+			waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
+
+			/* External discharge = 1 */
+			gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 1);
+
+			/* Delay >= 10 ms */
+			waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
+
+			/* External discharge = 0 */
+			gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 0);
+		}
+		/* Finished */
+	}
+#else
+#ifdef USING_2_0_INCH_EPAPER
+#error IMPLEMENT (page 38 of 4P015-00)
+	/* This is called >= 25 ms after the data has been input */
+	waitDisplayDrver(25 * (SYS_TICKS_IN_1_MS));
+
+	/* Set border to 0 */
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0);
+
+	/* Wait 200-300 ms - take 300ms to be safe */
+	waitDisplayDrver(300 * (SYS_TICKS_IN_1_MS));
+
+	/* Set border to 1 */
+	gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 1);
+
+	/* Check DC/DC */
+	scratch_byte = read_epaper_register_single_byte(EINK_REG_IDX_SELF_CHECK);
+
+	/* Check it for breakage */
+	if(MASK_AND_CHECK_VALUE(scratch_byte, EINK_SELF_CHECK_DCDC_MASK) != 0){
+		/* Turn on latch reset */
+		write_epaper_register_one_byte(EINK_REG_IDX_DRIVER_LATCH, EINK_DRIVER_LATCH_ON);
+
+		/* Turn off OE */
+		write_epaper_register_one_byte(EINK_REG_IDX_OE_CTRL, EINK_OE_CMD_TURN_OFF);
+
+		/* Power off pos. charge pump */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_POS_V_OFF);
+
+		/* Power off charge pump Vcom */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_VCOM_OFF);
+
+		/* Turn off all charge pumps */
+		write_epaper_register_one_byte(EINK_REG_IDX_CHARGE_PUMP_CTRL, EINK_CHARGE_PUMP_ALL_OFF);
+
+		/* Turn off OSC */
+		write_epaper_register_one_byte(EINK_REG_IDX_PWR_OSC_SETTING, EINK_PWR_OSC_OFF);
+
+		/* Discharge internal */
+		write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_1, EINK_PWR_1_DISCHARGE_INTERNAL);
+
+		/* Delay >= 120 ms */
+		waitDisplayDrver(120 * (SYS_TICKS_IN_1_MS));
+
+		/* Turn off discharge internal */
+		write_epaper_register_one_byte(EINK_REG_IDX_POWER_SETTING_1, EINK_PWR_1_DISCHARGE_INT_OFF);
+
+		/* Set powers and signals = 0 (VCC, VDD, /RESET, /CS, SI, SCLK) */
+		gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
+		gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
+		gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+		/* Need to configure SPI pins SI and SCLK to GIO, then turn low */
+		spiSetFunctional(EINK_SPI_PORT, EINK_SPI_PORT->PC0 & ~((0U << SPI_PIN_SIMO) | (0U << SPI_PIN_CLK)));
+		gioSetBit(EINK_SPI_GIO_PORT, SPI_PIN_SIMO, 0);
+		gioSetBit(EINK_SPI_GIO_PORT, SPI_PIN_CLK, 0);
+
+		for(num_tries = 0; num_tries < NUM_TRIES_TO_DO_EXT_DISCHARGE; num_tries++){
+			/* Delay >= 10 ms */
+			waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
+
+			/* External discharge = 1 */
+			gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 1);
+
+			/* Delay >= 10 ms */
+			waitDisplayDrver(10 * (SYS_TICKS_IN_1_MS));
+
+			/* External discharge = 0 */
+			gioSetBit(EINK_DISCHARGE_PORT, EINK_DISCHARGE_PIN, 0);
+		}
+		/* Finished */
+	}
+#endif
+#endif
 }
 
 void discharge_epaper(){
@@ -264,7 +417,8 @@ einkstate_t manage_eink(einkstate_t state){
 	case EinkInitializingCOGDriver:
 		if(epaper_start_COG_driver() == pdFAIL){
 			/* Discharge */
-			discharge_epaper();
+//			discharge_epaper();
+			epaper_power_off_sequence();
 			rtnval = EinkError;
 		}
 		else
@@ -298,26 +452,30 @@ einkstate_t manage_eink(einkstate_t state){
 		waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
 
 		gioToggleBit(gioPORTA, 2);
-		/* Load black frame */
-		write_epaper_solid_flush(BlackScreenFlush);
+		for(temp = 0; temp < 3; temp++){
+			/* Load black frame */
+			write_epaper_solid_flush(BlackScreenFlush);
 
-		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-
+			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
-		write_epaper_solid_flush(WhiteScreenFlush);
-		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-
+		for(temp = 0; temp < 3; temp++){
+			write_epaper_solid_flush(WhiteScreenFlush);
+			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load black frame */
-		write_epaper_solid_flush(BlackScreenFlush);
-		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-
+		for(temp = 0; temp < 3; temp++){
+			write_epaper_solid_flush(BlackScreenFlush);
+			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
-		write_epaper_solid_flush(WhiteScreenFlush);
-		waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-
+		for(temp = 0; temp < 3; temp++){
+			write_epaper_solid_flush(WhiteScreenFlush);
+			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+		}
 		gioToggleBit(gioPORTA, 2);
 		/* Load image */
 
@@ -334,10 +492,14 @@ einkstate_t manage_eink(einkstate_t state){
 		gioSetBit(hetPORT1, 8, 0);
 
 #endif
-		rtnval = EinkIdle;
+		rtnval = EinkIdleAndOn;
 		break;
-	case EinkIdle:
+	case EinkIdleAndOn:
 		/* Do nothing */
+		break;
+	case EinkPoweringOff:
+		epaper_power_off_sequence();
+		rtnval = EinkIdleAndOff;
 		break;
 	case EinkError:
 		/* Do nothing - broken display */
@@ -670,10 +832,11 @@ void displayResetPointer(spiDAT1_t dataconfig1_t) {
 
 /* Wait [time] x 10 us */
 /* TODO fix all magic values coming into here */
-static void waitDisplayDrver(TickType_t time)
+inline static void waitDisplayDrver(TickType_t time)
 {
 	TickType_t start_tick = xTaskGetTickCount();
-	while((xTaskGetTickCount()) < (time + start_tick)) { }
+//	while((xTaskGetTickCount()) < (time + start_tick)) { }
+	vTaskDelayUntil(&start_tick, time);
 }
 
 /* return true if port is busy, false if not busy

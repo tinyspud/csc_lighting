@@ -41,12 +41,15 @@
 
 
 /* USER CODE BEGIN (0) */
+#include "mcs_time.h"
 /* USER CODE END */
 
 #include "sci.h"
 #include "sys_vim.h"
 
 /* USER CODE BEGIN (1) */
+BaseType_t SCI_has_stuff;
+BaseType_t SCI_done_txing;
 /* USER CODE END */
 /** @struct g_sciTransfer
 *   @brief Interrupt mode globals
@@ -73,7 +76,9 @@ static struct g_sciTransfer
 void sciInit(void)
 {
 /* USER CODE BEGIN (2) */
-/* USER CODE END */
+	SCI_has_stuff = 0;
+	SCI_done_txing = 1;
+	/* USER CODE END */
 
     /** @b initialize @b SCILIN */
 
@@ -156,7 +161,11 @@ void sciInit(void)
     scilinREG->GCR1 |= 0x80U;
 
 /* USER CODE BEGIN (3) */
-/* USER CODE END */
+	/* Set up the Rx buffer */
+	int i = 0;
+	for(i = 0; i < SCI_RX_BUFF_LEN; i++)
+		sci_rx_buff[i] = 0;
+	/* USER CODE END */
 }
 
 
@@ -175,12 +184,12 @@ void sciInit(void)
 void sciSetFunctional(sciBASE_t *sci, uint32 port)
 {
 /* USER CODE BEGIN (4) */
-/* USER CODE END */
+	/* USER CODE END */
 
     sci->PIO0 = port;
 
 /* USER CODE BEGIN (5) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 
@@ -201,7 +210,7 @@ void sciSetBaudrate(sciBASE_t *sci, uint32 baud)
 	uint32 temp;
 	float64 temp2;
 /* USER CODE BEGIN (6) */
-/* USER CODE END */
+	/* USER CODE END */
 
     /*SAFETYMCUSW 96 S MR:6.1 <APPROVED> "Calculations including int and float cannot be avoided" */
 	temp = (f*(baud + 1U));
@@ -209,7 +218,7 @@ void sciSetBaudrate(sciBASE_t *sci, uint32 baud)
 	sci->BRS = (uint32)((uint32)temp2 & 0x00FFFFFFU);
 	
 /* USER CODE BEGIN (7) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 
@@ -228,7 +237,7 @@ void sciSetBaudrate(sciBASE_t *sci, uint32 baud)
 uint32 sciIsTxReady(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (8) */
-/* USER CODE END */
+	/* USER CODE END */
 
     return sci->FLR & (uint32)SCI_TX_INT;
 }
@@ -250,7 +259,7 @@ uint32 sciIsTxReady(sciBASE_t *sci)
 void sciSendByte(sciBASE_t *sci, uint8 byte)
 {
 /* USER CODE BEGIN (9) */
-/* USER CODE END */
+	/* USER CODE END */
 
 	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
     while ((sci->FLR & (uint32)SCI_TX_INT) == 0U) 
@@ -259,7 +268,7 @@ void sciSendByte(sciBASE_t *sci, uint8 byte)
     sci->TD = byte;
 
 /* USER CODE BEGIN (10) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 
@@ -289,7 +298,9 @@ void sciSend(sciBASE_t *sci, uint32 length, uint8 * data)
     uint8 txdata;
 	
 /* USER CODE BEGIN (11) */
-/* USER CODE END */
+	/* Set the flag indicating that the port isn't done transmitting */
+	SCI_done_txing = pdFALSE;
+	/* USER CODE END */
 /*SAFETYMCUSW 139 S MR:13.7 <APPROVED> "Mode variable is configured in sciEnableNotification()" */
     if ((g_sciTransfer_t.mode & (uint32)SCI_TX_INT) != 0U)
     {
@@ -328,7 +339,7 @@ void sciSend(sciBASE_t *sci, uint32 length, uint8 * data)
     }
 
 /* USER CODE BEGIN (12) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 
@@ -347,7 +358,7 @@ void sciSend(sciBASE_t *sci, uint32 length, uint8 * data)
 uint32 sciIsRxReady(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (13) */
-/* USER CODE END */
+	/* USER CODE END */
 
     return sci->FLR & (uint32)SCI_RX_INT;
 }
@@ -367,7 +378,7 @@ uint32 sciIsRxReady(sciBASE_t *sci)
 uint32 sciIsIdleDetected(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (14) */
-/* USER CODE END */
+	/* USER CODE END */
 
     return sci->FLR & (uint32)SCI_IDLE;
 }
@@ -390,7 +401,7 @@ uint32 sciRxError(sciBASE_t *sci)
     uint32 status = (sci->FLR & ((uint32)SCI_FE_INT | (uint32)SCI_OE_INT |(uint32)SCI_PE_INT));
 
 /* USER CODE BEGIN (15) */
-/* USER CODE END */
+	/* USER CODE END */
 
     sci->FLR = ((uint32)SCI_FE_INT | (uint32)SCI_OE_INT | (uint32)SCI_PE_INT);
     return status;
@@ -414,7 +425,7 @@ uint32 sciRxError(sciBASE_t *sci)
 uint32 sciReceiveByte(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (16) */
-/* USER CODE END */
+	/* USER CODE END */
 
 	/*SAFETYMCUSW 28 D MR:NA <APPROVED> "Potentially infinite loop found - Hardware Status check for execution sequence" */
     while ((sci->FLR & (uint32)SCI_RX_INT) == 0U) 
@@ -446,7 +457,8 @@ uint32 sciReceiveByte(sciBASE_t *sci)
 void sciReceive(sciBASE_t *sci, uint32 length, uint8 * data)
 {
 /* USER CODE BEGIN (17) */
-/* USER CODE END */
+	SCI_has_stuff = pdFALSE;
+	/* USER CODE END */
 
     if ((sci->SETINT & (uint32)SCI_RX_INT) == (uint32)SCI_RX_INT)
     {
@@ -477,7 +489,7 @@ void sciReceive(sciBASE_t *sci, uint32 length, uint8 * data)
         }
     }
 /* USER CODE BEGIN (18) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /** @fn void sciEnableLoopback(sciBASE_t *sci, loopBackType_t Loopbacktype)
@@ -493,7 +505,7 @@ void sciReceive(sciBASE_t *sci, uint32 length, uint8 * data)
 void sciEnableLoopback(sciBASE_t *sci, loopBackType_t Loopbacktype)
 {
 /* USER CODE BEGIN (19) */
-/* USER CODE END */
+	/* USER CODE END */
     
     /* Clear Loopback incase enabled already */
     sci->IODFTCTRL = 0U;
@@ -503,7 +515,7 @@ void sciEnableLoopback(sciBASE_t *sci, loopBackType_t Loopbacktype)
                    | (uint32)((uint32)Loopbacktype << 1U);
     
 /* USER CODE BEGIN (20) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /** @fn void sciDisableLoopback(sciBASE_t *sci)
@@ -518,13 +530,13 @@ void sciEnableLoopback(sciBASE_t *sci, loopBackType_t Loopbacktype)
 void sciDisableLoopback(sciBASE_t *sci)
 {
 /* USER CODE BEGIN (21) */
-/* USER CODE END */
+	/* USER CODE END */
     
     /* Disable Loopback Mode */
     sci->IODFTCTRL = 0x00000500U;
     
 /* USER CODE BEGIN (22) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /** @fn sciEnableNotification(sciBASE_t *sci, uint32 flags)
@@ -546,13 +558,13 @@ void sciEnableNotification(sciBASE_t *sci, uint32 flags)
 {
 
 /* USER CODE BEGIN (23) */
-/* USER CODE END */
+	/* USER CODE END */
 
     g_sciTransfer_t.mode |= (flags & (uint32)SCI_TX_INT);
     sci->SETINT                = (flags & (uint32)(~(uint32)(SCI_TX_INT)));
 
 /* USER CODE BEGIN (24) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 
@@ -572,13 +584,13 @@ void sciDisableNotification(sciBASE_t *sci, uint32 flags)
 {
 
 /* USER CODE BEGIN (25) */
-/* USER CODE END */
+	/* USER CODE END */
 
     g_sciTransfer_t.mode &= (uint32)(~(flags & (uint32)SCI_TX_INT));
     sci->CLEARINT                = (flags & (uint32)(~(uint32)(SCI_TX_INT)));
 
 /* USER CODE BEGIN (26) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /** @fn void scilinGetConfigValue(sci_config_reg_t *config_reg, config_value_type_t type)
@@ -647,7 +659,7 @@ void linLowLevelInterrupt(void)
     uint32 vec = scilinREG->INTVECT1;
 	uint8 byte;
 /* USER CODE BEGIN (27) */
-/* USER CODE END */
+	/* USER CODE END */
 
     switch (vec)
     {
@@ -708,7 +720,7 @@ void linLowLevelInterrupt(void)
          break;
     }
 /* USER CODE BEGIN (28) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 
 /** @fn void linHighLevelInterrupt(void)
@@ -725,7 +737,7 @@ void linHighLevelInterrupt(void)
     uint32 vec = scilinREG->INTVECT0;
 	uint8 byte;
 /* USER CODE BEGIN (29) */
-/* USER CODE END */
+	/* USER CODE END */
 
     switch (vec)
     {
@@ -786,7 +798,7 @@ void linHighLevelInterrupt(void)
         break;
     }
 /* USER CODE BEGIN (30) */
-/* USER CODE END */
+	/* USER CODE END */
 }
 /* USER CODE BEGIN (31) */
 void send_byte_on_uart(uint8_t byte2send){
@@ -795,14 +807,31 @@ void send_byte_on_uart(uint8_t byte2send){
 
 
 uint32_t xSerialGetChar(char* ptr2char, int32_t timeout){
+	/* Get the current timestamp */
+	portTickType curtime = xTaskGetTickCount();
+	uint32_t rtnval = pdFALSE;
+	/* Set up the receive buffer */
+//	sciReceive(scilinREG, SCI_RX_BUFF_LEN, &sci_rx_buff[0]);
 
-	return 0;
+	/* Since this is set up only for a single char, do that */
+	sciReceive(scilinREG, 1, (uint8*)ptr2char);
+
+	/* Wait on the timeout */
+	while((curtime + timeout) < xTaskGetTickCount()){
+		if(SCI_has_stuff == pdTRUE){
+			rtnval = pdTRUE;
+			SCI_has_stuff = pdFALSE;
+//			*ptr2char = sci_rx_buff[0];
+			break;
+		}
+	}
+	return rtnval;
 }
 
-uint32_t xSerialPutChar(char byte2send, int timeout){
-	sciSendByte(scilinREG, byte2send);
-
-	return 0;
-}
+//uint32_t xSerialPutChar(char byte2send, int timeout){
+//	sciSendByte(scilinREG, byte2send);
+//
+//	return 0;
+//}
 /* USER CODE END */
 
