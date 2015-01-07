@@ -548,9 +548,10 @@ int get_line_length(char* line, int linelen){
 /* Draw a line from (x1, y1) to (x2, y2) */
 void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	/* Convert to signed decimels */
-	float32 x1, y1, x2, y2, slope, tempfloat;
-	int runs = 0, i = 0, tempx, tempy;
-	uint8 curbit;
+	float32 x1 = 0, y1 = 0, x2 = 0, y2 = 0, slope = 0, tempfloat = 0;
+	int runs = 0, i = 0, tempx = 0, tempy = 0, lastx = 0, lasty = 0, ydiff = 0, j = 0;
+	uint8 curbit = 0;
+	boolean halfway = false;
 	x1 = INT_2_FLOAT32(x1_p);
 	y1 = INT_2_FLOAT32(y1_p);
 	x2 = INT_2_FLOAT32(x2_p);
@@ -567,7 +568,7 @@ void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 
 		tempx = x1_p;
 		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
 			tempy = y1_p + i;
-			if(tempy >= 0 && tempy <= bottommost){
+			if((tempy >= 0) && (tempy <= bottommost)){
 				switch(draw_type & DRAW_MODE_MASK){
 				case DRAW_SET_B:
 					render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
@@ -590,29 +591,45 @@ void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 
 		runs = x2_p - x1_p;
 
 		slope = (y2 - y1) / INT_2_FLOAT32(runs);
+		lasty = y1_p;
+		lastx = x1_p;
 
 		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
 			tempx = i + x1_p;
-			tempfloat = (slope * INT_2_FLOAT32(tempx));
+			tempfloat = (slope * INT_2_FLOAT32(i));
 
-			tempy = ((int)tempfloat) + x1_p;
+			/* Determine if to round up or leave as is (bottom will be truncated when cast back to int) */
+			tempfloat += ((tempfloat - ((float32)((int)tempfloat))) >= 0.5) ? 1 : 0;
 
-			if((tempy >= 0 && tempy <= bottommost) && (tempx >= 0 && tempx <= rightmost)){
-				switch(draw_type & DRAW_MODE_MASK){
-				case DRAW_SET_B:
-					render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
-					break;
-				case DRAW_SET_F:
-					render_set_pixel_foreground(tempx, tempy, target, bottommost, rightmost);
-					break;
-				case DRAW_SET_TOGGLE:
-					curbit = render_get_pixel(tempx, tempy, target, bottommost, rightmost);
-					render_set_pixel(tempx, tempy, ~curbit, target, bottommost, rightmost);
-					break;
-				default:
-					break;
+			tempy = ((int)tempfloat) + y1_p;
+
+				/* Iterate through this for as many y values between tempy and lasty */
+				ydiff = tempy - lasty;
+				halfway = false;
+				for(j = 0; (ydiff > 0) ? (j <= ydiff) : (j >= ydiff); (ydiff > 0) ? (j++) : (j--)){
+					/* Halfway through? */
+					if((!halfway) && ((ydiff > 0) ? (j >= (ydiff/2)) : (j < (ydiff/2))))
+							halfway = true;
+					/* Draw in ydiff dots between tempy and lasty along tempx and lastx */
+					if((((lasty + j) >= 0) && ((lasty + j) <= bottommost)) && (((halfway ? lastx : tempx) >= 0) && ((halfway ? lastx : tempx) <= rightmost))){
+					switch(draw_type & DRAW_MODE_MASK){
+					case DRAW_SET_B:
+						render_set_pixel_background(halfway ? lastx : tempx, lasty + j, target, bottommost, rightmost);
+						break;
+					case DRAW_SET_F:
+						render_set_pixel_foreground(halfway ? lastx : tempx, lasty + j, target, bottommost, rightmost);
+						break;
+					case DRAW_SET_TOGGLE:
+						curbit = render_get_pixel(halfway ? lastx : tempx, lasty + j, target, bottommost, rightmost);
+						render_set_pixel(halfway ? lastx : tempx, lasty + j, ~curbit, target, bottommost, rightmost);
+						break;
+					default:
+						break;
+					}
 				}
 			}
+			/* Update value of lasty */
+			lasty = tempy;
 		}
 	}
 }

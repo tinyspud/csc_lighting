@@ -33,13 +33,36 @@ void ui_task( void* p_params )
 	invalidate_GPSDATA_S_data(&_ui_gps_dat);
 
 	clear_scratch_screen();
-//	render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
+	//	render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
 
-	render_line(1, 1, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(0, 90, 0, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(1, 101, 1, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(2, 101, 2, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(3, 101, 3, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_rectangle(0, 0, 5, 21, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+	//
+	//	render_line(10, 20, 10, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(11, 20, 11, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(12, 20, 12, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//
+	//	render_line(0, 25, 20, 25, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(0, 27, 20, 27, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//
+		render_line(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//
+	//	render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
 
+	//	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	render_line(0, 0, 90, 90, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(0,0,RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(1,0,RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(0,1,RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(1,1,RENDER_ENDING_3_ARGUMENTS);
+//
+//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 1, DISPLAY_HEIGHT_PIXELS - 1, RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 2, DISPLAY_HEIGHT_PIXELS - 1, RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 1, DISPLAY_HEIGHT_PIXELS - 2, RENDER_ENDING_3_ARGUMENTS);
+//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 2, DISPLAY_HEIGHT_PIXELS - 2, RENDER_ENDING_3_ARGUMENTS);
 	boolean upload = false;
 
 	for (;;){
