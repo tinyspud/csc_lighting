@@ -15,7 +15,7 @@
 static volatile boolean l_is_emcy = false;
 static volatile boolean l_can_press = true;
 
-#define UI_DELAY_SECONDS	20
+#define UI_DELAY_SECONDS	30
 
 #define LEN_STR_2_DISP	30
 static char string_to_disp[LEN_STR_2_DISP] = { 0 };
@@ -32,28 +32,22 @@ void ui_task( void* p_params )
 	GPSDATA_S _ui_gps_dat = {0};
 	invalidate_GPSDATA_S_data(&_ui_gps_dat);
 
-	while(!ready_for_first_one()){ };
-
-	/* Flush 20 times */
 	clear_scratch_screen();
+//	render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
 
-	blackout_screen();
-	render_disable_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS,
-			scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
-	for(i = 0; i < 20; i++){
-		/* Write thatched screen */
-		render_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, DRAW_SET_TOGGLE,
-				scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+	render_line(1, 1, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(0, 90, 0, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 
-		try_upload_screen();
-		vTaskDelay(5 * SYS_TICKS_IN_1_SEC);
-	}
+	boolean upload = false;
 
 	for (;;){
 		/* For now just put the tick up on the screen */
 		curtick = xTaskGetTickCount();
 		if((curtick > (last_tick_refreshed + (waittime * SYS_TICKS_IN_1_SEC))) && (can_write_to_display())){
 			clear_scratch_screen();
+			upload = false;
 
 			/* Clear out string to display */
 			for(i = 0; i < LEN_STR_2_DISP; i++)
@@ -67,24 +61,25 @@ void ui_task( void* p_params )
 			switch(GetCurrentGPSLockState()){
 			case GPSLockLocked:
 				render_smart_string("Locked\0", 6, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
-						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+						RENDER_ENDING_3_ARGUMENTS);
 
 				/* Write the position to screen */
+				upload = true;
 				break;
 			case GPSLockSearching:
 				render_smart_string("Searching...\0", 13, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
-						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+						RENDER_ENDING_3_ARGUMENTS);
 				break;
 			case GPSLockUnknown:
 			default:
 				render_smart_string("GPS Error\0", 9, 0, 0, DRAW_SET_F | DRAW_ALIGN_LEFT,
-						scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+						RENDER_ENDING_3_ARGUMENTS);
 				break;
 			}
 
 			top = (LINES_ON_SCREEN / 2) + ((__char_bottom_97 - __char_top_97) / 2) - __char_bottom_97;
 			top = render_smart_string(string_to_disp, LEN_STR_2_DISP, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
-					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+					RENDER_ENDING_3_ARGUMENTS);
 
 			for(i = 0; i < LEN_STR_2_DISP; i++)
 				string_to_disp[i] = 0x00;
@@ -93,9 +88,17 @@ void ui_task( void* p_params )
 			string_to_disp[5] = ' ';
 			generate_gps_string_DATE(_ui_gps_dat, &string_to_disp[6], (LEN_STR_2_DISP - 6));
 			render_smart_string(string_to_disp, 14, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
-					scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE);
+					RENDER_ENDING_3_ARGUMENTS);
 
-			try_upload_screen();
+			if(upload)
+				try_upload_screen();
+			else{
+				render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
+
+				if(alternate)
+					render_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+				try_upload_screen();
+			}
 
 			/* Log the time */
 			last_tick_refreshed = xTaskGetTickCount();

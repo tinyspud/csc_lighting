@@ -1,6 +1,7 @@
 #include "DisplayTask.h"
 #include "LogTask.h"
 #include "mcs_time.h"
+#include "common.h"
 
 #include "gps.h"
 
@@ -9,6 +10,7 @@
 #include "vis.h"
 #include "menu_display.h"
 #include "render.h"
+#include "gio.h"
 //#endif
 
 
@@ -16,7 +18,6 @@ static einkstate_t displaystate = EinkUninitialized;
 
 static volatile boolean l_is_emcy = false;
 static volatile boolean l_can_press = true;
-
 
 void display_task( void* p_params )
 {
@@ -30,12 +31,13 @@ void display_task( void* p_params )
 
 	l_can_press = false;
 
+
 	displaystate = EinkUninitialized;
 
 	/* Someone else comes in and tells you the display is busy */
 	/* First time around, it's you */
 	gc_is_display_busy = true;
-
+//	xTimerStop(xBorderTimer, 1);
 	for (;;){
 		/* Have this task run like it's a timer */
 		if(gc_is_display_busy){
@@ -43,9 +45,9 @@ void display_task( void* p_params )
 
 			/* Stop conditions for the display timer */
 			switch(displaystate){
-			case EinkIdleAndOn:
+//			case EinkIdleAndOn:
 			case EinkIdleAndOff:
-			case EinkJustInitializedReadyForFirstFrame:
+//			case EinkJustInitializedReadyForFirstFrame:
 				gc_is_display_busy = false;
 				l_can_press = true;
 				break;
@@ -57,6 +59,7 @@ void display_task( void* p_params )
 	}//for
 }//func
 
+
 boolean ready_for_first_one(){
 	return displaystate == EinkJustInitializedReadyForFirstFrame;
 }
@@ -65,7 +68,7 @@ boolean ready_for_first_one(){
 void try_upload_screen(){
 	if(!gc_is_display_busy){
 		gc_is_display_busy = true;
-		displaystate = EinkLoading;
+		displaystate = EinkPoweringOn;
 	}
 }
 

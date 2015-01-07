@@ -196,6 +196,7 @@ void epaper_power_off_sequence(){
 		gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
 		gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
 		gioSetBit(EINK_RESET_PORT, EINK_RESET_PIN, 0);
+		gioSetBit(EINK_BORDER_CTRL_PORT, EINK_BORDER_CTRL_PIN, 0);
 		/* Need to configure SPI pins SI and SCLK to GIO, then turn low */
 		spiSetFunctional(EINK_SPI_PORT, EINK_SPI_PORT->PC0 & ~((0U << SPI_PIN_SIMO) | (0U << SPI_PIN_CLK)));
 		gioSetBit(EINK_SPI_GIO_PORT, SPI_PIN_SIMO, 0);
@@ -388,7 +389,7 @@ BaseType_t epaper_start_COG_driver(){
 	return pdFAIL;
 }
 
-#define NUM_WASH_CYCLES	10
+#define NUM_WASH_CYCLES	4
 
 /* Break code into blocks that can be executed on timer ticks by the RTOS -
  * advance the execution through blocks at states since the RM48 is so fast and the
@@ -408,6 +409,8 @@ einkstate_t manage_eink(einkstate_t state){
 		rtnval = EinkPoweringOn;
 		break;
 	case EinkPoweringOn:
+		/* Set HET08 high */
+		gioSetBit(hetPORT1, 8, 0);
 		// once display is activated must wait min 6.5ms before command will be accepted by the display
 		/* check to see if the device is busy - if it isn't busy then you can try to move on
 		 * otherwise wait for the timer to elapse */
@@ -425,6 +428,7 @@ einkstate_t manage_eink(einkstate_t state){
 			rtnval = EinkJustInitializedReadyForFirstFrame;
 
 		break;
+	case EinkJustInitializedReadyForFirstFrame:
 	case EinkLoading:
 		/* Load scratch_screen rows into the epaper */
 #ifdef ROTATE_DISPLAY
@@ -436,10 +440,6 @@ einkstate_t manage_eink(einkstate_t state){
 			wait_to_not_busy();
 		}
 #else
-		/* Set HET08 high */
-		gioSetBit(hetPORT1, 8, 1);
-
-		gioToggleBit(gioPORTA, 2);
 		/* Load inverted image */
 		for(temp = 0; temp < 2; temp++){
 			for(i = 0; i < LINES_ON_SCREEN; i++){
@@ -450,34 +450,28 @@ einkstate_t manage_eink(einkstate_t state){
 		}
 		waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
 
-		gioToggleBit(gioPORTA, 2);
 		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			/* Load black frame */
 			write_epaper_solid_flush(BlackScreenFlush);
 
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
-		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
 		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(WhiteScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
-		gioToggleBit(gioPORTA, 2);
 		/* Load black frame */
 		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(BlackScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
-		gioToggleBit(gioPORTA, 2);
 		/* Load white frame */
 		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
 			write_epaper_solid_flush(WhiteScreenFlush);
 			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
 		}
-		gioToggleBit(gioPORTA, 2);
 		/* Load image */
-
 		for(temp = 0; temp < 3 * (NUM_WASH_CYCLES); temp++){
 			for(i = 0; i < LINES_ON_SCREEN; i++){
 				wait_to_not_busy();
@@ -487,16 +481,22 @@ einkstate_t manage_eink(einkstate_t state){
 				wait_to_not_busy();
 			}
 		}
-		/* Set HET08 low */
-		gioSetBit(hetPORT1, 8, 0);
+		/* Load white frame */
+		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
+			write_epaper_solid_flush(NothingScreenFlush);
+			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+		}
 #endif
 		rtnval = EinkIdleAndOn;
 		break;
 	case EinkIdleAndOn:
-		/* Do nothing */
+		/* Turn it off */
+		rtnval = EinkPoweringOff;
 		break;
 	case EinkPoweringOff:
 		epaper_power_off_sequence();
+		/* Set HET08 high */
+		gioSetBit(hetPORT1, 8, 1);
 		rtnval = EinkIdleAndOff;
 		break;
 	case EinkError:
@@ -630,6 +630,7 @@ void uploadImageLine_pre_bitflip(spiDAT1_t dataconfig1_t, uint8 *displayBuf, int
 		break;
 	case BlackScreenFlush:
 	case WhiteScreenFlush:
+	case NothingScreenFlush:
 	default:
 		byte_write_black = EINK_CMD_NOTHING_BYTE & EINK_CMD_COLOR_BITS_MASK;
 		byte_write_white = EINK_CMD_NOTHING_BYTE & EINK_CMD_COLOR_BITS_MASK;
@@ -931,7 +932,8 @@ uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t
 	uint8 ChipSelect = dataconfig_t->CSNR;
 
 	Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
-			((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+			((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE :
+					((screen == NothingScreenFlush) ? EINK_CMD_NOTHING_BYTE : EINK_CMD_NOTHING_BYTE));
 	int msglen = (BYTES_IN_1_LINE_TO_EPD + 1);
 	while(blocksize < msglen)
 	{
@@ -954,7 +956,8 @@ uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t
 		}
 		else if(blocksize < (NUM_DATA_BYTES_FIRST + EINK_BORDER_LEN + EINK_COMMAND_OVERHEAD)){
 			Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
-					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE :
+							((screen == NothingScreenFlush) ? EINK_CMD_NOTHING_BYTE : EINK_CMD_NOTHING_BYTE));
 		}
 		else if(blocksize < (NUM_DATA_BYTES_FIRST + NUM_SCAN_BYTES + EINK_BORDER_LEN + EINK_COMMAND_OVERHEAD)){
 			Tx_Data = ((BYTES_IN_1_LINE + ((DISPLAY_HEIGHT_PIXELS - linenum - 1) >> 2) + 1) == (blocksize - (EINK_COMMAND_OVERHEAD))) ?
@@ -962,7 +965,8 @@ uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t
 		}
 		else{
 			Tx_Data = (screen == BlackScreenFlush) ? (EINK_CMD_BLACK_BYTE) :
-					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE : EINK_CMD_NOTHING_BYTE);
+					((screen == WhiteScreenFlush) ? EINK_CMD_WHITE_BYTE :
+							((screen == NothingScreenFlush) ? EINK_CMD_NOTHING_BYTE : EINK_CMD_NOTHING_BYTE));
 		}
 
 		spi->DAT1 =((uint32)DataFormat << 24U) |

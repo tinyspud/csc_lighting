@@ -127,6 +127,7 @@ typedef enum ScanLine{
 typedef enum ScreenUploading{
 	BlackScreenFlush,
 	WhiteScreenFlush,
+	NothingScreenFlush,
 	NegativeImage,
 	PositiveImage,
 }ScreenUploading_t;
@@ -319,5 +320,7 @@ void write_epaper_register(uint8_t regidx, uint8_t arguments[], uint8_t arg_len)
 uint32 spiTransmit_solid_color_line_data(spiBASE_t *spi, spiDAT1_t *dataconfig_t, ScreenUploading_t screen, int linenum);
 
 void write_epaper_solid_flush(ScreenUploading_t screen);
+
+boolean IsDisplayPowered(void);
 
 #endif /* EINK_H_ */

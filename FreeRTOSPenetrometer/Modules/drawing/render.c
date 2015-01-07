@@ -543,6 +543,89 @@ int get_line_length(char* line, int linelen){
 	return length_of_string;
 }
 
+#define INT_2_FLOAT32(x)	((float32)x)
+
+/* Draw a line from (x1, y1) to (x2, y2) */
+void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+	/* Convert to signed decimels */
+	float32 x1, y1, x2, y2, slope, tempfloat;
+	int runs = 0, i = 0, tempx, tempy;
+	uint8 curbit;
+	x1 = INT_2_FLOAT32(x1_p);
+	y1 = INT_2_FLOAT32(y1_p);
+	x2 = INT_2_FLOAT32(x2_p);
+	y2 = INT_2_FLOAT32(y2_p);
+
+	/* Calculate in terms of y = mx + b */
+	/* m = (y2 - y1) / (x2 - x1) */
+	if(x2 == x1){
+		if(x1_p < 0 || x1_p > rightmost)
+			return;
+
+		/* Vertical line */
+		runs = (y2_p - y1_p);
+		tempx = x1_p;
+		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
+			tempy = y1_p + i;
+			if(tempy >= 0 && tempy <= bottommost){
+				switch(draw_type & DRAW_MODE_MASK){
+				case DRAW_SET_B:
+					render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
+					break;
+				case DRAW_SET_F:
+					render_set_pixel_foreground(tempx, tempy, target, bottommost, rightmost);
+					break;
+				case DRAW_SET_TOGGLE:
+					curbit = render_get_pixel(tempx, tempy, target, bottommost, rightmost);
+					render_set_pixel(tempx, tempy, ~curbit, target, bottommost, rightmost);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	else{
+		/* Calculate how many values of x */
+		runs = x2_p - x1_p;
+
+		slope = (y2 - y1) / INT_2_FLOAT32(runs);
+
+		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
+			tempx = i + x1_p;
+			tempfloat = (slope * INT_2_FLOAT32(tempx));
+
+			tempy = ((int)tempfloat) + x1_p;
+
+			if((tempy >= 0 && tempy <= bottommost) && (tempx >= 0 && tempx <= rightmost)){
+				switch(draw_type & DRAW_MODE_MASK){
+				case DRAW_SET_B:
+					render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
+					break;
+				case DRAW_SET_F:
+					render_set_pixel_foreground(tempx, tempy, target, bottommost, rightmost);
+					break;
+				case DRAW_SET_TOGGLE:
+					curbit = render_get_pixel(tempx, tempy, target, bottommost, rightmost);
+					render_set_pixel(tempx, tempy, ~curbit, target, bottommost, rightmost);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

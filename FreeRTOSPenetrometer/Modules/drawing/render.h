@@ -42,6 +42,8 @@
 
 #define RENDER_MAX_WIDTH	BYTES_IN_1_LINE
 
+#define RENDER_ENDING_3_ARGUMENTS	scratch_screen, LINES_ON_SCREEN, BYTES_IN_1_LINE
+
 /* Create the ellipsis width (the ... character) */
 #define RENDER_ELLIPSIS_WID ((__char_wid_46 + RENDER_KERN_PIXELS) * 3)
 
