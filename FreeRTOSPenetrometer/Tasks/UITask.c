@@ -49,11 +49,13 @@ void ui_task( void* p_params )
 	//
 		render_line(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//
-	//	render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+//		render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
 
 	//	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(0, 0, 90, 90, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+		render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+		render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+		render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 //	render_set_pixel_foreground(0,0,RENDER_ENDING_3_ARGUMENTS);
 //	render_set_pixel_foreground(1,0,RENDER_ENDING_3_ARGUMENTS);
 //	render_set_pixel_foreground(0,1,RENDER_ENDING_3_ARGUMENTS);
