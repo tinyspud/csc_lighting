@@ -47,24 +47,18 @@ void ui_task( void* p_params )
 	//	render_line(0, 25, 20, 25, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//	render_line(0, 27, 20, 27, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//
-		render_line(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//
-//		render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+	//		render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
 
 	//	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-		render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-		render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-		render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(0,0,RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(1,0,RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(0,1,RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(1,1,RENDER_ENDING_3_ARGUMENTS);
-//
-//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 1, DISPLAY_HEIGHT_PIXELS - 1, RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 2, DISPLAY_HEIGHT_PIXELS - 1, RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 1, DISPLAY_HEIGHT_PIXELS - 2, RENDER_ENDING_3_ARGUMENTS);
-//	render_set_pixel_foreground(DISPLAY_WIDTH_PIXELS - 2, DISPLAY_HEIGHT_PIXELS - 2, RENDER_ENDING_3_ARGUMENTS);
+	render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+
+	render_bezier(10, 10, 40, 10, 40, 40, 70, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+
 	boolean upload = false;
 
 	for (;;){

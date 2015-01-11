@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="out" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.803761134" name="Debug" parent="com.ti.ccstudio.buildDefinitions.TMS470.Debug">
+				<configuration artifactExtension="out" artifactName="${ProjName}" buildProperties="" cleanCommand="${CG_CLEAN_CMD}" description="" id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.803761134" name="Debug" parent="com.ti.ccstudio.buildDefinitions.TMS470.Debug" prebuildStep=".\..\..\GitGrabber.exe --dir=&quot;.\..\..\&quot; --dest=&quot;.\..\Modules\alfat&quot;">
 					<folderInfo id="com.ti.ccstudio.buildDefinitions.TMS470.Debug.803761134." name="/" resourcePath="">
 						<toolChain id="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.DebugToolchain.279036595" name="TI Build Tools" superClass="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.DebugToolchain" targetTool="com.ti.ccstudio.buildDefinitions.TMS470_5.1.exe.linkerDebug.281405677">
 							<option id="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS.2036416308" superClass="com.ti.ccstudio.buildDefinitions.core.OPT_TAGS" valueType="stringList">

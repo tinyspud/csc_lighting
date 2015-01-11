@@ -1,6 +1,7 @@
 #include "eink.h"
 #include "vis.h"
 #include "render.h"
+#include <math.h>
 
 /*
  * Set a pixel's value at (x, y) with origin being top left of screen
@@ -543,17 +544,79 @@ int get_line_length(char* line, int linelen){
 	return length_of_string;
 }
 
-#define INT_2_FLOAT32(x)	((float32)x)
+#define INT_2_FLOAT(x)	((float)x)
+
+float parametric_bezier(float t, float a0, float a1, float a2, float a3){
+	return ((powf((1 - t), 3)) * a0) + 3 * (((powf((1 - t), 2)) * a1) * t) + 3 * (1 - t) * a2 * powf(t, 2) + powf(t, 3) * a3;
+}
+
+//void bezier(float t, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float * x_t, float * y_t){
+//	x_t = ((powf((1 - t), 3)) * x0) + 3 * (((powf((1 - t), 2)) * x1) * t) + 3 * (1 - t) * x2 * powf(t, 2) + powf(t, 3) * x3;
+//	y_t = ((powf((1 - t), 3)) * y0) + 3 * (((powf((1 - t), 2)) * y1) * t) + 3 * (1 - t) * y2 * powf(t, 2) + powf(t, 3) * y3;
+//}
+//
+void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+	float x0, y0, x1, y1, x2, y2, x3, y3, t, minx, maxx, miny, maxy;
+	int i, numsteps;
+	float xvals[MAX_POINTS_IN_BEZIER], yvals[MAX_POINTS_IN_BEZIER];
+
+	boolean goalongy = true;
+
+	/* Init the x and y val arrays */
+	for(i = 0; i < MAX_POINTS_IN_BEZIER; i++){
+		xvals[i] = 0;
+		yvals[i] = 0;
+	}
+
+	/* Convert to float */
+	x0 = INT_2_FLOAT(x0_p);
+	y0 = INT_2_FLOAT(y0_p);
+	x1 = INT_2_FLOAT(x1_p);
+	y1 = INT_2_FLOAT(y1_p);
+	x2 = INT_2_FLOAT(x2_p);
+	y2 = INT_2_FLOAT(y2_p);
+	x3 = INT_2_FLOAT(x3_p);
+	y3 = INT_2_FLOAT(y3_p);
+
+	/* Get mins, maxes */
+	minx = fminf(fminf(x0, x1), fminf(x2, x3));
+	maxx = fmaxf(fmaxf(x0, x1), fmaxf(x2, x3));
+
+	miny = fminf(fminf(y0, y1), fminf(y2, y3));
+	maxy = fmaxf(fmaxf(y0, y1), fmaxf(y2, y3));
+
+
+	/* Calculate the number of steps */
+	goalongy = ((maxy - miny) > (maxx - minx));
+	numsteps = goalongy ? (int)(maxy - miny) : (int)(maxx - minx);
+
+	if(numsteps >= MAX_POINTS_IN_BEZIER)
+		numsteps = MAX_POINTS_IN_BEZIER - 1;
+
+	/* Go through line */
+	for(i = 0; i < numsteps; i++){
+		/* Calculate t */
+		t = ((float)i) / ((float)numsteps);
+		xvals[i] = parametric_bezier(t, x0, x1, x2, x3);
+		yvals[i] = parametric_bezier(t, y0, y1, y2, y3);
+	}
+
+	/* Place on screen */
+	for(i = 0; i < (numsteps - 1); i++){
+		render_line(xvals[i], yvals[i], xvals[i + 1], yvals[i + 1], draw_type, target, bottommost, rightmost);
+	}
+}
+
 
 /* Draw a line from (x1, y1) to (x2, y2) */
 void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	/* Convert to signed decimels */
-	float32 y1 = 0, y2 = 0, slope = 0, tempfloat = 0;
+	float y1 = 0, y2 = 0, slope = 0, tempfloat = 0;
 	int runs = 0, i = 0, tempx = 0, tempy = 0, lastx = 0, lasty = 0, ydiff = 0, j = 0;
 	uint8 curbit = 0;
 	boolean halfway = false;
-	y1 = INT_2_FLOAT32(y1_p);
-	y2 = INT_2_FLOAT32(y2_p);
+	y1 = INT_2_FLOAT(y1_p);
+	y2 = INT_2_FLOAT(y2_p);
 
 	/* Calculate in terms of y = mx + b */
 	/* m = (y2 - y1) / (x2 - x1) */
@@ -587,13 +650,13 @@ void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 
 		/* Calculate how many values of x */
 		runs = x2_p - x1_p;
 
-		slope = (y2 - y1) / INT_2_FLOAT32(runs);
+		slope = (y2 - y1) / INT_2_FLOAT(runs);
 		lasty = y1_p;
 		lastx = x1_p;
 
 		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
 			tempx = i + x1_p;
-			tempfloat = (slope * INT_2_FLOAT32(i));
+			tempfloat = (slope * INT_2_FLOAT(i));
 
 			/* Determine if to round up or leave as is (bottom will be truncated when cast back to int) */
 			tempfloat += ((tempfloat - ((float32)((int)tempfloat))) >= 0.5) ? 1 : 0;

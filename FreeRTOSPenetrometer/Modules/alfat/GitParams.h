@@ -3,7 +3,7 @@
 #define __BUILD_AUTOGEN_H
 #define HAS_GIT_PARAMS
 
-#define BUILD_PATH	"C:\\Users\\chris\\Desktop\\beaumont\\mcs\\GitGrabber\\GitGrabber\\bin\\Debug\r\n\0"
+#define BUILD_PATH	"C:\\Users\\chris\\Desktop\\beaumont\\penetrometer\r\n\0"
 
 #define BUILD_SYSTEM	"PIZZABOX\r\n\0"
 
@@ -11,28 +11,28 @@
 
 #define BUILD_USER_NAME	"chris\r\n\0"
 
-#define BRANCH_NAME	"MCS_sysWORXX\r\n\0"
+#define BRANCH_NAME	"master\r\n\0"
 
-#define COMMIT_SHA	"0ffc283d54db65624fe60d1155dbf745333be7e5\r\n\0"
+#define COMMIT_SHA	"b5074f574e75810251d126bdac738e124f09e2ee\r\n\0"
 
 /* Time format: YYYY_MM_DD_HH:mm:ss */
-#define LAST_COMMIT_TIME_UTC	"2014_12_03_23:51:07\r\n\0"
+#define LAST_COMMIT_TIME_UTC	"2015_01_08_06:55:23\r\n\0"
 
-#define COMPILE_TIME_UTC	"2014_12_04_00:02:02\r\n\0"
+#define COMPILE_TIME_UTC	"2015_01_11_08:19:46\r\n\0"
 
-#define COMPILE_TIME_UTC_YYYY	2014
+#define COMPILE_TIME_UTC_YYYY	2015
 
-#define COMPILE_TIME_UTC_MM	12
+#define COMPILE_TIME_UTC_MM	1
 
-#define COMPILE_TIME_UTC_DD	4
+#define COMPILE_TIME_UTC_DD	11
 
-#define COMPILE_TIME_UTC_HH	0
+#define COMPILE_TIME_UTC_HH	8
 
-#define COMPILE_TIME_UTC_mm	2
+#define COMPILE_TIME_UTC_mm	19
 
-#define COMPILE_TIME_UTC_ss	2
+#define COMPILE_TIME_UTC_ss	46
 
-#define LONGEST_STR_USED	67
+#define LONGEST_STR_USED	44
 
 extern int BuildPathLength;
 extern int BuildSystemLength;
@@ -42,7 +42,5 @@ extern int BuildBranchNameLength;
 extern int BuildCommitSHALength;
 extern int LastCommitTimeLength;
 extern int CompileTimeLength;
-void GatherGitParams();
 #endif
-
 
