@@ -597,13 +597,14 @@ void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, i
 	for(i = 0; i < numsteps; i++){
 		/* Calculate t */
 		t = ((float)i) / ((float)numsteps);
-		xvals[i] = parametric_bezier(t, x0, x1, x2, x3);
-		yvals[i] = parametric_bezier(t, y0, y1, y2, y3);
+		xvals[i] = roundf(parametric_bezier(t, x0, x1, x2, x3));
+		yvals[i] = roundf(parametric_bezier(t, y0, y1, y2, y3));
 	}
 
 	/* Place on screen */
 	for(i = 0; i < (numsteps - 1); i++){
-		render_line(xvals[i], yvals[i], xvals[i + 1], yvals[i + 1], draw_type, target, bottommost, rightmost);
+		if((xvals[i] != xvals[i + 1]) || (yvals[i] != yvals[i + 1]))
+			render_line((int)xvals[i], (int)yvals[i], (int)xvals[i + 1], (int)yvals[i + 1], draw_type, target, bottommost, rightmost);
 	}
 }
 
