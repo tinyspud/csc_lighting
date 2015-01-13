@@ -148,7 +148,19 @@ typedef struct OTFontInformation{
 	OTFTableHeader_t	FontTableInformation[NUM_OTF_TABLES];
 }OTFontInformation_t;
 
+typedef struct OTFcmapSubtable{
+	USHORT				cmapPlatformID;
+	USHORT				cmapEncodingID;
+	ULONG				cmapSubtableOffset;
+	USHORT				cmapSubtableFormat;
+	USHORT				cmapSubtableLength;
+}OTFcmapSubtable_t;
 
+typedef struct OTFcmapMainTable{
+	USHORT				cmapVersion;
+	USHORT				cmapNumSubtables;
+	OTFcmapSubtable_t *	cmapSubtables;
+}OTFcmapMainTable_t;
 
 
 

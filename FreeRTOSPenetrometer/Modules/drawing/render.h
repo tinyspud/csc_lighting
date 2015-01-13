@@ -49,6 +49,57 @@
 /* Create the ellipsis width (the ... character) */
 #define RENDER_ELLIPSIS_WID ((__char_wid_46 + RENDER_KERN_PIXELS) * 3)
 
+
+/* Do not touch bits 0-3, 12 active bits of line properties */
+#define LineDrawingBitMask		0xFFF0
+#define LineDataBitMask			0x000F
+#define LineNumDrawBits			12
+#define LineNumDataBits			4
+
+
+//typedef enum LineDrawingStyle{
+//	ToggleLineBit0 = (1 << 4),
+//	ToggleLineBit1 = (1 << 5),
+//	ToggleLineBit2 = (1 << 6),
+//	ToggleLineBit3 = (1 << 7),
+//	ToggleLineBit4 = (1 << 8),
+//	ToggleLineBit5 = (1 << 9),
+//	ToggleLineBit6 = (1 << 10),
+//	ToggleLineBit7 = (1 << 11),
+//	ToggleLineBit8 = (1 << 12),
+//	ToggleLineBit9 = (1 << 13),
+//	ToggleLineBitA = (1 << 14),
+//	ToggleLineBitB = (1 << 15),
+//}LineDrawingStyle_t;
+//
+
+
+typedef uint16_t LineDrawingStyle_t;
+#define		TOGGLELINEBIT0  (1 << 4)
+#define		TOGGLELINEBIT1  (1 << 5)
+#define		TOGGLELINEBIT2  (1 << 6)
+#define		TOGGLELINEBIT3  (1 << 7)
+#define		TOGGLELINEBIT4  (1 << 8)
+#define		TOGGLELINEBIT5  (1 << 9)
+#define		TOGGLELINEBIT6  (1 << 10)
+#define		TOGGLELINEBIT7  (1 << 11)
+#define		TOGGLELINEBIT8  (1 << 12)
+#define		TOGGLELINEBIT9  (1 << 13)
+#define		TOGGLELINEBITA  (1 << 14)
+#define		TOGGLELINEBITB  (1 << 15)
+
+/* Dot line:	". . . . . . " */
+#define LINE_DRAWING_STYLE_DOT		(TOGGLELINEBIT0 | TOGGLELINEBIT2 | TOGGLELINEBIT4 | TOGGLELINEBIT6 | TOGGLELINEBIT8 | TOGGLELINEBITA)
+/* Dash line:	".  ..  ..  ." */
+#define LINE_DRAWING_STYLE_DASH		(TOGGLELINEBIT0 | TOGGLELINEBIT3 | TOGGLELINEBIT4 | TOGGLELINEBIT7 | TOGGLELINEBIT8 | TOGGLELINEBITB)
+/* Long Dash:	".. ..... ..." */
+#define LINE_DRAWING_STYLE_LONG		(TOGGLELINEBIT0 | TOGGLELINEBIT1 | TOGGLELINEBIT3 | TOGGLELINEBIT4 | TOGGLELINEBIT5 | TOGGLELINEBIT6 | TOGGLELINEBIT7 | TOGGLELINEBIT9 | TOGGLELINEBITA | TOGGLELINEBITB)
+/* Solid:		"............" */
+#define LINE_DRAWING_STYLE_SOLID	(TOGGLELINEBIT0 | TOGGLELINEBIT1 | TOGGLELINEBIT2 | TOGGLELINEBIT3 | TOGGLELINEBIT4 | TOGGLELINEBIT5 | TOGGLELINEBIT6 | TOGGLELINEBIT7 | TOGGLELINEBIT8 | TOGGLELINEBIT9 | TOGGLELINEBITA | TOGGLELINEBITB)
+#define RESET_LINE_DRAWING_STYLE(x)		(x &= LineDrawingBitMask)
+
+
+
 uint8 render_set_pixel(int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
 
 uint8 render_set_byte(int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
@@ -81,8 +132,6 @@ int render_smart_string(char*, int, int, int, uint8, uint8 [][RENDER_MAX_WIDTH],
 /* Shape drawing */
 void render_rectangle(int, int, int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
 
-void render_line(int, int, int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
-
 int get_line_length(char*, int);
 
 void render_ellipsis(int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
@@ -93,9 +142,14 @@ void render_disable_rectangle_OR(int, int, int, int, uint8 [][RENDER_MAX_WIDTH],
 
 void render_copy_line(uint8 [][RENDER_MAX_WIDTH], uint8 source[][RENDER_MAX_WIDTH], int, int, int, int);
 
-void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost);
+/* Line rendering */
+void render_line(int, int, int, int, uint8, LineDrawingStyle_t *, uint8 [][RENDER_MAX_WIDTH], int, int);
+void render_line_solid(int, int, int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
 
-void render_bezier_with_control_lines(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost);
+void render_bezier(int, int, int, int, int, int, int, int, uint8, LineDrawingStyle_t *, uint8 [][RENDER_MAX_WIDTH], int, int);
+void render_bezier_solid(int, int, int, int, int, int, int, int, uint8, uint8 [][RENDER_MAX_WIDTH], int, int);
+
+void render_bezier_with_control_lines(int, int, int, int, int, int, int, int, uint8, LineDrawingStyle_t *,uint8 [][RENDER_MAX_WIDTH], int, int);
 
 #endif
 

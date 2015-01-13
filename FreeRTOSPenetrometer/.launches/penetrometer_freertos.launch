@@ -5,7 +5,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM.Texas Instruments XDS100v2 USB Emulator/CortexR4" value="${build_artifact:penetrometer_freertos}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.Texas Instruments XDS100v2 USB Emulator/CortexR4" value="penetrometer_freertos"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:penetrometer_freertos}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.Texas Instruments XDS100v2 USB Emulator/CortexR4" value="C:/Users\chris\Desktop\beaumont\penetrometer\FreeRTOSPenetrometer\Debug\penetrometer_freertos.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.Texas Instruments XDS100v2 USB Emulator/CortexR4" value="C:/Users\Chris\Desktop\Beaumont\penetrometer\FreeRTOSPenetrometer\Debug\penetrometer_freertos.out"/>
 <mapAttribute key="com.ti.ccstudio.debug.ui.displayFormats">
 <mapEntry key="Texas Instruments XDS100v2 USB Emulator/CortexR4@##separator##@0" value="32-Bit Hex - TI Style"/>
 </mapAttribute>

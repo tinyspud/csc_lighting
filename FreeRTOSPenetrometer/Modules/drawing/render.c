@@ -546,19 +546,19 @@ int get_line_length(char* line, int linelen){
 
 #define INT_2_FLOAT(x)	((float)x)
 
-float parametric_bezier(float t, float a0, float a1, float a2, float a3){
+inline float parametric_bezier(float t, float a0, float a1, float a2, float a3){
 	return ((powf((1 - t), 3)) * a0) + 3 * (((powf((1 - t), 2)) * a1) * t) + 3 * (1 - t) * a2 * powf(t, 2) + powf(t, 3) * a3;
 }
 
-void render_bezier_with_control_lines(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+void render_bezier_with_control_lines(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, LineDrawingStyle_t * Ptr2LineProperties, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	/* Render in the Bezier */
-	render_bezier(x0_p, y0_p, x1_p, y1_p, x2_p, y2_p, x3_p, y3_p, draw_type, target, bottommost, rightmost);
+	render_bezier(x0_p, y0_p, x1_p, y1_p, x2_p, y2_p, x3_p, y3_p, draw_type, Ptr2LineProperties, target, bottommost, rightmost);
 	/* Render in the two control lines */
-	render_line(x0_p, y0_p, x1_p, y1_p, draw_type, target, bottommost, rightmost);
-	render_line(x2_p, y2_p, x3_p, y3_p, draw_type, target, bottommost, rightmost);
+	render_line_solid(x0_p, y0_p, x1_p, y1_p, draw_type, target, bottommost, rightmost);
+	render_line_solid(x2_p, y2_p, x3_p, y3_p, draw_type, target, bottommost, rightmost);
 }
 
-void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, LineDrawingStyle_t * Ptr2LineProperties, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	float x0, y0, x1, y1, x2, y2, x3, y3, t, minx, maxx, miny, maxy;
 	int i, numsteps;
 	float xvals[MAX_POINTS_IN_BEZIER], yvals[MAX_POINTS_IN_BEZIER];
@@ -607,13 +607,26 @@ void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, i
 	/* Place on screen */
 	for(i = 0; i < (numsteps - 1); i++){
 		if((xvals[i] != xvals[i + 1]) || (yvals[i] != yvals[i + 1]))
-			render_line((int)xvals[i], (int)yvals[i], (int)xvals[i + 1], (int)yvals[i + 1], draw_type, target, bottommost, rightmost);
+			render_line((int)xvals[i], (int)yvals[i], (int)xvals[i + 1], (int)yvals[i + 1], draw_type, Ptr2LineProperties, target, bottommost, rightmost);
 	}
 }
 
+void render_line_solid(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+	LineDrawingStyle_t linespec = LINE_DRAWING_STYLE_SOLID;
+	render_line(x1_p, y1_p, x2_p, y2_p, draw_type, &linespec, target, bottommost, rightmost);
+}
+
+
+inline void increment_line(LineDrawingStyle_t * Ptr2LineProperties){
+	*(Ptr2LineProperties) = ((*(Ptr2LineProperties)) & LineDrawingBitMask) | (((*(Ptr2LineProperties)) + 1) & LineDataBitMask);
+}
+
+inline bool needtodrawpixelinline(LineDrawingStyle_t * Ptr2LineProperties){
+	return (((*(Ptr2LineProperties)) >> (LineNumDataBits + ((*(Ptr2LineProperties)) & LineDataBitMask))) & 1) == 1;
+}
 
 /* Draw a line from (x1, y1) to (x2, y2) */
-void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, LineDrawingStyle_t * Ptr2LineProperties, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	/* Convert to signed decimels */
 	float y1 = 0, y2 = 0, slope = 0, tempfloat = 0;
 	int runs = 0, i = 0, tempx = 0, tempy = 0, lastx = 0, lasty = 0, ydiff = 0, j = 0;
@@ -634,19 +647,22 @@ void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 
 		for(i = 0; (runs > 0) ? (i <= runs) : (i >= runs); (runs > 0) ? (i++) : (i--)){
 			tempy = y1_p + i;
 			if((tempy >= 0) && (tempy <= bottommost)){
-				switch(draw_type & DRAW_MODE_MASK){
-				case DRAW_SET_B:
-					render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
-					break;
-				case DRAW_SET_F:
-					render_set_pixel_foreground(tempx, tempy, target, bottommost, rightmost);
-					break;
-				case DRAW_SET_TOGGLE:
-					render_flip_pixel(tempx, tempy, target, bottommost, rightmost);
-					break;
-				default:
-					break;
+				if(needtodrawpixelinline(Ptr2LineProperties)){
+					switch(draw_type & DRAW_MODE_MASK){
+					case DRAW_SET_B:
+						render_set_pixel_background(tempx, tempy, target, bottommost, rightmost);
+						break;
+					case DRAW_SET_F:
+						render_set_pixel_foreground(tempx, tempy, target, bottommost, rightmost);
+						break;
+					case DRAW_SET_TOGGLE:
+						render_flip_pixel(tempx, tempy, target, bottommost, rightmost);
+						break;
+					default:
+						break;
+					}
 				}
+				increment_line(Ptr2LineProperties);
 			}
 		}
 	}
@@ -676,19 +692,22 @@ void render_line(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, uint8 
 					halfway = true;
 				/* Draw in ydiff dots between tempy and lasty along tempx and lastx */
 				if((((lasty + j) >= 0) && ((lasty + j) <= bottommost)) && (((halfway ? tempx : lastx) >= 0) && ((halfway ? tempx : lastx) <= (rightmost * 8)))){
-					switch(draw_type & DRAW_MODE_MASK){
-					case DRAW_SET_B:
-						render_set_pixel_background(halfway ? tempx : lastx, lasty + j, target, bottommost, rightmost);
-						break;
-					case DRAW_SET_F:
-						render_set_pixel_foreground(halfway ? tempx : lastx, lasty + j, target, bottommost, rightmost);
-						break;
-					case DRAW_SET_TOGGLE:
-						render_flip_pixel(tempx, tempy, target, bottommost, rightmost);
-						break;
-					default:
-						break;
+					if(needtodrawpixelinline(Ptr2LineProperties)){
+						switch(draw_type & DRAW_MODE_MASK){
+						case DRAW_SET_B:
+							render_set_pixel_background(halfway ? tempx : lastx, lasty + j, target, bottommost, rightmost);
+							break;
+						case DRAW_SET_F:
+							render_set_pixel_foreground(halfway ? tempx : lastx, lasty + j, target, bottommost, rightmost);
+							break;
+						case DRAW_SET_TOGGLE:
+							render_flip_pixel(tempx, tempy, target, bottommost, rightmost);
+							break;
+						default:
+							break;
+						}
 					}
+					increment_line(Ptr2LineProperties);
 				}
 			}
 			/* Update value of lasty */
