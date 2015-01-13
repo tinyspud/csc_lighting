@@ -550,11 +550,14 @@ float parametric_bezier(float t, float a0, float a1, float a2, float a3){
 	return ((powf((1 - t), 3)) * a0) + 3 * (((powf((1 - t), 2)) * a1) * t) + 3 * (1 - t) * a2 * powf(t, 2) + powf(t, 3) * a3;
 }
 
-//void bezier(float t, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float * x_t, float * y_t){
-//	x_t = ((powf((1 - t), 3)) * x0) + 3 * (((powf((1 - t), 2)) * x1) * t) + 3 * (1 - t) * x2 * powf(t, 2) + powf(t, 3) * x3;
-//	y_t = ((powf((1 - t), 3)) * y0) + 3 * (((powf((1 - t), 2)) * y1) * t) + 3 * (1 - t) * y2 * powf(t, 2) + powf(t, 3) * y3;
-//}
-//
+void render_bezier_with_control_lines(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
+	/* Render in the Bezier */
+	render_bezier(x0_p, y0_p, x1_p, y1_p, x2_p, y2_p, x3_p, y3_p, draw_type, target, bottommost, rightmost);
+	/* Render in the two control lines */
+	render_line(x0_p, y0_p, x1_p, y1_p, draw_type, target, bottommost, rightmost);
+	render_line(x2_p, y2_p, x3_p, y3_p, draw_type, target, bottommost, rightmost);
+}
+
 void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost){
 	float x0, y0, x1, y1, x2, y2, x3, y3, t, minx, maxx, miny, maxy;
 	int i, numsteps;
@@ -588,7 +591,7 @@ void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, i
 
 	/* Calculate the number of steps */
 	goalongy = ((maxy - miny) > (maxx - minx));
-	numsteps = goalongy ? (int)(maxy - miny) : (int)(maxx - minx);
+	numsteps = (goalongy ? (int)(maxy - miny) : (int)(maxx - minx)) + 1;
 
 	if(numsteps >= MAX_POINTS_IN_BEZIER)
 		numsteps = MAX_POINTS_IN_BEZIER - 1;

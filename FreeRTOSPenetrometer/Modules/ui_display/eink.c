@@ -50,6 +50,7 @@
 #include "gio.h"
 #include "DisplayTask.h"
 #include "common.h"
+#include "OTFRasterizer.h"
 
 /* scratch_screen is memory copy of what's been transmitted to the
  * display.  This is stored in the non-bit-flipped version */
@@ -63,6 +64,8 @@ uint8 scratch_screen[LINES_ON_SCREEN][BYTES_IN_1_LINE];
  * cleared.
  */
 void init_display_buffers_and_pins(void) {
+	init_otf_rasterizer();
+
 	__display_black_on_white = TRUE;
 
 	int i = 0;

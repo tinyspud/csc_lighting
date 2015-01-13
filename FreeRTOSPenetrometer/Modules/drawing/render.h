@@ -95,5 +95,7 @@ void render_copy_line(uint8 [][RENDER_MAX_WIDTH], uint8 source[][RENDER_MAX_WIDT
 
 void render_bezier(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost);
 
+void render_bezier_with_control_lines(int x0_p, int y0_p, int x1_p, int y1_p, int x2_p, int y2_p, int x3_p, int y3_p, uint8 draw_type, uint8 target[][RENDER_MAX_WIDTH], int bottommost, int rightmost);
+
 #endif
 

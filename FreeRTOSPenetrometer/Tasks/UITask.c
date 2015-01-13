@@ -53,11 +53,13 @@ void ui_task( void* p_params )
 
 	//	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+//	render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+//	render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+//	render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 
-	render_bezier(10, 10, 40, 10, 40, 40, 70, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_bezier_with_control_lines(0, 87, 132, 0, 132, 176, 264, 87, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_bezier(0, 86, 132, -1, 132, 175, 264, 86, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	render_bezier(0, 88, 132, 1, 132, 177, 264, 88, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 
 	boolean upload = false;
 
