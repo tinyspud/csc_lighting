@@ -18,6 +18,7 @@
 #include "FlashApp.h"
 #include "S210_LL.h"
 #include "system_error_callbacks.h"
+#include "ADCSampling.h"
 
 
 
@@ -29,7 +30,7 @@
 #define CHANNEL_0                       0x00                 /**< ANT Channel 0. */
 #define CHANNEL_0_ANT_EXT_ASSIGN        0x00                 /**< ANT Ext Assign. */
 
-#define CHANNEL_0_PERIOD				16384				/* Channel period (n/32768 s period) */	
+#define CHANNEL_0_PERIOD				10				/* Channel period (n/32768 s period) */	
 
 // Channel ID configuration. 
 #define CHANNEL_0_CHAN_ID_DEV_TYPE      0x02u                /**< Device type. */
@@ -55,6 +56,7 @@ static void channel_event_handle(uint32_t event)
 {
 	uint32_t err_code;
 	int32_t temp = 0xFFFFFFFF;
+	uint32_t ADC = 0x00000400;
 
 	switch (event)
 	{
@@ -68,6 +70,12 @@ static void channel_event_handle(uint32_t event)
 //	{
 //		// Do nothing.
 //	}
+	if(NRF_ADC->BUSY == 0){
+		ADC = GetADCVal();
+		/* Restart ADC sampling */
+		NRF_ADC->TASKS_START = 1;							//Start ADC sampling
+	}
+	
 	if(NRF_TEMP->EVENTS_DATARDY == 1){
 		NRF_TEMP->EVENTS_DATARDY = 0;
 
@@ -77,16 +85,22 @@ static void channel_event_handle(uint32_t event)
 		/**@note Workaround for PAN_028 rev2.0A anomaly 30 - TEMP: Temp module analog front end does not power down when DATARDY event occurs. */
 		NRF_TEMP->TASKS_STOP = 1; /** Stop the temperature measurement. */
 	}
-	NRF_TEMP->TASKS_START = 1; /** Start the temperature measurement. */
+
+	/** Start the temperature measurement. */
+	NRF_TEMP->TASKS_START = 1;
 
 		// Assign a new value to the broadcast data. 
 		m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
-		m_broadcast_data[0] = (uint8_t)temp;
-	
-		// Broadcast the data. 
+		m_broadcast_data[0] = (uint8_t)((temp >> 8) & (0x000000FF));
+		m_broadcast_data[1] = (uint8_t)(temp & 0x000000FF);
+
+		m_broadcast_data[2] = (uint8_t)((ADC >> 8) & (0x000000FF));
+		m_broadcast_data[3] = (uint8_t)(ADC & 0x000000FF);
+
+	// Broadcast the data. 
 		err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
-			BROADCAST_DATA_BUFFER_SIZE,
-			m_broadcast_data);
+		BROADCAST_DATA_BUFFER_SIZE,
+		m_broadcast_data);
 		APP_ERROR_CHECK(err_code);
 
 		// Increment the counter.

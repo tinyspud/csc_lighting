@@ -37,7 +37,7 @@
 #include "FlashApp.h"
 #include "system_error_callbacks.h"
 #include "S210_LL.h"
-#include "system_ADC_LL.h"
+#include "ADCSampling.h"
 
 /**@brief Function for application main entry. Does not return.
  */
@@ -56,6 +56,9 @@ int main(void)
 	/* Start the flash app */
 	init_flash_app();
 
+	/* Init the ADC */
+	init_strain_ADC();
+	
 	/* Init the temperature */
 	int32_t volatile temp = 1;
 	nrf_temp_init();
@@ -80,12 +83,14 @@ int main(void)
 
 	uint32_t err_code = 0;
 	LED_TURN_ON(LED_GREEN);
+	
 	// Main loop. 
 	for (;;)
 	{
 		// Put CPU in sleep if possible. 
 		err_code = sd_app_evt_wait();
 		APP_ERROR_CHECK(err_code);
+		
 
 		// Extract and process all pending ANT events as long as there are any left. 
 		do

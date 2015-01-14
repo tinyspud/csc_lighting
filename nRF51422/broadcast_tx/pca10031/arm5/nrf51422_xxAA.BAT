@@ -9,6 +9,7 @@ SET CPU_CLOCK=0x00F42400
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\s210_ll.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\system_error_callbacks.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\system_adc_ll.__i"
+"C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\adcsampling.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\slld.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\slld_hal.__i"
 "C:\Keil_v5\ARM\ARMCC\Bin\ArmCC" --Via ".\_build\bsp.__i"

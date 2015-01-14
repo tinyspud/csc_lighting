@@ -73,12 +73,15 @@
 #define SPIM0_MISO_PIN      23u     /**< SPI Master In Slave Out GPIO pin number. */
 #define SPIM0_SS_PIN        5u     /**< SPI Slave Select GPIO pin number. */
 
-#define EEPROM_CS_PIN			SPIM0_SS_PIN
+#define EEPROM_CS_PIN		SPIM0_SS_PIN
 #define EEPROM_CLK_PIN		SPIM0_SCK_PIN
 #define EEPROM_MOSI_PIN		SPIM0_MOSI_PIN
 #define EEPROM_MISO_PIN		SPIM0_MISO_PIN
-#define EEPROM_WP_PIN			9U
+#define EEPROM_WP_PIN		9U
 #define EEPROM_RST_PIN		6U
+
+#define STRAIN_GAUGE_PIN	ADC_CONFIG_PSEL_AnalogInput3
+#define STRAIN_GAUGE_REF	0U
 
 
 
