@@ -32,11 +32,12 @@
 #include "nordic_common.h"
 #include "bsp.h"
 
+#include "system_timer.h"
 #include "LEDs.h"
 #include "slld_hal.h"
 #include "FlashApp.h"
 #include "system_error_callbacks.h"
-#include "S210_LL.h"
+#include "S210_LL.h" 
 #include "ADCSampling.h"
 
 /**@brief Function for application main entry. Does not return.
@@ -59,28 +60,12 @@ int main(void)
 	/* Init the ADC */
 	init_strain_ADC();
 	
+	/* Init the timer */
+	system_timer_init();
+	
 	/* Init the temperature */
-	int32_t volatile temp = 1;
 	nrf_temp_init();
 	
-	system_ADC_LL_init();
-
-	NRF_TEMP->TASKS_START = 1; /** Start the temperature measurement. */
-
-	/* Busy wait while temperature measurement is not finished, you can skip waiting if you enable interrupt for DATARDY event and read the result in the interrupt. */
-	/*lint -e{845} // A zero has been given as right argument to operator '|'" */
-	while (NRF_TEMP->EVENTS_DATARDY == 0)
-	{
-		// Do nothing.
-	}
-	NRF_TEMP->EVENTS_DATARDY = 0;
-
-	/**@note Workaround for PAN_028 rev2.0A anomaly 29 - TEMP: Stop task clears the TEMP register. */
-	temp = (nrf_temp_read() / 4);
-
-	/**@note Workaround for PAN_028 rev2.0A anomaly 30 - TEMP: Temp module analog front end does not power down when DATARDY event occurs. */
-	NRF_TEMP->TASKS_STOP = 1; /** Stop the temperature measurement. */
-
 	uint32_t err_code = 0;
 	LED_TURN_ON(LED_GREEN);
 	
@@ -91,15 +76,12 @@ int main(void)
 		err_code = sd_app_evt_wait();
 		APP_ERROR_CHECK(err_code);
 		
-
 		// Extract and process all pending ANT events as long as there are any left. 
 		do
 		{
-			LED_TURN_ON(LED_ORANGE);
 			// Fetch the event. 
 			err_code = handle_ANT_events();
 		} while (err_code == NRF_SUCCESS);
-		LED_TURN_OFF(LED_ORANGE);
 	}
 }
 

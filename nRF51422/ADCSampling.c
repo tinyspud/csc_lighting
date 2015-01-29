@@ -31,39 +31,27 @@ void init_strain_ADC(void){
 	NRF_ADC->ENABLE = ADC_ENABLE_ENABLE_Enabled;
 	
 	_adc_val = 0;
+
 }
 
-uint8_t battery_level_get(void) //Returns battery level as a percentage
-{
-	NRF_ADC->EVENTS_END = 0;
-	NRF_ADC->ENABLE     = ADC_ENABLE_ENABLE_Enabled;
 
-	NRF_ADC->EVENTS_END  = 0;    // Stop any running conversions.
-	NRF_ADC->TASKS_START = 1;
-
-	while (!NRF_ADC->EVENTS_END)
-	{
-	}
-
-	NRF_ADC->EVENTS_END     = 0;
-	NRF_ADC->TASKS_STOP     = 1;
-
-	return 0;
+void start_ADC(void){
+	
 }
 
 /* Interrupt handler for ADC data ready event */
 void ADC_IRQHandler(void)
 {
 	/* Clear dataready event */
-  NRF_ADC->EVENTS_END = 0;	
+	NRF_ADC->EVENTS_END = 0;	
 
 	/* Write ADC result to port 2 */
- 	_adc_val = NRF_ADC->RESULT;
+	_adc_val = NRF_ADC->RESULT;
 	
 	//Use the STOP task to save current. Workaround for PAN_028 rev1.5 anomaly 1.
 	NRF_ADC->TASKS_STOP = 1;
 	
-//	//Release the external crystal
+	//Release the external crystal
 //	sd_clock_hfclk_release();
 }
 

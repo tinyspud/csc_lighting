@@ -37,7 +37,6 @@ void display_task( void* p_params )
 	/* Someone else comes in and tells you the display is busy */
 	/* First time around, it's you */
 	gc_is_display_busy = true;
-//	xTimerStop(xBorderTimer, 1);
 	for (;;){
 		/* Have this task run like it's a timer */
 		if(gc_is_display_busy){
@@ -45,9 +44,7 @@ void display_task( void* p_params )
 
 			/* Stop conditions for the display timer */
 			switch(displaystate){
-//			case EinkIdleAndOn:
 			case EinkIdleAndOff:
-//			case EinkJustInitializedReadyForFirstFrame:
 				gc_is_display_busy = false;
 				l_can_press = true;
 				break;

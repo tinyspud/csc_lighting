@@ -11,6 +11,7 @@
 #include "vis.h"
 #include "menu_display.h"
 #include "render.h"
+#include "GraphArea.h"
 
 static volatile boolean l_is_emcy = false;
 static volatile boolean l_can_press = true;
@@ -33,42 +34,38 @@ void ui_task( void* p_params )
 	invalidate_GPSDATA_S_data(&_ui_gps_dat);
 
 	clear_scratch_screen();
-	//	render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
 
-	//	render_line(1, 101, 1, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(2, 101, 2, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(3, 101, 3, 120, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_rectangle(0, 0, 5, 21, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
+	RenderGraph();
+
+	//	render_line_solid(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//
-	//	render_line(10, 20, 10, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(11, 20, 11, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(12, 20, 12, 1, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	LineDrawingStyle_t style = LINE_DRAWING_STYLE_DOT;
+	//	render_line(0, 0, 50, 5, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_DOT;
+	//	render_line(0, 1, 50, 6, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_DOT;
+	//	render_line(0, 2, 50, 7, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
 	//
-	//	render_line(0, 25, 20, 25, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(0, 27, 20, 27, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_DASH;
+	//	render_line(0, 4, 50, 9, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_DASH;
+	//	render_line(0, 5, 50, 10, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_DASH;
+	//	render_line(0, 6, 50, 11, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
 	//
-	render_line_solid(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_LONG;
+	//	render_line(0, 8, 50, 13, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_LONG;
+	//	render_line(0, 9, 50, 14, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_LONG;
+	//	render_line(0, 10, 50, 15, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
 	//
-	//		render_rectangle(0,0,50,50,DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
-
-	//	render_line(2, 1, 4, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(50, 20, 1, 20, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(0, 0, 90, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(0, 1, 90, 91, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_line(1, 0, 91, 90, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-
-	//	render_bezier_with_control_lines(0, 87, 132, 0, 132, 176, 264, 87, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_bezier(0, 86, 132, -1, 132, 175, 264, 86, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-	//	render_bezier(0, 88, 132, 1, 132, 177, 264, 88, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
-
-	LineDrawingStyle_t style = LINE_DRAWING_STYLE_DOT;
-	render_line(0, 0, 50, 0, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
-
-	style = LINE_DRAWING_STYLE_DASH;
-	render_line(0, 1, 50, 1, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
-
-	style = LINE_DRAWING_STYLE_LONG;
-	render_line(0, 2, 50, 2, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_SOLID;
+	//	render_line(0, 12, 50, 17, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_SOLID;
+	//	render_line(0, 13, 50, 18, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
+	//	style = LINE_DRAWING_STYLE_SOLID;
+	//	render_line(0, 14, 50, 19, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
 
 	boolean upload = false;
 
@@ -120,15 +117,9 @@ void ui_task( void* p_params )
 			render_smart_string(string_to_disp, 14, top, (DISPLAY_WIDTH_PIXELS / 2), DRAW_SET_F | DRAW_ALIGN_CENTER,
 					RENDER_ENDING_3_ARGUMENTS);
 
-			if(upload)
-				try_upload_screen();
-			else{
+			if(!upload)
 				render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
-
-				if(alternate)
-					render_rectangle(0, 0, DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, DRAW_SET_TOGGLE, RENDER_ENDING_3_ARGUMENTS);
-				try_upload_screen();
-			}
+			try_upload_screen();
 
 			/* Log the time */
 			last_tick_refreshed = xTaskGetTickCount();

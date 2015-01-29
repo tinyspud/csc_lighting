@@ -434,14 +434,14 @@
               <FilePath>..\..\..\system_error_callbacks.c</FilePath>
             </File>
             <File>
-              <FileName>system_ADC_LL.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\system_ADC_LL.c</FilePath>
-            </File>
-            <File>
               <FileName>ADCSampling.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\ADCSampling.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\system_timer.c</FilePath>
             </File>
           </Files>
         </Group>

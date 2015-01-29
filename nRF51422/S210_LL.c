@@ -30,7 +30,7 @@
 #define CHANNEL_0                       0x00                 /**< ANT Channel 0. */
 #define CHANNEL_0_ANT_EXT_ASSIGN        0x00                 /**< ANT Ext Assign. */
 
-#define CHANNEL_0_PERIOD				10				/* Channel period (n/32768 s period) */	
+#define CHANNEL_0_PERIOD				3276				/* Channel period (n/32768 s period) */	
 
 // Channel ID configuration. 
 #define CHANNEL_0_CHAN_ID_DEV_TYPE      0x02u                /**< Device type. */
@@ -64,12 +64,11 @@ static void channel_event_handle(uint32_t event)
 		// Send a new broadcast and increment the counter.
 	case EVENT_TX:
 		
-	/* Busy wait while temperature measurement is not finished, you can skip waiting if you enable interrupt for DATARDY event and read the result in the interrupt. */
+	/* Busy wait while temperature measurement is not finished, you can skip waiting
+	if you enable interrupt for DATARDY event and read the result in the interrupt. */
 	/*lint -e{845} // A zero has been given as right argument to operator '|'" */
-//	while (NRF_TEMP->EVENTS_DATARDY == 0)
-//	{
-//		// Do nothing.
-//	}
+	LED_TURN_ON(LED_ORANGE);
+
 	if(NRF_ADC->BUSY == 0){
 		ADC = GetADCVal();
 		/* Restart ADC sampling */
@@ -82,29 +81,31 @@ static void channel_event_handle(uint32_t event)
 		/**@note Workaround for PAN_028 rev2.0A anomaly 29 - TEMP: Stop task clears the TEMP register. */
 		temp = (nrf_temp_read() / 4);
 
-		/**@note Workaround for PAN_028 rev2.0A anomaly 30 - TEMP: Temp module analog front end does not power down when DATARDY event occurs. */
+		/**@note Workaround for PAN_028 rev2.0A anomaly 30 - TEMP: Temp module 
+		analog front end does not power down when DATARDY event occurs. */
 		NRF_TEMP->TASKS_STOP = 1; /** Stop the temperature measurement. */
 	}
 
 	/** Start the temperature measurement. */
 	NRF_TEMP->TASKS_START = 1;
 
-		// Assign a new value to the broadcast data. 
-		m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
-		m_broadcast_data[0] = (uint8_t)((temp >> 8) & (0x000000FF));
-		m_broadcast_data[1] = (uint8_t)(temp & 0x000000FF);
+	// Assign a new value to the broadcast data. 
+	m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
+	m_broadcast_data[0] = (uint8_t)((temp >> 8) & (0x000000FF));
+	m_broadcast_data[1] = (uint8_t)(temp & 0x000000FF);
 
-		m_broadcast_data[2] = (uint8_t)((ADC >> 8) & (0x000000FF));
-		m_broadcast_data[3] = (uint8_t)(ADC & 0x000000FF);
+	m_broadcast_data[2] = (uint8_t)((ADC >> 8) & (0x000000FF));
+	m_broadcast_data[3] = (uint8_t)(ADC & 0x000000FF);
 
 	// Broadcast the data. 
-		err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
-		BROADCAST_DATA_BUFFER_SIZE,
-		m_broadcast_data);
-		APP_ERROR_CHECK(err_code);
+	err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
+			BROADCAST_DATA_BUFFER_SIZE,
+			m_broadcast_data);
+	APP_ERROR_CHECK(err_code);
 
-		// Increment the counter.
-		m_counter++;
+	// Increment the counter.
+	m_counter++;
+	LED_TURN_OFF(LED_ORANGE);
 
 		break;
 

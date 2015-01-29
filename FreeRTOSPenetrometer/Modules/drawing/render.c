@@ -618,11 +618,11 @@ void render_line_solid(int x1_p, int y1_p, int x2_p, int y2_p, uint8 draw_type, 
 
 
 inline void increment_line(LineDrawingStyle_t * Ptr2LineProperties){
-	*(Ptr2LineProperties) = ((*(Ptr2LineProperties)) & LineDrawingBitMask) | (((*(Ptr2LineProperties)) + 1) & LineDataBitMask);
+	*(Ptr2LineProperties) = ((*(Ptr2LineProperties)) & LINE_DRAWING_BIT_MASK) | ((((*(Ptr2LineProperties)) + 1) & LINE_DATA_BIT_MASK) % LINE_NUM_DRAW_BITS);
 }
 
 inline bool needtodrawpixelinline(LineDrawingStyle_t * Ptr2LineProperties){
-	return (((*(Ptr2LineProperties)) >> (LineNumDataBits + ((*(Ptr2LineProperties)) & LineDataBitMask))) & 1) == 1;
+	return (((*(Ptr2LineProperties)) >> (LINE_NUM_DATA_BITS + ((*(Ptr2LineProperties)) & LINE_DATA_BIT_MASK))) & 1) == 1;
 }
 
 /* Draw a line from (x1, y1) to (x2, y2) */

@@ -3,34 +3,34 @@
 #define __BUILD_AUTOGEN_H
 #define HAS_GIT_PARAMS
 
-#define BUILD_PATH	"C:\\Users\\Chris\\Desktop\\Beaumont\\penetrometer\r\n\0"
+#define BUILD_PATH	"C:\\Users\\chris\\Desktop\\beaumont\\penetrometer\r\n\0"
 
-#define BUILD_SYSTEM	"BABEBIGBLUEOX\r\n\0"
+#define BUILD_SYSTEM	"PIZZABOX\r\n\0"
 
-#define BUILD_USER_DOMAIN	"BABEBIGBLUEOX\r\n\0"
+#define BUILD_USER_DOMAIN	"PIZZABOX\r\n\0"
 
-#define BUILD_USER_NAME	"Chris\r\n\0"
+#define BUILD_USER_NAME	"chris\r\n\0"
 
 #define BRANCH_NAME	"master\r\n\0"
 
-#define COMMIT_SHA	"58730d794a88677d49e8e139ac216b420a5cbe8a\r\n\0"
+#define COMMIT_SHA	"f3d6c16e62c90b64d4c1cf6735756f1be2df8421\r\n\0"
 
 /* Time format: YYYY_MM_DD_HH:mm:ss */
-#define LAST_COMMIT_TIME_UTC	"2015_01_13_09:44:31\r\n\0"
+#define LAST_COMMIT_TIME_UTC	"2015_01_14_03:28:04\r\n\0"
 
-#define COMPILE_TIME_UTC	"2015_01_13_11:44:53\r\n\0"
+#define COMPILE_TIME_UTC	"2015_01_29_08:33:10\r\n\0"
 
 #define COMPILE_TIME_UTC_YYYY	2015
 
 #define COMPILE_TIME_UTC_MM	1
 
-#define COMPILE_TIME_UTC_DD	13
+#define COMPILE_TIME_UTC_DD	29
 
-#define COMPILE_TIME_UTC_HH	11
+#define COMPILE_TIME_UTC_HH	8
 
-#define COMPILE_TIME_UTC_mm	44
+#define COMPILE_TIME_UTC_mm	33
 
-#define COMPILE_TIME_UTC_ss	53
+#define COMPILE_TIME_UTC_ss	10
 
 #define LONGEST_STR_USED	44
 

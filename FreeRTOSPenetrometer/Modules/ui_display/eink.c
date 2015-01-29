@@ -392,7 +392,7 @@ BaseType_t epaper_start_COG_driver(){
 	return pdFAIL;
 }
 
-#define NUM_WASH_CYCLES	4
+#define NUM_WASH_CYCLES	1
 
 /* Break code into blocks that can be executed on timer ticks by the RTOS -
  * advance the execution through blocks at states since the RM48 is so fast and the
@@ -400,7 +400,6 @@ BaseType_t epaper_start_COG_driver(){
 einkstate_t manage_eink(einkstate_t state){
 	int i;
 	uint16 temp = 0x0000;
-	boolean prev = false;
 
 	einkstate_t rtnval = state;
 	switch(state){
@@ -443,51 +442,69 @@ einkstate_t manage_eink(einkstate_t state){
 			wait_to_not_busy();
 		}
 #else
-		/* Load inverted image */
-		for(temp = 0; temp < 2; temp++){
-			for(i = 0; i < LINES_ON_SCREEN; i++){
-				wait_to_not_busy();
-				uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i, NegativeImage);
-				wait_to_not_busy();
-			}
-		}
-		waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
+		{
+			int block_size = 5;
+			//			int step_size = block_size / 4;
+			int step_size = 1;
+			int num_frames = 4;
+			int num_washes = 4;
 
-		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
-			/* Load black frame */
-			write_epaper_solid_flush(BlackScreenFlush);
+			int scratch_step_loc, step_top, step_bottom;
 
-			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-		}
-		/* Load white frame */
-		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
-			write_epaper_solid_flush(WhiteScreenFlush);
-			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-		}
-		/* Load black frame */
-		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
-			write_epaper_solid_flush(BlackScreenFlush);
-			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-		}
-		/* Load white frame */
-		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
-			write_epaper_solid_flush(WhiteScreenFlush);
-			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
-		}
-		/* Load image */
-		for(temp = 0; temp < 3 * (NUM_WASH_CYCLES); temp++){
-			for(i = 0; i < LINES_ON_SCREEN; i++){
-				wait_to_not_busy();
-				uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[i], i, PositiveImage);
-				/* Clear out the scratch_screen line */
-				clear_scratch_screen_line(i);
-				wait_to_not_busy();
+			/* Load inverted image */
+			for(temp = 0; temp < num_frames; temp++){
+				step_top = -block_size;
+
+				while(step_top <= LINES_ON_SCREEN){
+					step_bottom = step_top + block_size;
+					for(scratch_step_loc = step_bottom; scratch_step_loc != step_top; scratch_step_loc--){
+						if((scratch_step_loc >= 0) && (scratch_step_loc < LINES_ON_SCREEN)){
+							wait_to_not_busy();
+							if((temp == (num_frames - 1)) && (scratch_step_loc == (step_top - 1)))
+								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NothingScreenFlush);
+							else
+								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NegativeImage);
+							wait_to_not_busy();
+						}
+					}
+					step_top += step_size;
+				}
 			}
-		}
-		/* Load white frame */
-		for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
-			write_epaper_solid_flush(NothingScreenFlush);
-			waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+			waitDisplayDrver(400 * SYS_TICKS_IN_1_MS);
+
+			for(scratch_step_loc = 0; scratch_step_loc < num_washes; scratch_step_loc++){
+				for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
+					/* Load black frame */
+					write_epaper_solid_flush(BlackScreenFlush);
+
+					waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+				}
+				/* Load white frame */
+				for(temp = 0; temp < NUM_WASH_CYCLES; temp++){
+					write_epaper_solid_flush(WhiteScreenFlush);
+					waitDisplayDrver(196 * SYS_TICKS_IN_1_MS);
+				}
+			}
+
+			/* Load image */
+			for(temp = 0; temp < num_frames; temp++){
+				step_top = -block_size;
+
+				while(step_top <= LINES_ON_SCREEN){
+					step_bottom = step_top + block_size;
+					for(scratch_step_loc = step_bottom; scratch_step_loc != step_top; scratch_step_loc--){
+						if((scratch_step_loc >= 0) && (scratch_step_loc < LINES_ON_SCREEN)){
+							wait_to_not_busy();
+							if((temp == (num_frames - 1)) && (scratch_step_loc == (step_top - 1)))
+								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NothingScreenFlush);
+							else
+								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, PositiveImage);
+							wait_to_not_busy();
+						}
+					}
+					step_top += step_size;
+				}
+			}
 		}
 #endif
 		rtnval = EinkIdleAndOn;
@@ -837,7 +854,7 @@ void displayResetPointer(spiDAT1_t dataconfig1_t) {
 inline static void waitDisplayDrver(TickType_t time)
 {
 	TickType_t start_tick = xTaskGetTickCount();
-//	while((xTaskGetTickCount()) < (time + start_tick)) { }
+	//	while((xTaskGetTickCount()) < (time + start_tick)) { }
 	vTaskDelayUntil(&start_tick, time);
 }
 
