@@ -21,7 +21,7 @@ void TIMER1_IRQHandler(void){
     if(NRF_TIMER1->EVENTS_COMPARE[0] != 0)
 	{
 		/* Toggle the red LED */
-		nrf_gpio_pin_toggle(LED_RED);
+		LED_TURN_ON(ADC_INDICATOR_LED);
 
 		if(NRF_ADC->BUSY == 0)
 			NRF_ADC->TASKS_START = 1;							//Start ADC sampling

@@ -12,8 +12,22 @@
 #include "nordic_common.h"
 #include "bsp.h"
 
+#include "LEDs.h"
+#include "ADCSampling.h"
 
 uint32_t _adc_val = 0;
+
+typedef enum active_adc_buffer{
+	adc_buffer0 = 0,
+	adc_buffer1 = 1,
+}active_adc_buffer_t;
+
+static volatile int active_buff_idx = 0;
+
+static volatile active_adc_buffer_t active_buff_num;
+
+uint32_t _adc_buffer_0[ADC_BUFF_LEN];
+uint32_t _adc_buffer_1[ADC_BUFF_LEN];
 
 void init_strain_ADC(void){
 	/* Enable interrupt on ADC sample ready event*/		
@@ -31,7 +45,15 @@ void init_strain_ADC(void){
 	NRF_ADC->ENABLE = ADC_ENABLE_ENABLE_Enabled;
 	
 	_adc_val = 0;
+	
+	int i = 0;
+	for(i = 0; i < ADC_BUFF_LEN; i++){
+		_adc_buffer_0[i] = 0;
+		_adc_buffer_1[i] = 0;
+	}
 
+	active_buff_num = adc_buffer0;
+	active_buff_idx = 0;
 }
 
 
@@ -47,6 +69,27 @@ void ADC_IRQHandler(void)
 
 	/* Write ADC result to port 2 */
 	_adc_val = NRF_ADC->RESULT;
+
+	switch(active_buff_num){
+		default:
+			active_buff_num = adc_buffer0;
+		case adc_buffer0:
+			_adc_buffer_0[active_buff_idx] = _adc_val;
+			break;
+		case adc_buffer1:
+			_adc_buffer_1[active_buff_idx] = _adc_val;
+			break;
+	}
+	
+	active_buff_idx++;
+	if(active_buff_idx >= ADC_BUFF_LEN){
+		active_buff_idx = 0;
+		/* Switch buffers */
+		active_buff_num = (active_buff_num == adc_buffer0) ? adc_buffer1 : adc_buffer0;
+	}
+	
+	LED_TURN_OFF(ADC_INDICATOR_LED);
+
 	
 	//Use the STOP task to save current. Workaround for PAN_028 rev1.5 anomaly 1.
 	NRF_ADC->TASKS_STOP = 1;

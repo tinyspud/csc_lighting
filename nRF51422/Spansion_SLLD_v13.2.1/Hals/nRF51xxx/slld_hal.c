@@ -48,9 +48,12 @@
 
 
 
-#define TX_RX_BUFF_LEN		4096
-uint8_t tx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20002000)));
-uint8_t rx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20003000)));
+#define TX_RX_BUFF_LEN		1
+//uint8_t tx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20002000)));
+//uint8_t rx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20003000)));
+
+uint8_t tx_buffer[TX_RX_BUFF_LEN];
+uint8_t rx_buffer[TX_RX_BUFF_LEN];
 
 // ***************************************************************************
 //	FLASH_READ - HAL read function

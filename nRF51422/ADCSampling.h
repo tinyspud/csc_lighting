@@ -6,6 +6,10 @@
 #include <stdint.h>
 
 #define ADC_SAMPLING_PERIOD		125
+#define ADC_INDICATOR_LED		LED_RED
+
+#define ADC_BUFF_LEN	16
+
 
 void init_strain_ADC(void);
 
