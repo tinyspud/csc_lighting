@@ -51,8 +51,6 @@ void ADC_IRQHandler(void)
 	//Use the STOP task to save current. Workaround for PAN_028 rev1.5 anomaly 1.
 	NRF_ADC->TASKS_STOP = 1;
 	
-	//Release the external crystal
-//	sd_clock_hfclk_release();
 }
 
 

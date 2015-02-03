@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define ADC_SAMPLING_PERIOD		125
 
 void init_strain_ADC(void);
 
