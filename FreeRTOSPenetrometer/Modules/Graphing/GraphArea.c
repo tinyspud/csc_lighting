@@ -28,6 +28,7 @@ void RenderGraph(){
 
 	/* Draw minor gridlines */
 	style = LINE_DRAWING_STYLE_DOT;
+//	style = LINE_DRAWING_STYLE_SOLID;
 	for(xy_temp = y_axis_loc; xy_temp < DISPLAY_WIDTH_PIXELS; xy_temp += PIXELS_GRID_DISTANCE){
 		for(i = 0; i < MINOR_AXIS_THICKNESS; i++){
 			RESET_LINE_DRAWING_STYLE(style);

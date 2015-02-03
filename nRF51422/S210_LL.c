@@ -69,11 +69,12 @@ static void channel_event_handle(uint32_t event)
 	/*lint -e{845} // A zero has been given as right argument to operator '|'" */
 	LED_TURN_ON(LED_ORANGE);
 
-	if(NRF_ADC->BUSY == 0){
 		ADC = GetADCVal();
-		/* Restart ADC sampling */
-		NRF_ADC->TASKS_START = 1;							//Start ADC sampling
-	}
+//	if(NRF_ADC->BUSY == 0){
+//		ADC = GetADCVal();
+//		/* Restart ADC sampling */
+//		NRF_ADC->TASKS_START = 1;							//Start ADC sampling
+//	}
 	
 	if(NRF_TEMP->EVENTS_DATARDY == 1){
 		NRF_TEMP->EVENTS_DATARDY = 0;

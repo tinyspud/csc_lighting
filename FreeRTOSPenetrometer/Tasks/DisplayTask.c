@@ -27,7 +27,7 @@ void display_task( void* p_params )
 	 *  */
 
 	/* Init the display buffers (they're very large) */
-	gc_is_display_busy = false;
+	gc_is_display_busy = true;
 
 	l_can_press = false;
 

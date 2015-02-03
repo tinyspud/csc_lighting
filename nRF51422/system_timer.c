@@ -13,8 +13,25 @@
 #include "bsp.h"
 
 #include "system_timer.h"
+#include "LEDs.h"
+
+void TIMER1_IRQHandler(void){
+	/* Look at what kind of interrupt is being generated */
+//	/* Timer interrupt - start the ADC */
+//	if(NRF_ADC->BUSY == 0)
+//		NRF_ADC->TASKS_START = 1;							//Start ADC sampling
+//    if ((NRF_TIMER1->EVENTS_COMPARE[0] != 0) && \
+//        ((NRF_TIMER1->INTENSET & TIMER_INTENSET_COMPARE0_Msk) != 0))
+    if(NRF_TIMER1->EVENTS_COMPARE[0] != 0)
+	{
+		/* Toggle the red LED */
+		nrf_gpio_pin_toggle(LED_RED);
+		NRF_TIMER1->EVENTS_COMPARE[0] = 0;
+	}
+}
 
 void system_timer_init(void){
+	
 	// Start 16 MHz crystal oscillator.
     NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
     NRF_CLOCK->TASKS_HFCLKSTART    = 1;
@@ -25,38 +42,31 @@ void system_timer_init(void){
         // Do nothing.
     }
 	
-	/* Crystal is 15MHz */
-    NRF_TIMER0->MODE        = TIMER_MODE_MODE_Timer;       // Set the timer in Timer Mode.
-    NRF_TIMER0->PRESCALER   = 9;                           // Prescaler 9 produces 31250 Hz timer frequency => 1 tick = 32 us.
-    NRF_TIMER0->BITMODE     = TIMER_BITMODE_BITMODE_16Bit; // 16 bit mode.
+	/* Crystal is 16MHz */
+    NRF_TIMER1->MODE        = TIMER_MODE_MODE_Timer;       // Set the timer in Timer Mode.
+    NRF_TIMER1->PRESCALER   = 9;                           // Prescaler 10 produces n 16 MHz/2^(prescaler) = 15625 Hz
+    NRF_TIMER1->BITMODE     = TIMER_BITMODE_BITMODE_16Bit; // 16 bit mode.
+	NRF_TIMER1->SHORTS      = TIMER_SHORTS_COMPARE0_STOP_Disabled << TIMER_SHORTS_COMPARE0_STOP_Pos;
 	
-	NVIC_EnableIRQ(TIMER0_IRQn);
-	
-
+//	sd_nvic_SetPriority(TIMER1_IRQn, NRF_APP_PRIORITY_HIGH);  
+//	sd_nvic_EnableIRQ(TIMER1_IRQn);
 }
 
 void start_system_timer(){
-	    NRF_TIMER0->TASKS_CLEAR = 1;                           // clear the task first to be usable for later.
+	NRF_TIMER1->TASKS_CLEAR = 1;                           // clear the task first to be usable for later.
+
+	/* Enable the compare 0 interrupt */
+//	NRF_TIMER1->INTENCLR |= TIMER_INTENCLR_COMPARE0_Clear << TIMER_INTENCLR_COMPARE0_Pos;;
+	NRF_TIMER1->INTENSET |= TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
 
     // With 32 us ticks, we need to multiply by 31.25 to get milliseconds.
-//    NRF_TIMER0->CC[0]       = number_of_ms * 31;
-//    NRF_TIMER0->CC[0]      += number_of_ms / 4;
-    NRF_TIMER0->TASKS_START = 1; // Start timer.
+    NRF_TIMER1->CC[0]       = 1000 * 31;
+    NRF_TIMER1->CC[0]      += 1000 / 4;
 
-    while (NRF_TIMER0->EVENTS_COMPARE[0] == 0)
-    {
-        // Do nothing.
-    }
-
-    NRF_TIMER0->EVENTS_COMPARE[0] = 0;
-    NRF_TIMER0->TASKS_STOP        = 1; // Stop timer.
-	
-	NRF_TIMER0->INTENSET |= TIMER_INTENSET_COMPARE0_Enabled;
-	
-
-}
-
-void TIMER0_IRQHandler(void){
+//	NVIC_EnableIRQ(TIMER1_IRQn);
+	sd_nvic_SetPriority(TIMER1_IRQn, NRF_APP_PRIORITY_LOW);  
+	sd_nvic_EnableIRQ(TIMER1_IRQn);
+    NRF_TIMER1->TASKS_START = 1; // Start timer.
 
 }
 

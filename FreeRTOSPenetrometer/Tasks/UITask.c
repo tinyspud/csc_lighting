@@ -16,7 +16,7 @@
 static volatile boolean l_is_emcy = false;
 static volatile boolean l_can_press = true;
 
-#define UI_DELAY_SECONDS	30
+#define UI_DELAY_SECONDS	60
 
 #define LEN_STR_2_DISP	30
 static char string_to_disp[LEN_STR_2_DISP] = { 0 };
@@ -32,10 +32,6 @@ void ui_task( void* p_params )
 	TickType_t waittime = UI_DELAY_SECONDS;
 	GPSDATA_S _ui_gps_dat = {0};
 	invalidate_GPSDATA_S_data(&_ui_gps_dat);
-
-	clear_scratch_screen();
-
-	RenderGraph();
 
 	//	render_line_solid(40, 26, 20, 40, DRAW_SET_F, RENDER_ENDING_3_ARGUMENTS);
 	//
@@ -68,6 +64,8 @@ void ui_task( void* p_params )
 	//	render_line(0, 14, 50, 19, DRAW_SET_F, &style, RENDER_ENDING_3_ARGUMENTS);
 
 	boolean upload = false;
+
+	boolean started = false;
 
 	for (;;){
 		/* For now just put the tick up on the screen */
@@ -119,6 +117,12 @@ void ui_task( void* p_params )
 
 			if(!upload)
 				render_disable_rectangle_OR(0,0,DISPLAY_WIDTH_PIXELS, DISPLAY_HEIGHT_PIXELS, RENDER_ENDING_3_ARGUMENTS);
+
+			if(!started){
+				clear_scratch_screen();
+				RenderGraph();
+				started = true;
+			}
 			try_upload_screen();
 
 			/* Log the time */

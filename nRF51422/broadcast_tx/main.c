@@ -51,24 +51,30 @@ int main(void)
 	/* Init the S210 low level drivers (soft device) */
 	init_S210_LL();
 
-	/* Init the SPI Master */
-	spi_EEPROM_init();
+//	/* Init the SPI Master */
+//	spi_EEPROM_init();
 
-	/* Start the flash app */
-	init_flash_app();
+//	/* Start the flash app */
+//	init_flash_app();
 
-	/* Init the ADC */
-	init_strain_ADC();
-	
 	/* Init the timer */
 	system_timer_init();
-	
+
+//	/* Init the ADC */
+//	init_strain_ADC();
+//		
 	/* Init the temperature */
-	nrf_temp_init();
-	
+//	nrf_temp_init();
+//	
 	uint32_t err_code = 0;
 	LED_TURN_ON(LED_GREEN);
 	
+	__enable_irq();
+	/* Start the system timer */
+	start_system_timer();
+
+	while(true){};
+
 	// Main loop. 
 	for (;;)
 	{

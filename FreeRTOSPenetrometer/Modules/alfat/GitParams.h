@@ -13,24 +13,24 @@
 
 #define BRANCH_NAME	"master\r\n\0"
 
-#define COMMIT_SHA	"f3d6c16e62c90b64d4c1cf6735756f1be2df8421\r\n\0"
+#define COMMIT_SHA	"7a321bd4e782d83cd4f9517ae1152cd1a38f40c1\r\n\0"
 
 /* Time format: YYYY_MM_DD_HH:mm:ss */
-#define LAST_COMMIT_TIME_UTC	"2015_01_14_03:28:04\r\n\0"
+#define LAST_COMMIT_TIME_UTC	"2015_01_29_08:44:52\r\n\0"
 
-#define COMPILE_TIME_UTC	"2015_01_29_08:33:10\r\n\0"
+#define COMPILE_TIME_UTC	"2015_01_31_00:17:35\r\n\0"
 
 #define COMPILE_TIME_UTC_YYYY	2015
 
 #define COMPILE_TIME_UTC_MM	1
 
-#define COMPILE_TIME_UTC_DD	29
+#define COMPILE_TIME_UTC_DD	31
 
-#define COMPILE_TIME_UTC_HH	8
+#define COMPILE_TIME_UTC_HH	0
 
-#define COMPILE_TIME_UTC_mm	33
+#define COMPILE_TIME_UTC_mm	17
 
-#define COMPILE_TIME_UTC_ss	10
+#define COMPILE_TIME_UTC_ss	35
 
 #define LONGEST_STR_USED	44
 

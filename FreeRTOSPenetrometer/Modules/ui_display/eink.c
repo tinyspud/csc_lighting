@@ -90,6 +90,8 @@ void init_display_buffers_and_pins(void) {
 	dataconfig1_t.DFSEL   = SPI_FMT_0;
 	dataconfig1_t.CSNR    = 0;
 
+	/* Draw first thing on screen */
+	RenderGraph();
 	/* Set all pins low */
 	gioSetBit(EINK_PANEL_ON_PORT, EINK_PANEL_ON_PIN, 0);
 	gioSetBit(EINK_CS_PORT, EINK_CS_PIN, 0);
@@ -398,7 +400,6 @@ BaseType_t epaper_start_COG_driver(){
  * advance the execution through blocks at states since the RM48 is so fast and the
  * chip takes a long time to respond to things */
 einkstate_t manage_eink(einkstate_t state){
-	int i;
 	uint16 temp = 0x0000;
 
 	einkstate_t rtnval = state;
@@ -443,10 +444,11 @@ einkstate_t manage_eink(einkstate_t state){
 		}
 #else
 		{
-			int block_size = 5;
+//			int block_size = 20;
+			int block_size = LINES_ON_SCREEN;
 			//			int step_size = block_size / 4;
 			int step_size = 1;
-			int num_frames = 4;
+			int num_frames = 2;
 			int num_washes = 4;
 
 			int scratch_step_loc, step_top, step_bottom;
@@ -460,10 +462,10 @@ einkstate_t manage_eink(einkstate_t state){
 					for(scratch_step_loc = step_bottom; scratch_step_loc != step_top; scratch_step_loc--){
 						if((scratch_step_loc >= 0) && (scratch_step_loc < LINES_ON_SCREEN)){
 							wait_to_not_busy();
-							if((temp == (num_frames - 1)) && (scratch_step_loc == (step_top - 1)))
-								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NothingScreenFlush);
-							else
-								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NegativeImage);
+//							if((temp == (num_frames - 1)) && (scratch_step_loc == (step_top - 1)))
+//								uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NothingScreenFlush);
+//							else
+							uploadImageLine_pre_bitflip(dataconfig1_t, scratch_screen[scratch_step_loc], scratch_step_loc, NegativeImage);
 							wait_to_not_busy();
 						}
 					}
