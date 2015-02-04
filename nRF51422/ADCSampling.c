@@ -93,7 +93,6 @@ void ADC_IRQHandler(void)
 	}
 	
 	LED_TURN_OFF(ADC_INDICATOR_LED);
-
 	
 	//Use the STOP task to save current. Workaround for PAN_028 rev1.5 anomaly 1.
 	NRF_ADC->TASKS_STOP = 1;
