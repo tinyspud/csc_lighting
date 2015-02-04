@@ -922,8 +922,9 @@ SLLD_STATUS slld_WRSRCmd
 #endif /* REMOVE_WRSRCmd */
 
 void slld_VersionCmd(void)
-{       
-    printf("\n%s\n", SLLD_VERSION);
+{   
+/* TODO CChock temp disable printf */    
+//    printf("\n%s\n", SLLD_VERSION);
 }
 
 #ifndef REMOVE_SRSTCmd

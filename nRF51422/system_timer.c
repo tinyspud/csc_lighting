@@ -45,7 +45,7 @@ void system_timer_init(void){
 	
 	/* Crystal is 16MHz */
     NRF_TIMER1->MODE        = TIMER_MODE_MODE_Timer;       // Set the timer in Timer Mode.
-    NRF_TIMER1->PRESCALER   = 9;                           // Prescaler 10 produces n 16 MHz/2^(prescaler) = 15625 Hz
+    NRF_TIMER1->PRESCALER   = 8;                           // Prescaler: 16 MHz/2^(prescaler) Hz
     NRF_TIMER1->BITMODE     = TIMER_BITMODE_BITMODE_16Bit; // 16 bit mode.
 	NRF_TIMER1->SHORTS      |= (TIMER_SHORTS_COMPARE0_STOP_Enabled << TIMER_SHORTS_COMPARE0_STOP_Pos) |
 								(TIMER_SHORTS_COMPARE0_CLEAR_Enabled << TIMER_SHORTS_COMPARE0_CLEAR_Pos);
@@ -58,9 +58,10 @@ void start_system_timer(){
 	NRF_TIMER1->INTENSET |= TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
 
     // With 32 us ticks, we need to multiply by 31.25 to get milliseconds.
-    NRF_TIMER1->CC[0]       = (ADC_SAMPLING_PERIOD * 31);
-    NRF_TIMER1->CC[0]      += (ADC_SAMPLING_PERIOD / 4);
-
+//    NRF_TIMER1->CC[0]       = (ADC_SAMPLING_PERIOD * 31);
+//    NRF_TIMER1->CC[0]      += (ADC_SAMPLING_PERIOD / 4);
+	NRF_TIMER1->CC[0] = 16000000/(1 << (NRF_TIMER1->PRESCALER)) / ADC_SAMPLING_FREQ;
+	
 #ifdef SOFTDEVICE_PRESENT
 	sd_nvic_SetPriority(TIMER1_IRQn, NRF_APP_PRIORITY_LOW);  
 	sd_nvic_EnableIRQ(TIMER1_IRQn);

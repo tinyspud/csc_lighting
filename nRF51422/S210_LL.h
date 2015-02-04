@@ -5,6 +5,8 @@
 
 void init_S210_LL(void);
 
+void open_channel_0(void);
+
 uint32_t handle_ANT_events(void);
 
 #endif

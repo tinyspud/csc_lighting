@@ -40,10 +40,15 @@
 #include "S210_LL.h" 
 #include "ADCSampling.h"
 
+void bsp_test(void);
+
 /**@brief Function for application main entry. Does not return.
  */
 int main(void)
 {
+	/* Cycle through all pins setting them high individually to make sure you're properly conencted */
+	bsp_test();
+	
 	/* Very first thing to try to init are the LEDs so you can blink out error
 	 * codes */
 	init_LEDs();
@@ -69,8 +74,9 @@ int main(void)
 	nrf_temp_init();
 	
 	uint32_t err_code = 0;
-	LED_TURN_ON(LED_GREEN);
 
+	/* Open the ANT channel 0 */
+	open_channel_0();
 	/* Start the system timer */
 	start_system_timer();
 
@@ -91,6 +97,24 @@ int main(void)
 		} while (err_code == NRF_SUCCESS);
 	}
 }
+
+void bsp_test(){
+	nrf_gpio_cfg_output(LED_0);
+	nrf_gpio_cfg_output(LED_1);
+	nrf_gpio_cfg_output(LED_2);
+	nrf_gpio_cfg_output(LED_3);
+	
+	nrf_gpio_cfg_output(EEPROM_CS_PIN);
+	nrf_gpio_cfg_output(EEPROM_CLK_PIN);
+	nrf_gpio_cfg_output(EEPROM_MOSI_PIN);
+	nrf_gpio_cfg_output(EEPROM_MISO_PIN);
+	nrf_gpio_cfg_output(EEPROM_WP_PIN);
+	nrf_gpio_cfg_output(EEPROM_RST_PIN);
+
+	/* Cycle through the pins */
+	
+}
+
 
 /**
  *@}

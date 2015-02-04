@@ -86,6 +86,10 @@ void ADC_IRQHandler(void)
 		active_buff_idx = 0;
 		/* Switch buffers */
 		active_buff_num = (active_buff_num == adc_buffer0) ? adc_buffer1 : adc_buffer0;
+		if(active_buff_num == adc_buffer1)
+			LED_TURN_ON(ADC_ACTIVE_BUFF_LED);
+		else
+			LED_TURN_OFF(ADC_ACTIVE_BUFF_LED);
 	}
 	
 	LED_TURN_OFF(ADC_INDICATOR_LED);

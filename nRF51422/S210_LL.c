@@ -157,9 +157,6 @@ static void ant_channel_tx_broadcast_setup(void)
 	err_code = sd_ant_channel_period_set(CHANNEL_0, CHANNEL_0_PERIOD);
 	APP_ERROR_CHECK(err_code);
 	
-	// Open channel. 
-	err_code = sd_ant_channel_open(CHANNEL_0);
-	APP_ERROR_CHECK(err_code);
 }
 
 uint32_t handle_ANT_events(){
@@ -229,14 +226,21 @@ void init_S210_LL(){
 	m_broadcast_data[0] = 0x00;
 	m_broadcast_data[BROADCAST_DATA_BUFFER_SIZE - 1] = m_counter;
 
-	// Initiate the broadcast loop by sending a packet on air, 
-	// then start waiting for an event on this broadcast message.
-	err_code = sd_ant_broadcast_message_tx(CHANNEL_0, BROADCAST_DATA_BUFFER_SIZE, m_broadcast_data);
-	APP_ERROR_CHECK(err_code);
-
 	get_chip_capabilities();
 
 }
 
+void open_channel_0(){
+	uint32_t err_code;
+
+	// Open channel. 
+	err_code = sd_ant_channel_open(CHANNEL_0);
+	APP_ERROR_CHECK(err_code);
+
+	// Initiate the broadcast loop by sending a packet on air, 
+	// then start waiting for an event on this broadcast message.
+	err_code = sd_ant_broadcast_message_tx(CHANNEL_0, BROADCAST_DATA_BUFFER_SIZE, m_broadcast_data);
+	APP_ERROR_CHECK(err_code);
+}	
 
 
