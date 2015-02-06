@@ -47,8 +47,8 @@
 
 
 
-
-#define TX_RX_BUFF_LEN		4100
+/* length is 4KB + 1 command + 4B address */
+#define TX_RX_BUFF_LEN		4102
 //uint8_t tx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20002000)));
 //uint8_t rx_buffer[TX_RX_BUFF_LEN] __attribute__((at(0x20003000)));
 
@@ -263,7 +263,7 @@ int			Number_Of_Written_Bytes				 /* number of bytes to be written */
 )
 {
 	SLLD_STATUS status = SLLD_OK;
-	uint16_t i = 0;
+	int i = 0;
 	uint16_t j = 0;
 
 	uint8_t * spi_tx_data_ptr = &tx_buffer[0];

@@ -80,8 +80,6 @@ int main(void)
 	/* Start the system timer */
 	start_system_timer();
 
-//	while(true){};
-
 	// Main loop. 
 	for (;;)
 	{

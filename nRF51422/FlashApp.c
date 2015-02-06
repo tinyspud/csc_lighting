@@ -16,14 +16,23 @@
 
 DEVSTATUS _status_register;
 
+static ADDRESS _active_addr;
+
+static uint8_t _status_reg_1;
+static uint8_t _status_reg_2;
+
+
+#define TARGETLEN	81
 void init_flash_app(){
 	_status_register = dev_status_unknown;
 	int i = 0;
-	uint8_t target[5] = { 0, 0, 0, 0, 0 };
+	uint8_t target[TARGETLEN] = { 0 };
 	SLLD_STATUS _status = SLLD_ERROR;
 
-	LED_TURN_ON(LED_YELLOW);
+	for(i = 0; i < TARGETLEN; i++)
+		target[i] = 0;
 	
+	LED_TURN_ON(LED_YELLOW);
 	
 	/* Set CS# high */
 	nrf_gpio_pin_set(EEPROM_CS_PIN);
@@ -40,7 +49,6 @@ void init_flash_app(){
 
 	/* Set RST# high */
 	nrf_gpio_pin_set(EEPROM_RST_PIN);
-
 	
 	/* Reset device */
 	_status = slld_SRSTCmd();
@@ -55,10 +63,28 @@ void init_flash_app(){
 	}
 	else
 	{
-		slld_ClearStatusRegisterCmd();
 	}
-	slld_RDIDCmd(&target[0], 5);
+	slld_RDIDCmd(&target[0], TARGETLEN);
+	
+	/* Clear the status register */
+	slld_ClearStatusRegisterCmd();
 
+	/* Read status reg 1 */
+	slld_RDSRCmd(&_status_reg_1);
+	
+	/* Read status reg 2 */
+	slld_RDSR2Cmd(&_status_reg_2);
+	
+	/* Look at the status register values */
+	
+	/* Test write */
+	
+	/* test read */
+	_active_addr = 0;
+	slld_ReadCmd(_active_addr, &target[0], TARGETLEN);
+	
+	
+	
 	
 	/* wait for 100 ms just to make sure the flash is done... */
 	nrf_delay_ms(100);
@@ -66,6 +92,8 @@ void init_flash_app(){
 	/* Look at the status */
 
 }
+
+
 
 /* Write ADC data to flash */
 

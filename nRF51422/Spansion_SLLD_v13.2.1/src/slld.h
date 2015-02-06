@@ -500,6 +500,7 @@ extern "C" {
 #define REMOVE_Fast_Read_4BCmd
 #define REMOVE_SRSTCmd
 #define REMOVE_RASPCmd
+
 #define REMOVE_BRRDCmd
 #define REMOVE_ABRDCmd
 #define REMOVE_ECCRDCmd

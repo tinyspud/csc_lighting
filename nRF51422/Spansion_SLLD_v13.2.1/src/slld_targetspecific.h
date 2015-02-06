@@ -146,18 +146,18 @@ extern "C" {
 /* #define REMOVE_WPWDCmd                           */
 /* #define REMOVE_WPWDOp                            */
 /* #define REMOVE_RCRCmd                            */
-/* #define REMOVE_DUALOUTPUT_READCmd                */
-/* #define REMOVE_DUALOUTPUT_READ_4BCmd             */
-/* #define REMOVE_QUADOUTPUT_READ                   */
-/* #define REMOVE_QUADOUTPUT_READ_4BCmd             */
-/* #define REMOVE_DUALOUTPUT_HP_READ                */
-/* #define REMOVE_DUALOUTPUT_HP_READ_4BCmd          */
-/* #define REMOVE_QUADOUTPUT_HP_READ                */
-/* #define REMOVE_QUADOUTPUT_HP_READ_4BCmd          */
-/* #define REMOVE_QUAD_PAGE_PROGRAMCmd              */
-/* #define REMOVE_QUAD_PAGE_PROGRAM_4BCmd           */
-/* #define REMOVE_QUAD_PAGE_PROGRAMOp               */
-/* #define REMOVE_QUAD_PAGE_PROGRAM_4BOp            */
+#define REMOVE_DUALOUTPUT_READCmd
+#define REMOVE_DUALOUTPUT_READ_4BCmd 
+#define REMOVE_QUADOUTPUT_READ 
+#define REMOVE_QUADOUTPUT_READ_4BCmd 
+#define REMOVE_DUALOUTPUT_HP_READ
+#define REMOVE_DUALOUTPUT_HP_READ_4BCmd
+#define REMOVE_QUADOUTPUT_HP_READ
+#define REMOVE_QUADOUTPUT_HP_READ_4BCmd
+#define REMOVE_QUAD_PAGE_PROGRAMCmd
+#define REMOVE_QUAD_PAGE_PROGRAM_4BCmd 
+#define REMOVE_QUAD_PAGE_PROGRAMOp 
+#define REMOVE_QUAD_PAGE_PROGRAM_4BOp
 /* #define REMOVE_P4EOp                             */
 /* #define REMOVE_P8EOp                             */
 /* #define REMOVE_P8E_4BOp                          */
@@ -173,7 +173,7 @@ extern "C" {
 // enables code to execute commands from a file instead of directly from *
 // the command line.													 *
 //************************************************************************
-#define ENABLE_SCRIPTING_MACRO
+//#define ENABLE_SCRIPTING_MACRO
 
 /************************************************************************
  * Creates lld_printf.log file and writes all the LLD_PRINTFs to it      *
