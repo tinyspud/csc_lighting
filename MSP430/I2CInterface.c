@@ -59,16 +59,7 @@ void __insure_free_i2c_bus(){
 
 	for(tries = 3; tries > 0; tries--){
 		if((UCB1STAT & UCSCLLOW) == UCSCLLOW){
-			//			__i = I2C_STOP_LINE_TIMEOUT;
-			//			while(need2reset && (__i > 0)){
-			//				__i--;
-			//				need2reset = (I2C_CTL1 & UCTXSTP) == UCTXSTP;
-			//			};
-			//
-			//			if(need2reset){
 			_quick_i2c_reset();
-			//				break;
-			//			}
 		}
 		else
 		{
@@ -231,7 +222,6 @@ void _do_coproc_read() {
 		break;
 	case TRANSMIT_RX_ADDR:
 		read_i2c_slave_to_buff();
-		delay_len = SYS_TIMER_QUARTER_SEC;
 		break;
 	default:
 		/* Do nothing */
@@ -289,7 +279,7 @@ void _write_coproc(){
 	UCB1IE |= UCTXIE;                // Enable TX interrupt
 	UCB1CTL1 |= UCTR + UCTXSTT;             // I2C TX, start condition
 
-	TryRegisterWithSysTimer(_do_coproc_write, (5 * SYS_TIMER_ONE_MSEC));
+	TryRegisterWithSysTimer(_do_coproc_write, 1);
 }
 
 void _do_coproc_write(){
@@ -302,8 +292,7 @@ void _do_coproc_write(){
 	else{
 		if(_i2c_state == WRITE_I2C_NACKED)
 			TryRegisterWithSysTimer(_write_coproc, SYS_TIMER_ONE_MSEC);
-
-		TryRegisterWithSysTimer(_do_coproc_write, (5 * SYS_TIMER_ONE_MSEC));
+//		TryRegisterWithSysTimer(_do_coproc_write, (5 * SYS_TIMER_ONE_MSEC));
 	}
 }
 

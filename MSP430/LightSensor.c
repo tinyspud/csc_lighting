@@ -92,6 +92,11 @@ void read_R_val(){
 		R_indexer.curval = STORE_AND_INCREMENT;
 		break;
 	case STORE_AND_INCREMENT:
+		R_buffer[R_indexer.index] |= (uint16_t)scratch;
+
+		EnqueueCharToSendUART('R');
+		EnqueueUIntHexUART(R_buffer[R_indexer.index]);
+
 		R_indexer.curval = GRAB_HIGH_BYTE;
 		R_indexer.index++;
 		if(R_indexer.index >= AMB_BUFF_LEN)
@@ -115,6 +120,11 @@ void read_G_val(){
 		G_indexer.curval = STORE_AND_INCREMENT;
 		break;
 	case STORE_AND_INCREMENT:
+		G_buffer[G_indexer.index] |= (uint16_t)scratch;
+
+		EnqueueCharToSendUART('G');
+		EnqueueUIntHexUART(G_buffer[G_indexer.index]);
+
 		G_indexer.curval = GRAB_HIGH_BYTE;
 		G_indexer.index++;
 		if(G_indexer.index >= AMB_BUFF_LEN)
@@ -138,6 +148,11 @@ void read_B_val(){
 		B_indexer.curval = STORE_AND_INCREMENT;
 		break;
 	case STORE_AND_INCREMENT:
+		B_buffer[B_indexer.index] |= (uint16_t)scratch;
+
+		EnqueueCharToSendUART('B');
+		EnqueueUIntHexUART(B_buffer[B_indexer.index]);
+
 		B_indexer.curval = GRAB_HIGH_BYTE;
 		B_indexer.index++;
 		if(B_indexer.index >= AMB_BUFF_LEN)
@@ -161,6 +176,11 @@ void read_T_val(){
 		T_indexer.curval = STORE_AND_INCREMENT;
 		break;
 	case STORE_AND_INCREMENT:
+		T_buffer[T_indexer.index] |= (uint16_t)scratch;
+
+		EnqueueCharToSendUART('T');
+		EnqueueUIntHexUART(T_buffer[T_indexer.index]);
+
 		T_indexer.curval = GRAB_HIGH_BYTE;
 		T_indexer.index++;
 		if(T_indexer.index >= AMB_BUFF_LEN)
@@ -184,6 +204,11 @@ void read_IR_val(){
 		IR_indexer.curval = STORE_AND_INCREMENT;
 		break;
 	case STORE_AND_INCREMENT:
+		IR_buffer[IR_indexer.index] |= (uint16_t)scratch;
+
+		EnqueueCharToSendUART('I');
+		EnqueueUIntHexUART(IR_buffer[IR_indexer.index]);
+
 		IR_indexer.curval = GRAB_HIGH_BYTE;
 		IR_indexer.index++;
 		if(IR_indexer.index >= AMB_BUFF_LEN)
