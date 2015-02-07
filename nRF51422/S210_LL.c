@@ -14,8 +14,6 @@
 #include "nrf_temp.h"
 
 #include "LEDs.h"
-#include "slld_hal.h"
-#include "FlashApp.h"
 #include "S210_LL.h"
 #include "system_error_callbacks.h"
 #include "ADCSampling.h"

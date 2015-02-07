@@ -34,11 +34,12 @@
 
 #include "system_timer.h"
 #include "LEDs.h"
-#include "slld_hal.h"
-#include "FlashApp.h"
 #include "system_error_callbacks.h"
 #include "S210_LL.h" 
 #include "ADCSampling.h"
+#include "twi_master_config.h"
+#include "twi_master.h"
+#include "LightSensor.h"
 
 void bsp_test(void);
 
@@ -57,12 +58,9 @@ int main(void)
 	/* Init the S210 low level drivers (soft device) */
 	init_S210_LL();
 #endif
-
-	/* Init the SPI Master */
-	spi_EEPROM_init();
-
-	/* Start the flash app */
-	init_flash_app();
+	
+	/* Init the light sensor */
+	init_light_sensor();
 
 	/* Init the timer */
 	system_timer_init();
@@ -97,20 +95,6 @@ int main(void)
 }
 
 void bsp_test(){
-	nrf_gpio_cfg_output(LED_0);
-	nrf_gpio_cfg_output(LED_1);
-	nrf_gpio_cfg_output(LED_2);
-	nrf_gpio_cfg_output(LED_3);
-	
-	nrf_gpio_cfg_output(EEPROM_CS_PIN);
-	nrf_gpio_cfg_output(EEPROM_CLK_PIN);
-	nrf_gpio_cfg_output(EEPROM_MOSI_PIN);
-	nrf_gpio_cfg_output(EEPROM_MISO_PIN);
-	nrf_gpio_cfg_output(EEPROM_WP_PIN);
-	nrf_gpio_cfg_output(EEPROM_RST_PIN);
-
-	/* Cycle through the pins */
-	
 }
 
 

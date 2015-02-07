@@ -58,27 +58,18 @@
 #define BUTTONS_LIST {}
 #define BUTTONS_MASK   0x00000000
 
-// UART connection with J-Link
-#define RX_PIN_NUMBER  11
-#define TX_PIN_NUMBER  9
-#define CTS_PIN_NUMBER 10
-#define RTS_PIN_NUMBER 8
-#define HWFC           true
+//// UART connection with J-Link
+//#define RX_PIN_NUMBER  11
+//#define TX_PIN_NUMBER  9
+//#define CTS_PIN_NUMBER 10
+//#define RTS_PIN_NUMBER 8
+//#define HWFC           true
 
+#define MAX_44008_SCL	24
+#define MAX_44008_SDA	6
+//#define MAX_44008_A0	5
+#define MAX_44008_INT	9
 
-
-
-#define SPIM0_SCK_PIN       11u     /**< SPI clock GPIO pin number. */
-#define SPIM0_MOSI_PIN      24u     /**< SPI Master Out Slave In GPIO pin number. */
-#define SPIM0_MISO_PIN      23u     /**< SPI Master In Slave Out GPIO pin number. */
-#define SPIM0_SS_PIN        5u     /**< SPI Slave Select GPIO pin number. */
-
-#define EEPROM_CS_PIN		SPIM0_SS_PIN
-#define EEPROM_CLK_PIN		SPIM0_SCK_PIN
-#define EEPROM_MOSI_PIN		SPIM0_MOSI_PIN
-#define EEPROM_MISO_PIN		SPIM0_MISO_PIN
-#define EEPROM_WP_PIN		9U
-#define EEPROM_RST_PIN		6U
 
 #define STRAIN_GAUGE_PIN	ADC_CONFIG_PSEL_AnalogInput3
 #define STRAIN_GAUGE_REF	0U
