@@ -52,8 +52,8 @@ void init_light_sensor(){
 	if(twi_master_init())
 		LED_TURN_ON(LED_GREEN);
 
-	scratch = 0xA5;
-    twi_master_transfer(0x55, &scratch, 1, TWI_ISSUE_STOP);
+//	scratch = 0xA5;
+//    twi_master_transfer(0x55, &scratch, 1, TWI_ISSUE_STOP);
 
 	
 	/*  */
@@ -65,7 +65,7 @@ bool read_int_register(){
 	bool transfer_succeeded = true;
 	scratch = REG_INT_STATUS;
 	/* Read the INT register */
-    transfer_succeeded &= twi_master_transfer(MAX_44008_ADDR, &scratch, 1, TWI_ISSUE_STOP);
+    transfer_succeeded &= twi_master_transfer(MAX_44008_ADDR, &scratch, 1, TWI_DONT_ISSUE_STOP);
     if (transfer_succeeded) 
     {
 	/* Read the INT register */
