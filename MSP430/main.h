@@ -6,6 +6,7 @@
 #define SET_BIT_HIGH(port, pin)	port |= pin
 #define SET_BIT_LOW(port, pin)	port &= ~pin
 
+#define DEBUG_LED_DIR	PJDIR
 #define DEBUG_LED_PORT	PJOUT
 #define DEBUG_LED_PIN	BIT3
 

@@ -66,6 +66,8 @@ void EnqueueULongHexUART(unsigned long);
 
 void EnqueueUIntHexUART(unsigned int);
 
+void EnqueueUIntRawUART(unsigned int);
+
 unsigned char* GetUARTTxBufferPtr(unsigned int *);
 
 void AppendToComplexUARTTxQueue(unsigned char*, int, signed char *, uart_tx_endiannessmode_t);

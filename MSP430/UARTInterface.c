@@ -468,6 +468,14 @@ void EnqueueULongHexUART(unsigned long to_send) {
 	}
 }
 
+void EnqueueUIntRawUART(unsigned int to_send){
+	int i = 0;
+	for (i = 0; i < 2; i++) {
+		EnqueueCharToSendUART((char) ((to_send & 0xFF00) >> 8));
+		to_send <<= 8;
+	}
+}
+
 void EnqueueUIntHexUART(unsigned int to_send) {
 	int i = 0;
 	for (i = 0; i < 2; i++) {

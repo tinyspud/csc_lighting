@@ -3,11 +3,12 @@
 #include <stdint.h>
 
 #include "LightSensor.h"
+#include "LEDControl.h"
 #include "I2CInterface.h"
 
 uint8_t scratch = 0;
 
-#define AMB_BUFF_LEN	120
+#define AMB_BUFF_LEN	3
 
 uint16_t R_buffer[AMB_BUFF_LEN];
 uint16_t G_buffer[AMB_BUFF_LEN];
@@ -95,7 +96,10 @@ void read_R_val(){
 		R_buffer[R_indexer.index] |= (uint16_t)scratch;
 
 		EnqueueCharToSendUART('R');
-		EnqueueUIntHexUART(R_buffer[R_indexer.index]);
+		EnqueueUIntRawUART(R_buffer[R_indexer.index]);
+
+//		set_LED_R(R_buffer[R_indexer.index]);
+//		set_LED_R(R_buffer[R_indexer.index] >> 7);
 
 		R_indexer.curval = GRAB_HIGH_BYTE;
 		R_indexer.index++;
@@ -123,7 +127,7 @@ void read_G_val(){
 		G_buffer[G_indexer.index] |= (uint16_t)scratch;
 
 		EnqueueCharToSendUART('G');
-		EnqueueUIntHexUART(G_buffer[G_indexer.index]);
+		EnqueueUIntRawUART(G_buffer[G_indexer.index]);
 
 		G_indexer.curval = GRAB_HIGH_BYTE;
 		G_indexer.index++;
@@ -151,7 +155,7 @@ void read_B_val(){
 		B_buffer[B_indexer.index] |= (uint16_t)scratch;
 
 		EnqueueCharToSendUART('B');
-		EnqueueUIntHexUART(B_buffer[B_indexer.index]);
+		EnqueueUIntRawUART(B_buffer[B_indexer.index]);
 
 		B_indexer.curval = GRAB_HIGH_BYTE;
 		B_indexer.index++;
@@ -179,7 +183,7 @@ void read_T_val(){
 		T_buffer[T_indexer.index] |= (uint16_t)scratch;
 
 		EnqueueCharToSendUART('T');
-		EnqueueUIntHexUART(T_buffer[T_indexer.index]);
+		EnqueueUIntRawUART(T_buffer[T_indexer.index]);
 
 		T_indexer.curval = GRAB_HIGH_BYTE;
 		T_indexer.index++;
@@ -207,14 +211,14 @@ void read_IR_val(){
 		IR_buffer[IR_indexer.index] |= (uint16_t)scratch;
 
 		EnqueueCharToSendUART('I');
-		EnqueueUIntHexUART(IR_buffer[IR_indexer.index]);
+		EnqueueUIntRawUART(IR_buffer[IR_indexer.index]);
 
 		IR_indexer.curval = GRAB_HIGH_BYTE;
 		IR_indexer.index++;
 		if(IR_indexer.index >= AMB_BUFF_LEN)
 			IR_indexer.index = 0;
 
-		TryRegisterWithSysTimer(read_R_val, (100 * SYS_TIMER_ONE_MSEC));
+		TryRegisterWithSysTimer(read_R_val, SYS_TIMER_ONE_SEC);
 		break;
 	}
 }

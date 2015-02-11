@@ -38,5 +38,14 @@ void set_LED_pwm_output(char);
 
 uart_command_process_status_t LEDCommand(unsigned char*, unsigned char*);
 
+void set_LED_R(unsigned int);
+
+void set_LED_G(unsigned int);
+
+void set_LED_B(unsigned int);
+
+void set_sinusoid_R(unsigned int, unsigned int);
+
+
 #endif
 

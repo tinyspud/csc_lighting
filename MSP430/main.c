@@ -64,6 +64,7 @@ int main(void) {
 }
 
 void init_clocks_ucs(){
+	DEBUG_LED_DIR |= DEBUG_LED_PIN;
 
 	P5SEL |= BIT2+BIT3;                       // Port select XT2 (4.000 MHz)
 	P5SEL |= BIT4+BIT5;                       // Port select XT1 (32768 Hz)
@@ -87,16 +88,16 @@ void init_clocks_ucs(){
 
 }
 
-void toggle_debug_led(){
-	//	DEBUG_LED_PORT ^= DEBUG_LED_PIN;
+__inline void toggle_debug_led(){
+	DEBUG_LED_PORT ^= DEBUG_LED_PIN;
 }
 
-void turn_debug_led_on(){
-	//	DEBUG_LED_PORT |= DEBUG_LED_PIN;
+__inline void turn_debug_led_on(){
+	DEBUG_LED_PORT |= DEBUG_LED_PIN;
 }
 
-void turn_debug_led_off(){
-	//	DEBUG_LED_PORT &= ~DEBUG_LED_PIN;
+__inline void turn_debug_led_off(){
+	DEBUG_LED_PORT &= ~DEBUG_LED_PIN;
 }
 
 
