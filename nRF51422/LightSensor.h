@@ -23,7 +23,7 @@
 #define REG_AMB_TEMP_HIGH_BYTE		0x12
 #define REG_AMB_TEMP_LOW_BYTE		0x13
 
-#define MAX_44008_ADDR				0x80
+#define MAX_44008_ADDR				0x82
 
 void init_light_sensor(void);
 

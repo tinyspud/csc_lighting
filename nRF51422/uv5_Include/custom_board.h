@@ -65,10 +65,10 @@
 //#define RTS_PIN_NUMBER 8
 //#define HWFC           true
 
-#define MAX_44008_SCL	24
-#define MAX_44008_SDA	6
+#define MAX_44008_SCL	24U
+#define MAX_44008_SDA	9U
 //#define MAX_44008_A0	5
-#define MAX_44008_INT	9
+#define MAX_44008_INT	6U
 
 
 #define STRAIN_GAUGE_PIN	ADC_CONFIG_PSEL_AnalogInput3

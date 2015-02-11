@@ -58,8 +58,8 @@ void start_system_timer(){
 	NRF_TIMER1->INTENSET |= TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
 
     // With 32 us ticks, we need to multiply by 31.25 to get milliseconds.
-//    NRF_TIMER1->CC[0]       = (ADC_SAMPLING_PERIOD * 31);
-//    NRF_TIMER1->CC[0]      += (ADC_SAMPLING_PERIOD / 4);
+	//    NRF_TIMER1->CC[0]       = (ADC_SAMPLING_PERIOD * 31);
+	//    NRF_TIMER1->CC[0]      += (ADC_SAMPLING_PERIOD / 4);
 	NRF_TIMER1->CC[0] = 16000000/(1 << (NRF_TIMER1->PRESCALER)) / ADC_SAMPLING_FREQ;
 	
 #ifdef SOFTDEVICE_PRESENT
