@@ -10,7 +10,7 @@
 #include "nrf_delay.h"
 #include "nrf_temp.h"
 #include "nordic_common.h"
-#include "bsp.h"
+#include "custom_board.h"
 
 #include "system_timer.h"
 #include "LEDs.h"
@@ -47,6 +47,5 @@ bool read_int_register(){
 		transfer_succeeded &= twi_master_transfer(MAX_44008_ADDR | TWI_READ_BIT, &scratch, 1, TWI_ISSUE_STOP);
     }
     return transfer_succeeded;
-
 }
 

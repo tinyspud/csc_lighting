@@ -10,7 +10,7 @@
 #include "nrf_delay.h"
 #include "nrf_temp.h"
 #include "nordic_common.h"
-#include "bsp.h"
+#include "custom_board.h"
 
 #include "LEDs.h"
 #include "ADCSampling.h"

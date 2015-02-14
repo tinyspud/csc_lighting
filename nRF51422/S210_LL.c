@@ -10,7 +10,7 @@
 #include "nrf_delay.h"
 #include "nrf_temp.h"
 #include "nordic_common.h"
-#include "bsp.h"
+#include "custom_board.h"
 #include "nrf_temp.h"
 
 #include "LEDs.h"
@@ -83,7 +83,6 @@ static void channel_0_event_handle(uint32_t event)
 {
 	uint32_t err_code;
 	int32_t temp = 0xFFFFFFFF;
-	uint32_t ADC = 0x00000400;
 
 	switch (event)
 	{
@@ -94,10 +93,6 @@ static void channel_0_event_handle(uint32_t event)
 	/* Busy wait while temperature measurement is not finished, you can skip waiting
 	if you enable interrupt for DATARDY event and read the result in the interrupt. */
 	/*lint -e{845} // A zero has been given as right argument to operator '|'" */
-	LED_TURN_ON(LED_ORANGE);
-
-		ADC = GetADCVal();
-
 	if(NRF_TEMP->EVENTS_DATARDY == 1){
 		NRF_TEMP->EVENTS_DATARDY = 0;
 
@@ -117,9 +112,6 @@ static void channel_0_event_handle(uint32_t event)
 	m_broadcast_data[0] = (uint8_t)((temp >> 8) & (0x000000FF));
 	m_broadcast_data[1] = (uint8_t)(temp & 0x000000FF);
 
-	m_broadcast_data[2] = (uint8_t)((ADC >> 8) & (0x000000FF));
-	m_broadcast_data[3] = (uint8_t)(ADC & 0x000000FF);
-
 	// Broadcast the data.
 	err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
 			BROADCAST_DATA_BUFFER_SIZE,
@@ -128,7 +120,6 @@ static void channel_0_event_handle(uint32_t event)
 
 	// Increment the counter.
 	m_counter++;
-	LED_TURN_OFF(LED_ORANGE);
 
 		break;
 
@@ -318,10 +309,10 @@ void init_S210_LL(){
 	err_code = sd_softdevice_enable(NRF_CLOCK_LFCLKSRC_XTAL_50_PPM, softdevice_assert_callback);
 	APP_ERROR_CHECK(err_code);
 
-	APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_MAX_TIMERS, APP_TIMER_OP_QUEUE_SIZE, false);
+//	APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_MAX_TIMERS, APP_TIMER_OP_QUEUE_SIZE, false);
 
-	err_code = bsp_init(BSP_INIT_LED, APP_TIMER_TICKS(100, APP_TIMER_PRESCALER), NULL);
-	APP_ERROR_CHECK(err_code);
+//	err_code = bsp_init(BSP_INIT_LED, APP_TIMER_TICKS(100, APP_TIMER_PRESCALER), NULL);
+//	APP_ERROR_CHECK(err_code);
 
 	// Set application IRQ to lowest priority.
 	err_code = sd_nvic_SetPriority(SD_EVT_IRQn, NRF_APP_PRIORITY_LOW);

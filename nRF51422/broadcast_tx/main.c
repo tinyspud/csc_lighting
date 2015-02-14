@@ -30,13 +30,12 @@
 #include "nrf_delay.h"
 #include "nrf_temp.h"
 #include "nordic_common.h"
-#include "bsp.h"
+#include "custom_board.h"
 
 #include "system_timer.h"
 #include "LEDs.h"
 #include "system_error_callbacks.h"
 #include "S210_LL.h" 
-#include "ADCSampling.h"
 #include "twi_master_config.h"
 #include "twi_master.h"
 #include "LightSensor.h"
@@ -65,20 +64,19 @@ int main(void)
 	/* Init the timer */
 	system_timer_init();
 
-	/* Init the ADC */
-	init_strain_ADC();
-		
 	/* Init the temperature */
 	nrf_temp_init();
 	
 	uint32_t err_code = 0;
 
-	/* Open the ANT channel 0 */
-	open_channel_0();
 	/* Start the system timer */
 	start_system_timer();
+	while(1){}
 
-	// Main loop. 
+	/* Open the ANT channel 0 */
+	open_channel_0();
+
+// Main loop. 
 	for (;;)
 	{
 		// Put CPU in sleep if possible. 

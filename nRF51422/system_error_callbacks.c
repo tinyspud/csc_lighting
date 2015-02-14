@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "bsp.h"
+#include "custom_board.h"
+
 #include "app_error.h"
 #include "app_timer.h"
 #include "nrf_delay.h"
