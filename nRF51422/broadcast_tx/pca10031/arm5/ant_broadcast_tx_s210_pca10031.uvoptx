@@ -141,66 +141,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>198</LineNumber>
+          <LineNumber>26</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>55342</Address>
+          <Address>54936</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\..\system_timer.c</Filename>
+          <Filename>..\..\..\LightSensor.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\nrf51422_xxAA_S210\../../../system_timer.c\198</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>57</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>53962</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\..\system_timer.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\nrf51422_xxAA_S210\../../../system_timer.c\57</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>65</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\..\system_timer.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>201</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\..\system_timer.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\nrf51422_xxAA_S210\../../../LightSensor.c\26</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -240,14 +192,6 @@
           <ItemText>_cur_small_tick</ItemText>
         </Ww>
       </WatchWindow1>
-      <MemoryWindow1>
-        <Mm>
-          <WinNumber>1</WinNumber>
-          <SubType>0</SubType>
-          <ItemText>_cur_small_tick</ItemText>
-          <AccSizeX>0</AccSizeX>
-        </Mm>
-      </MemoryWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -280,6 +224,10 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <SystemViewers>
+        <Entry>
+          <Name>System Viewer\PPI</Name>
+          <WinId>35898</WinId>
+        </Entry>
         <Entry>
           <Name>System Viewer\RTC1</Name>
           <WinId>35899</WinId>

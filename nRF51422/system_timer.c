@@ -30,11 +30,6 @@ static volatile uint32_t _cur_big_tick;
 static volatile int8_t _fcn_list_updated;
 static volatile _fcn_pair_t _fcn_pntr_buffer[MAX_NUM_FCNS];
 
-static volatile uint32_t pwm_val_A = 1;
-static volatile uint32_t pwm_val_R = 1500;
-static volatile uint32_t pwm_val_G = 800;
-static volatile uint32_t pwm_val_B = 1;
-
 void SortFunctionPointers(void);
 void store_a_to_b(volatile _fcn_pair_t *, volatile _fcn_pair_t *);
 void clear_out_fcn_pair(volatile _fcn_pair_t *);
@@ -58,25 +53,6 @@ void RTC1_IRQHandler()
     }
 }
 
-/* Refresh PWM1-3 values */
-
-void TIMER1_IRQHandler(void){
-	/* Look at what kind of interrupt is being generated */
-	if((NRF_TIMER1->EVENTS_COMPARE[0] != 0) &&
-		((NRF_TIMER1->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
-	{
-		NRF_TIMER1->CC[1] = pwm_val_R;	// red
-		NRF_TIMER1->CC[2] = pwm_val_G;	// green
-		NRF_TIMER1->CC[3] = pwm_val_B;	// orange
-
-		NRF_TIMER1->EVENTS_COMPARE[0] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[1] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[2] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[3] = 0;
-		NRF_TIMER1->TASKS_START = 1;
-	}
-}
-
 void system_timer_init(void){
 	/* Create the function pointer list */
 	_fcn_list_updated = -1;
@@ -88,68 +64,6 @@ void system_timer_init(void){
 		clear_out_fcn_pair(&_fcn_pntr_buffer[i]);
 	}
 
-	// Start 16 MHz crystal oscillator.
-    NRF_CLOCK->EVENTS_HFCLKSTARTED = 0;
-    NRF_CLOCK->TASKS_HFCLKSTART    = 1;
-
-    // Wait for the external oscillator to start up.
-    while (NRF_CLOCK->EVENTS_HFCLKSTARTED == 0)
-    {
-        // Do nothing.
-    }
-
-	/* Crystal is 16MHz */
-    NRF_TIMER1->MODE        = TIMER_MODE_MODE_Timer;       // Set the timer in Timer Mode.
-    NRF_TIMER1->PRESCALER   = 0;                           // Prescaler: 16 MHz/2^(prescaler) Hz
-	NRF_TIMER1->BITMODE     = TIMER_BITMODE_BITMODE_32Bit;
-
-	NRF_TIMER1->SHORTS      = (TIMER_SHORTS_COMPARE0_CLEAR_Enabled << TIMER_SHORTS_COMPARE0_CLEAR_Pos);
-	
-	/* GPIOTE config */
-	nrf_gpiote_task_config(0, LED_RED, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
-	nrf_gpiote_task_config(1, LED_GREEN, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
-	nrf_gpiote_task_config(2, LED_ORANGE, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
-
-    // Configure PPI channel 0 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[0] match.
-    NRF_PPI->CH[0].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[1];
-    NRF_PPI->CH[0].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
-
-    // Configure PPI channel 1 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[1] match.
-    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[2];
-    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[1];
-
-    // Configure PPI channel 1 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[2] match.
-    NRF_PPI->CH[2].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[3];
-    NRF_PPI->CH[2].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[2];
-
-    // Configure PPI channel 0 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[0] match.
-    NRF_PPI->CH[3].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[0];
-    NRF_PPI->CH[3].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
-
-    // Configure PPI channel 1 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[1] match.
-    NRF_PPI->CH[4].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[0];
-    NRF_PPI->CH[4].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[1];
-
-    // Configure PPI channel 1 to toggle PWM_OUTPUT_PIN on every TIMER2 COMPARE[2] match.
-    NRF_PPI->CH[5].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[0];
-    NRF_PPI->CH[5].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[2];
-
-
-// Enable PPI channels 0-5.
-    NRF_PPI->CHEN = (PPI_CHEN_CH0_Enabled << PPI_CHEN_CH0_Pos)
-                    | (PPI_CHEN_CH1_Enabled << PPI_CHEN_CH1_Pos)
-                    | (PPI_CHEN_CH2_Enabled << PPI_CHEN_CH2_Pos)
-                    | (PPI_CHEN_CH3_Enabled << PPI_CHEN_CH3_Pos)
-                    | (PPI_CHEN_CH4_Enabled << PPI_CHEN_CH4_Pos)
-                    | (PPI_CHEN_CH5_Enabled << PPI_CHEN_CH5_Pos);
-	
-	NRF_TIMER1->CC[0] = 1600;
-
-	NRF_TIMER1->CC[1] = pwm_val_R;	// red
-	NRF_TIMER1->CC[2] = pwm_val_G;	// green
-	NRF_TIMER1->CC[3] = pwm_val_B;	// orange
-
-	
 	/* Start the low frequency crystal (LFXTAL) */
 	NRF_CLOCK->LFCLKSRC            = (CLOCK_LFCLKSRC_SRC_Xtal << CLOCK_LFCLKSRC_SRC_Pos);
     NRF_CLOCK->EVENTS_LFCLKSTARTED = 0;
@@ -178,81 +92,22 @@ void system_timer_init(void){
 }
 
 void start_system_timer(){
-	NRF_TIMER1->TASKS_CLEAR = 1;                           // clear the task first to be usable for later.
-
-	/* Enable the compare 0 interrupt */
-	NRF_TIMER1->INTENSET |= (TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos) |
-							(TIMER_INTENSET_COMPARE1_Enabled << TIMER_INTENSET_COMPARE1_Pos) |
-							(TIMER_INTENSET_COMPARE2_Enabled << TIMER_INTENSET_COMPARE2_Pos) |
-							(TIMER_INTENSET_COMPARE3_Enabled << TIMER_INTENSET_COMPARE3_Pos);
-
 #ifdef SOFTDEVICE_PRESENT
-	sd_nvic_SetPriority(TIMER1_IRQn, NRF_APP_PRIORITY_LOW);
-	sd_nvic_EnableIRQ(TIMER1_IRQn);
-
 	sd_nvic_SetPriority(RTC1_IRQn, NRF_APP_PRIORITY_HIGH);
 	sd_nvic_EnableIRQ(RTC1_IRQn);
 #else
-	NVIC_EnableIRQ(TIMER1_IRQn);
-
     NVIC_EnableIRQ(RTC1_IRQn);                                  // Enable Interrupt for the RTC in the core.
 #endif
-
-    NRF_TIMER1->TASKS_START = 1; // Start timer.
 	NRF_RTC1->TASKS_START = 1;  // start the RTC
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 uint32_t TickToSec(uint32_t tickval){
 	return (tickval / SYS_TIMER_ONE_SEC);
 }
 
 uint16_t get_current_tick(){
-	return _cur_small_tick; /* TODO give value of cur tick */
+//	return _cur_small_tick; /* TODO give value of cur tick */
+	return NRF_RTC1->COUNTER;
 }
 
 uint32_t GetCurrentLongTick(){

@@ -39,15 +39,15 @@
 
 #define LEDS_LIST { LED_RED, LED_GREEN, LED_YELLOW, LED_ORANGE}
 // defining RGB led as 3 single LEDs
-#define BSP_LED_0 LED_RGB_RED
-#define BSP_LED_1 LED_RGB_GREEN
-#define BSP_LED_2 LED_RGB_ORANGE
-#define BSP_LED_3 LED_RGB_YELLOW
+//#define BSP_LED_0 LED_RGB_RED
+//#define BSP_LED_1 LED_RGB_GREEN
+//#define BSP_LED_2 LED_RGB_ORANGE
+//#define BSP_LED_3 LED_RGB_YELLOW
 
-#define BSP_LED_0_MASK    (1<<BSP_LED_0)
-#define BSP_LED_1_MASK    (1<<BSP_LED_1)
-#define BSP_LED_2_MASK    (1<<BSP_LED_2)
-#define BSP_LED_3_MASK		(1<<BSP_LED_3)
+//#define BSP_LED_0_MASK    (1<<BSP_LED_0)
+//#define BSP_LED_1_MASK    (1<<BSP_LED_1)
+//#define BSP_LED_2_MASK    (1<<BSP_LED_2)
+//#define BSP_LED_3_MASK		(1<<BSP_LED_3)
 
 #define LEDS_MASK      (BSP_LED_0_MASK | BSP_LED_1_MASK | BSP_LED_2_MASK)
 //defines which LEDs are lit when signal is low

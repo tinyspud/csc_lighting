@@ -71,7 +71,9 @@ int main(void)
 
 	/* Start the system timer */
 	start_system_timer();
-	while(1){}
+	
+	/* Start the LED timer */
+	start_LED_timer();
 
 	/* Open the ANT channel 0 */
 	open_channel_0();
