@@ -83,6 +83,10 @@ int main(void)
 // Main loop. 
 	for (;;)
 	{
+		/* Sort and check function pointers */
+		SortFunctionPointers();
+		CheckAndServiceFunctionPointers();
+		
 		// Put CPU in sleep if possible. 
 		err_code = sd_app_evt_wait();
 		APP_ERROR_CHECK(err_code);

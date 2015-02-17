@@ -111,7 +111,7 @@ uint16_t get_current_tick(){
 }
 
 uint32_t GetCurrentLongTick(){
-	return (uint32_t)((((uint32_t)_cur_big_tick) << 1) | get_current_tick());
+	return (uint32_t)((((uint32_t)_cur_big_tick) << 16) | get_current_tick());
 }
 
 void TryRegisterWithSysTimer(queueableFunctionPointer fcn_ptr, uint32_t ticks_from_now_execution){

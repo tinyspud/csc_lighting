@@ -13,6 +13,7 @@
 #include "custom_board.h"
 #include "nrf_temp.h"
 
+#include "system_timer.h"
 #include "LEDs.h"
 #include "S210_LL.h"
 #include "system_error_callbacks.h"
@@ -126,6 +127,7 @@ static void channel_0_event_handle(uint32_t event)
 {
 	uint32_t err_code;
 	int32_t temp = 0xFFFFFFFF;
+	uint16_t tick = 0;
 
 //	switch (event)
 //	{
@@ -155,6 +157,10 @@ static void channel_0_event_handle(uint32_t event)
 	m_broadcast_data[0] = (uint8_t)((temp >> 8) & (0x000000FF));
 	m_broadcast_data[1] = (uint8_t)(temp & 0x000000FF);
 
+	tick = get_current_tick();
+	m_broadcast_data[5] = (uint8_t)((tick >> 8) & 0x00FF);
+	m_broadcast_data[6] = (uint8_t)(tick & 0x00FF);
+	
 	// Broadcast the data.
 	err_code = sd_ant_broadcast_message_tx(CHANNEL_0,
 			BROADCAST_DATA_BUFFER_SIZE,
