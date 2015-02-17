@@ -55,14 +55,24 @@ void TIMER1_IRQHandler(void){
 //	LED_TURN_ON(LED_RED);
 //	LED_TOGGLE(LED_RED);
 //	LED_TOGGLE(LED_GREEN);
-		
-		NRF_TIMER1->CC[R_INDEX] = pwm_val_R;	// red
-		NRF_TIMER1->CC[G_INDEX] = pwm_val_G;	// green
-		NRF_TIMER1->CC[B_INDEX] = pwm_val_B;	// yellow
+		/* TODO For now just set to lowest until can figure out how to disable the event that makes it switch */
+		NRF_TIMER1->CC[R_INDEX] = (pwm_val_R == 0) ? 1 : pwm_val_R;	// red
+		NRF_TIMER1->CC[G_INDEX] = (pwm_val_G == 0) ? 1 : pwm_val_G;	// green
+		NRF_TIMER1->CC[B_INDEX] = (pwm_val_B == 0) ? 1 : pwm_val_B;	// yellow
 		NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[R_INDEX] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[G_INDEX] = 0;
-		NRF_TIMER1->EVENTS_COMPARE[B_INDEX] = 0;
+		
+		/* TODO need fix to see if this still fires if all LEDs are off */
+//		if(pwm_val_R > 0)
+//			NRF_TIMER1->EVENTS_COMPARE[R_INDEX] = 0;
+//		if(pwm_val_G > 0)
+//			NRF_TIMER1->EVENTS_COMPARE[G_INDEX] = 0;
+//		if(pwm_val_B > 0)
+//			NRF_TIMER1->EVENTS_COMPARE[B_INDEX] = 0;
+		
+			NRF_TIMER1->EVENTS_COMPARE[R_INDEX] = 0;
+			NRF_TIMER1->EVENTS_COMPARE[G_INDEX] = 0;
+			NRF_TIMER1->EVENTS_COMPARE[B_INDEX] = 0;
+		/* Do sanity check to see if system's still running */
 		NRF_TIMER1->TASKS_START = 1;
 	}
 }
@@ -73,9 +83,10 @@ void TIMER2_IRQHandler(void){
 //		((NRF_TIMER2->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
 	if((NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX]) != 0)
 	{
-		NRF_TIMER2->CC[(A_INDEX % 4)] = pwm_val_A;	// orange
+		NRF_TIMER2->CC[(A_INDEX % 4)] = (pwm_val_A == 0) ? 1 : pwm_val_A;	// orange
 		NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX] = 0;
-		NRF_TIMER2->EVENTS_COMPARE[(A_INDEX % 4)] = 0;
+		if(pwm_val_A > 0)
+			NRF_TIMER2->EVENTS_COMPARE[(A_INDEX % 4)] = 0;
 		NRF_TIMER2->TASKS_START = 1;
 	}
 }
