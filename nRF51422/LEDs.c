@@ -24,9 +24,9 @@
 #define G_INDEX		2
 #define B_INDEX		1
 
-static volatile uint32_t pwm_val_A = 1024;
-static volatile uint32_t pwm_val_R = 500;
-static volatile uint32_t pwm_val_G = 2047;
+static volatile uint32_t pwm_val_A = 1;
+static volatile uint32_t pwm_val_R = 64;
+static volatile uint32_t pwm_val_G = 128;
 static volatile uint32_t pwm_val_B = 1;
 
 void set_A_PWM_val(uint32_t val){
@@ -48,12 +48,13 @@ void set_B_PWM_val(uint32_t val){
 /* Refresh PWM1-3 values */
 void TIMER1_IRQHandler(void){
 	/* Look at what kind of interrupt is being generated */
-	if((NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX] != 0) &&
-		((NRF_TIMER1->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
+//	if((NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX] != 0) &&
+//		((NRF_TIMER1->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
+	if((NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX]) != 0)
 	{
-//		LED_TURN_ON(LED_RED);
-		LED_TOGGLE(LED_RED);
-		LED_TOGGLE(LED_GREEN);
+//	LED_TURN_ON(LED_RED);
+//	LED_TOGGLE(LED_RED);
+//	LED_TOGGLE(LED_GREEN);
 		
 		NRF_TIMER1->CC[R_INDEX] = pwm_val_R;	// red
 		NRF_TIMER1->CC[G_INDEX] = pwm_val_G;	// green
@@ -68,8 +69,9 @@ void TIMER1_IRQHandler(void){
 
 void TIMER2_IRQHandler(void){
 	/* Look at what kind of interrupt is being generated */
-	if((NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX] != 0) &&
-		((NRF_TIMER2->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
+//	if((NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX] != 0) &&
+//		((NRF_TIMER2->INTENSET & TIMER_INTENSET_COMPARE1_Msk) != 0))
+	if((NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX]) != 0)
 	{
 		NRF_TIMER2->CC[(A_INDEX % 4)] = pwm_val_A;	// orange
 		NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX] = 0;
@@ -126,11 +128,11 @@ void init_LEDs(void){
 //    NRF_PPI->CH[0].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
 //    NRF_PPI->CH[0].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
 
-    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
-    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
-
-//    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
+//    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
 //    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
+
+    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
+    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
 
 	/* Green */
     NRF_PPI->CH[2].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[G_INDEX];

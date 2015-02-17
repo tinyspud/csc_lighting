@@ -75,6 +75,8 @@ int main(void)
 	/* Start the LED timer */
 	start_LED_timer();
 
+//	while(1){}
+
 	/* Open the ANT channel 0 */
 	open_channel_0();
 

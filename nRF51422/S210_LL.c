@@ -75,6 +75,49 @@ static uint8_t m_counter = 1u;                               /**< Counter to inc
 // ANT event message buffer.
 static uint8_t event_message_buffer[ANT_EVENT_MSG_BUFFER_MIN_SIZE];
 
+void channel_0_handle_rx(uint32_t event, uint8_t * evt_msg_bfr){
+	int i = 0;
+	uint32_t temp = 0;
+
+	//	evt_msg_bfr[0];
+	
+//	evt_msg_bfr[0] = 0;
+//	evt_msg_bfr[1] = 0; /*  */
+//	evt_msg_bfr[2] = 0;
+//	evt_msg_bfr[3] = 0; /* First byte of message */
+	
+//	switch(event){
+//		case EVENT_RX:
+//		/* Parse the message */
+//		break;
+//		default:
+//			break;
+//	}
+	switch(evt_msg_bfr[BUFFER_INDEX_MESG_ID]){
+		case MESG_ACKNOWLEDGED_DATA_ID:
+		/* For now this means that the data coming in is a set value */
+		/* Set R */
+		temp = (uint32_t)((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA] | ((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 1] << 8));
+		set_R_PWM_val(temp);
+		/* Set G */
+		temp = (uint32_t)((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 2] | ((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 3] << 8));
+		set_G_PWM_val(temp);
+		/* Set B */
+		temp = (uint32_t)((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 4] | ((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 5] << 8));
+		set_B_PWM_val(temp);
+		/* Set A */
+		temp = (uint32_t)((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 6] | ((uint32_t)evt_msg_bfr[BUFFER_INDEX_MESG_DATA + 7] << 8));
+		set_A_PWM_val(temp);
+			break;
+		default:
+			break;
+	}
+	
+	/* Clear out the buffer */
+	for(i = 0; i < ANT_EVENT_MSG_BUFFER_MIN_SIZE; i++)
+		event_message_buffer[i] = 0;
+}
+
 /**@brief Function for handling ANT TX channel events.
  *
  * @param[in] event The received ANT event to handle.
@@ -84,11 +127,11 @@ static void channel_0_event_handle(uint32_t event)
 	uint32_t err_code;
 	int32_t temp = 0xFFFFFFFF;
 
-	switch (event)
-	{
-		// ANT broadcast success.
-		// Send a new broadcast and increment the counter.
-	case EVENT_TX:
+//	switch (event)
+//	{
+//		// ANT broadcast success.
+//		// Send a new broadcast and increment the counter.
+//	case EVENT_TX:
 
 	/* Busy wait while temperature measurement is not finished, you can skip waiting
 	if you enable interrupt for DATARDY event and read the result in the interrupt. */
@@ -121,11 +164,11 @@ static void channel_0_event_handle(uint32_t event)
 	// Increment the counter.
 	m_counter++;
 
-		break;
+//		break;
 
-	default:
-		break;
-	}
+//	default:
+//		break;
+//	}
 }
 
 /**@brief Function for stack interrupt handling.
@@ -239,7 +282,7 @@ static void ant_channel_tx_broadcast_setup(void)
 
 	// Set Channel Number.
 	err_code = sd_ant_channel_assign(CHANNEL_0,
-		CHANNEL_TYPE_MASTER_TX_ONLY,
+		CHANNEL_TYPE_MASTER,
 		ANT_CHANNEL_DEFAULT_NETWORK,
 		CHANNEL_0_ANT_EXT_ASSIGN);
 
@@ -276,6 +319,9 @@ uint32_t handle_ANT_events(){
 				case EVENT_TX:
 					channel_0_event_handle(event);
 					break;
+				case EVENT_RX:
+					channel_0_handle_rx(event, &event_message_buffer[0]);
+					break;
 				default:
 					break;
 			}
@@ -308,11 +354,6 @@ void init_S210_LL(){
 	uint32_t err_code;
 	err_code = sd_softdevice_enable(NRF_CLOCK_LFCLKSRC_XTAL_50_PPM, softdevice_assert_callback);
 	APP_ERROR_CHECK(err_code);
-
-//	APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_MAX_TIMERS, APP_TIMER_OP_QUEUE_SIZE, false);
-
-//	err_code = bsp_init(BSP_INIT_LED, APP_TIMER_TICKS(100, APP_TIMER_PRESCALER), NULL);
-//	APP_ERROR_CHECK(err_code);
 
 	// Set application IRQ to lowest priority.
 	err_code = sd_nvic_SetPriority(SD_EVT_IRQn, NRF_APP_PRIORITY_LOW);

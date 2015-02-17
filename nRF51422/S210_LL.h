@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+#define BUFFER_INDEX_MESG_ID          0x01u             /**< Index for Message ID. */
+#define BUFFER_INDEX_MESG_DATA        0x03u             /**< Index for Data. */
+
 void init_S210_LL(void);
 
 void open_channel_0(void);
