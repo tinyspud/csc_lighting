@@ -43,13 +43,32 @@ void RTC1_IRQHandler()
         ((NRF_RTC1->INTENSET & RTC_INTENSET_TICK_Msk) != 0))
     {
 		_cur_small_tick++;
+
+		/* Check to see if the current small tick increments */
+		if(_cur_small_tick == 0x0000FFFF){
+			_cur_big_tick++;
+			_cur_small_tick = 0;
+		}
+		LED_TOGGLE(LED_ORANGE);
+
+		/* Clear tick event */
         NRF_RTC1->EVENTS_TICK = 0;
     }
 
     if ((NRF_RTC1->EVENTS_COMPARE[0] != 0) &&
         ((NRF_RTC1->INTENSET & RTC_INTENSET_COMPARE0_Msk) != 0))
     {
-        NRF_RTC1->EVENTS_COMPARE[0] = 0;
+//		_cur_small_tick++;
+
+//		/* Check to see if the current small tick increments */
+//		if(_cur_small_tick == 0x0000FFFF){
+//			_cur_big_tick++;
+//			_cur_small_tick = 0;
+//			LED_TOGGLE(LED_ORANGE);
+//		}
+
+//        NRF_RTC1->EVENTS_COMPARE[0] = 0;
+//		NRF_RTC1->TASKS_START = 1;
     }
 }
 
@@ -79,7 +98,8 @@ void system_timer_init(void){
 //    NRF_RTC1->PRESCALER = COUNTER_PRESCALER;                    // Set prescaler to a TICK of RTC_FREQUENCY.
 	NRF_RTC1->PRESCALER = 0;                    // Set prescaler to a TICK of RTC_FREQUENCY.
 //    NRF_RTC1->CC[0]     = COMPARE_COUNTERTIME * RTC_FREQUENCY;  // Compare0 after approx COMPARE_COUNTERTIME seconds.
-
+	
+	NRF_RTC1->CC[0] = 1;
     // Enable TICK event and TICK interrupt:
     NRF_RTC1->EVTENSET = RTC_EVTENSET_TICK_Msk;
     NRF_RTC1->INTENSET = RTC_INTENSET_TICK_Msk;
@@ -87,7 +107,7 @@ void system_timer_init(void){
 //    // Enable COMPARE0 event and COMPARE0 interrupt:
 //    NRF_RTC1->EVTENSET = RTC_EVTENSET_COMPARE0_Msk;
 //    NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE0_Msk;
-
+	
 	_cur_small_tick = 0;
 }
 

@@ -10,6 +10,7 @@
 
 
 #define MAX_LED_PWM_VAL		2048
+//#define MAX_LED_PWM_VAL		256
 
 
 /* Values to set ARGB LED values */
@@ -21,6 +22,8 @@ void set_B_PWM_val(uint32_t);
 void start_LED_timer(void);
 
 void init_LEDs(void);
+
+void LightShow(void);
 
 void blink_out_value(uint32_t value);
 

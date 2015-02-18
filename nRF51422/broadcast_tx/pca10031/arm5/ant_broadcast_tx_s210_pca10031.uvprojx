@@ -363,7 +363,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>NRF51 ANT_STACK_SUPPORT_REQD S210 SOFTDEVICE_PRESENT BOARD_CUSTOM SPI_MASTER_0_ENABLE</Define>
+              <Define>NRF51 ANT_STACK_SUPPORT_REQD BOARD_CUSTOM SPI_MASTER_0_ENABLE S210 SOFTDEVICE_PRESENT</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\uv5_Include;..\..\..\..\nRF51422;..\..\..\Spansion_SLLD_v13.2.1\Hals\nRF51xxx;..\..\..\Spansion_SLLD_v13.2.1\src</IncludePath>
             </VariousControls>
@@ -670,9 +670,9 @@
         </targetInfos>
       </component>
       <component Cclass="nRF_Libraries" Cgroup="app_scheduler" Cvariant="default" Cvendor="NordicSemiconductor" Cversion="1.1.0" condition="app_scheduler">
-        <package name="nRF_Libraries" schemaVersion="1.2" url="http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_Libraries" vendor="NordicSemiconductor"/>
+        <package name="nRF_Libraries" schemaVersion="1.2" supportContact="http://www.nordicsemi.com/About-us/Contact-us" url="http://developer.nordicsemi.com/nRF51_SDK/pieces/nRF_Libraries/" vendor="NordicSemiconductor" version="1.1.0"/>
         <targetInfos>
-          <targetInfo name="nrf51422_xxAA" versionMatchMode="fixed"/>
+          <targetInfo name="nrf51422_xxAA"/>
         </targetInfos>
       </component>
       <component Cclass="nRF_Libraries" Cgroup="app_util" Cvariant="default" Cvendor="NordicSemiconductor" Cversion="1.1.0" condition="app_util">

@@ -159,37 +159,22 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\nrf51422_xxAA_S210\../../../FlashApp.c\_status_register</ItemText>
+          <ItemText>_cur_small_tick</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>spi_tx_data_ptr</ItemText>
+          <ItemText>_cur_big_tick</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tx_buffer</ItemText>
+          <ItemText>_fcn_pntr_buffer</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tx_buf_len</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>rx_buffer</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>data_buffer</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>_cur_small_tick</ItemText>
+          <ItemText>redval</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

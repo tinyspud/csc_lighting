@@ -40,26 +40,21 @@
 #include "twi_master.h"
 #include "LightSensor.h"
 
-void bsp_test(void);
-
 /**@brief Function for application main entry. Does not return.
  */
 int main(void)
 {
-	/* Cycle through all pins setting them high individually to make sure you're properly conencted */
-	bsp_test();
-	
 	/* Very first thing to try to init are the LEDs so you can blink out error
 	 * codes */
 	init_LEDs();
-
+/* S210 SOFTDEVICE_PRESENT */
 #ifdef SOFTDEVICE_PRESENT
 	/* Init the S210 low level drivers (soft device) */
 	init_S210_LL();
 #endif
 	
 	/* Init the light sensor */
-	init_light_sensor();
+	//	init_light_sensor();
 
 	/* Init the timer */
 	system_timer_init();
@@ -77,8 +72,13 @@ int main(void)
 
 //	while(1){}
 
+	LightShow();
+
+
+#ifdef SOFTDEVICE_PRESENT
 	/* Open the ANT channel 0 */
 	open_channel_0();
+#endif
 
 // Main loop. 
 	for (;;)
@@ -86,23 +86,21 @@ int main(void)
 		/* Sort and check function pointers */
 		SortFunctionPointers();
 		CheckAndServiceFunctionPointers();
-		
-		// Put CPU in sleep if possible. 
-		err_code = sd_app_evt_wait();
-		APP_ERROR_CHECK(err_code);
-		
+		LED_TOGGLE(LED_YELLOW);
+//		// Put CPU in sleep if possible. 
+//		err_code = sd_app_evt_wait();
+//		APP_ERROR_CHECK(err_code);
+//		
 		// Extract and process all pending ANT events as long as there are any left. 
+		#ifdef SOFTDEVICE_PRESENT
 		do
 		{
 			// Fetch the event. 
 			err_code = handle_ANT_events();
 		} while (err_code == NRF_SUCCESS);
+		#endif
 	}
 }
-
-void bsp_test(){
-}
-
 
 /**
  *@}

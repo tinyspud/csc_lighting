@@ -13,6 +13,7 @@
 #include "nordic_common.h"
 #include "custom_board.h"
 
+#include "system_timer.h"
 #include "nrf_gpio.h"
 #include "boards.h"
 #include "nrf_delay.h"
@@ -30,19 +31,19 @@ static volatile uint32_t pwm_val_G = 128;
 static volatile uint32_t pwm_val_B = 1;
 
 void set_A_PWM_val(uint32_t val){
-	pwm_val_A = (val >= MAX_LED_PWM_VAL) ? (MAX_LED_PWM_VAL - 1) : val;
+	pwm_val_A = (val >= (MAX_LED_PWM_VAL - 1)) ? (MAX_LED_PWM_VAL - 2) : val;
 }
 
 void set_R_PWM_val(uint32_t val){
-	pwm_val_R = (val >= MAX_LED_PWM_VAL) ? (MAX_LED_PWM_VAL - 1) : val;
+	pwm_val_R = (val >= (MAX_LED_PWM_VAL - 1)) ? (MAX_LED_PWM_VAL - 2) : val;
 }
 
 void set_G_PWM_val(uint32_t val){
-	pwm_val_G = (val >= MAX_LED_PWM_VAL) ? (MAX_LED_PWM_VAL - 1) : val;
+	pwm_val_G = (val >= (MAX_LED_PWM_VAL - 1)) ? (MAX_LED_PWM_VAL - 2) : val;
 }
 
 void set_B_PWM_val(uint32_t val){
-	pwm_val_B = (val >= MAX_LED_PWM_VAL) ? (MAX_LED_PWM_VAL - 1) : val;
+	pwm_val_B = (val >= (MAX_LED_PWM_VAL - 1)) ? (MAX_LED_PWM_VAL - 2) : val;
 }
 
 /* Refresh PWM1-3 values */
@@ -59,6 +60,10 @@ void TIMER1_IRQHandler(void){
 		NRF_TIMER1->CC[R_INDEX] = (pwm_val_R == 0) ? 1 : pwm_val_R;	// red
 		NRF_TIMER1->CC[G_INDEX] = (pwm_val_G == 0) ? 1 : pwm_val_G;	// green
 		NRF_TIMER1->CC[B_INDEX] = (pwm_val_B == 0) ? 1 : pwm_val_B;	// yellow
+//		NRF_TIMER1->CC[R_INDEX] = pwm_val_R;	// red
+//		NRF_TIMER1->CC[G_INDEX] = pwm_val_G;	// green
+//		NRF_TIMER1->CC[B_INDEX] = pwm_val_B;	// yellow
+
 		NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX] = 0;
 		
 		/* TODO need fix to see if this still fires if all LEDs are off */
@@ -84,6 +89,8 @@ void TIMER2_IRQHandler(void){
 	if((NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX]) != 0)
 	{
 		NRF_TIMER2->CC[(A_INDEX % 4)] = (pwm_val_A == 0) ? 1 : pwm_val_A;	// orange
+//		NRF_TIMER2->CC[(A_INDEX % 4)] = pwm_val_A;	// orange
+
 		NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX] = 0;
 		if(pwm_val_A > 0)
 			NRF_TIMER2->EVENTS_COMPARE[(A_INDEX % 4)] = 0;
@@ -128,43 +135,39 @@ void init_LEDs(void){
 	NRF_TIMER2->SHORTS      = (TIMER_SHORTS_COMPARE0_CLEAR_Enabled << TIMER_SHORTS_COMPARE0_CLEAR_Pos);
 
 	/* GPIOTE config */
-	nrf_gpiote_task_config(R_INDEX, LED_RED, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_HIGH);
-	nrf_gpiote_task_config(G_INDEX, LED_GREEN, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_HIGH);
-	nrf_gpiote_task_config(B_INDEX, LED_ORANGE, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_HIGH);
-	nrf_gpiote_task_config(0, LED_YELLOW, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_HIGH);
+	nrf_gpiote_task_config(R_INDEX, LED_RED, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
+	nrf_gpiote_task_config(G_INDEX, LED_GREEN, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
+//	nrf_gpiote_task_config(B_INDEX, LED_ORANGE, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
+//	nrf_gpiote_task_config(0, LED_YELLOW, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
 
-	/* Configure PPI to toggle the LED on CC[x] and CC[0] */
+/* Configure PPI to toggle the LED on CC[x] and CC[0] */
 	/* Red */
 	/* RED at CH0 gets blown out by TWI driver */
-//    NRF_PPI->CH[0].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
-//    NRF_PPI->CH[0].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
-
-//    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
-//    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
-
-    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
+    NRF_PPI->CH[0].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
+    NRF_PPI->CH[0].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
+    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
     NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
+
+//    NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[R_INDEX];
+//    NRF_PPI->CH[1].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[R_INDEX];
 
 	/* Green */
     NRF_PPI->CH[2].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[G_INDEX];
     NRF_PPI->CH[2].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[G_INDEX];
-
     NRF_PPI->CH[3].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
     NRF_PPI->CH[3].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[G_INDEX];
 
 	/* Blue */
-    NRF_PPI->CH[4].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[B_INDEX];
-    NRF_PPI->CH[4].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[B_INDEX];
+//    NRF_PPI->CH[4].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[B_INDEX];
+//    NRF_PPI->CH[4].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[B_INDEX];
+//    NRF_PPI->CH[5].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
+//    NRF_PPI->CH[5].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[B_INDEX];
 
-    NRF_PPI->CH[5].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[RESET_INDEX];
-    NRF_PPI->CH[5].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[B_INDEX];
-
-	/* Amber */
-    NRF_PPI->CH[6].EEP = (uint32_t)&NRF_TIMER2->EVENTS_COMPARE[(A_INDEX % 4)];
-    NRF_PPI->CH[6].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
-
-    NRF_PPI->CH[7].EEP = (uint32_t)&NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX];
-    NRF_PPI->CH[7].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
+//	/* Amber */
+//    NRF_PPI->CH[6].EEP = (uint32_t)&NRF_TIMER2->EVENTS_COMPARE[(A_INDEX % 4)];
+//    NRF_PPI->CH[6].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
+//    NRF_PPI->CH[7].EEP = (uint32_t)&NRF_TIMER2->EVENTS_COMPARE[RESET_INDEX];
+//    NRF_PPI->CH[7].TEP = (uint32_t)&NRF_GPIOTE->TASKS_OUT[0];
 
 	// Enable PPI channels 0-7
     NRF_PPI->CHEN = 
@@ -172,12 +175,12 @@ void init_LEDs(void){
                     (PPI_CHEN_CH1_Enabled << PPI_CHEN_CH1_Pos) |
                     (PPI_CHEN_CH2_Enabled << PPI_CHEN_CH2_Pos) |
                     (PPI_CHEN_CH3_Enabled << PPI_CHEN_CH3_Pos) |
-                    (PPI_CHEN_CH4_Enabled << PPI_CHEN_CH4_Pos) |
-					(PPI_CHEN_CH5_Enabled << PPI_CHEN_CH5_Pos) |
-					(PPI_CHEN_CH6_Enabled << PPI_CHEN_CH6_Pos) |
-                    (PPI_CHEN_CH7_Enabled << PPI_CHEN_CH7_Pos)
-//					(PPI_CHEN_CH8_Enabled << PPI_CHEN_CH8_Pos)
-					;
+//					(PPI_CHEN_CH4_Enabled << PPI_CHEN_CH4_Pos) |
+//					(PPI_CHEN_CH5_Enabled << PPI_CHEN_CH5_Pos) |
+//					(PPI_CHEN_CH6_Enabled << PPI_CHEN_CH6_Pos) |
+//					(PPI_CHEN_CH7_Enabled << PPI_CHEN_CH7_Pos) |
+//					(PPI_CHEN_CH8_Enabled << PPI_CHEN_CH8_Pos) |
+					0;
 	
 	NRF_TIMER1->CC[RESET_INDEX] = MAX_LED_PWM_VAL;
 	NRF_TIMER2->CC[RESET_INDEX] = MAX_LED_PWM_VAL;
@@ -213,7 +216,32 @@ void start_LED_timer(){
     NRF_TIMER2->TASKS_START = 1; // Start timer.
 }
 
+#define STEPSIZE	4
 
+void LightShow(){
+	static uint32_t redval = 1;
+	static bool goingup = true;
+		
+	/* Increment the red LED */
+	if(goingup){
+		set_R_PWM_val(redval);
+		redval += STEPSIZE;
+	}
+	else
+	{
+		set_R_PWM_val(redval);
+		redval -= STEPSIZE;
+	}
+	
+	if((goingup) && (redval >= (0.9*MAX_LED_PWM_VAL)))
+		goingup = false;
+	else if((!goingup) && (redval <= (STEPSIZE * 2 - 1)))
+		goingup = true;
+	
+	TryRegisterWithSysTimer(LightShow, SYS_TIMER_ONE_MSEC);
+//	TryRegisterWithSysTimer(LightShow, 1);
+
+}
 
 
 
